@@ -10,6 +10,10 @@ class Mixer {
   // Channels
   channels: Array<Channel> = [];
 
+  // Time
+  startTime: number = 0;
+  offsetTime: number = 0;
+
   // States
   isPlaying: boolean = false;
   state: 'running' | 'suspended' | 'stopped' | 'closed' = 'stopped';
@@ -56,6 +60,17 @@ class Mixer {
     return maxChannel.duration
   }
 
+  get timeElapsed(): number {
+    return this.audioCtx.currentTime - this.startTime
+  }
+
+  get currentDuration(): number {
+    if (this.state === 'stopped' || this.duration === 0) {
+      return 0
+    }
+    return Math.min(this.offsetTime + (this.audioCtx.currentTime - this.startTime), this.duration)
+  }
+
   async addChannel(dto: ChannelDto) {
     if (this.state !== 'stopped') {
       return
@@ -73,9 +88,11 @@ class Mixer {
   }
 
   play() {
-    if (this.controller.play(this.audioCtx.currentTime + 1)) {
+    const startTime = this.audioCtx.currentTime
+    if (this.controller.play(startTime)) {
       this.setMixerState('running')
       this.isPlaying = true;
+      this.startTime = startTime;
     }
   }
 
@@ -83,6 +100,8 @@ class Mixer {
     if (this.controller.stop()) {
       this.setMixerState('stopped')
       this.isPlaying = false;
+      this.startTime = 0
+      this.offsetTime = 0
     }
   }
 
@@ -94,9 +113,12 @@ class Mixer {
   }
 
   seek(offset: number) {
-    if (this.controller.seek(offset)) {
+    const startTime = this.audioCtx.currentTime
+    if (this.controller.seek(startTime, offset)) {
       this.setMixerState('running')
       this.isPlaying = true;
+      this.startTime = startTime
+      this.offsetTime = offset;
     }
   }
 

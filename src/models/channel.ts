@@ -95,10 +95,10 @@ class Channel {
     this.sourceNode = undefined;
   }
 
-  seek(offset: number) {
+  seek(when: number, offset: number) {
     this.stop();
     this.reloadChannel();
-    this.sourceNode?.start(0, offset)
+    this.sourceNode?.start(when, offset)
   }
 }
 

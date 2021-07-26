@@ -14,5 +14,5 @@ export interface MixerController {
   play: (when: number) => boolean
   stop: () => boolean
   pause: () => boolean
-  seek: (offset: number) => boolean
+  seek: (when: number, offset: number) => boolean
 }

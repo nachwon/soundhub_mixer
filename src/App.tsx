@@ -7,11 +7,17 @@ const mixer = new Mixer();
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(mixer.audioCtx.currentTime)
-    }, 1000)
+      if (mixer.duration === 0) {
+        setProgress(0)
+      } else {
+        setProgress(mixer.currentDuration / mixer.duration * 100)
+      } 
+    }, 10)
 
     return () => clearInterval(intervalId)
   }, [])
@@ -20,12 +26,12 @@ function App() {
     <div className="App">
       <input type="file" onChange={(e) => e.target.files ? mixer.addChannel(
         {
-          title: e.target.files[0].name,
+          title: e.target.files[0]?.name,
           src: e.target.files[0]
         }) : null
       } />
       <button onClick={() => mixer.play()}>Play</button>
-      <button onClick={() => mixer.stop()}>Stop</button>
+      <button onClick={() => { mixer.stop(); setCurrentTime(0)}}>Stop</button>
       <button onClick={() => mixer.pause()}>Pause</button>
       <button onClick={() => mixer.seek(15)}>Seek to 15</button>
       <button onClick={() => mixer.seek(100)}>Seek to 100</button>
@@ -44,9 +50,15 @@ function App() {
         onClick={(e) => {
           const offsetX = e.nativeEvent.offsetX;
           const relativeDuration = offsetX / 500 * mixer.duration;
+          console.log(relativeDuration, progress)
           mixer.seek(relativeDuration)
         }}
-      />
+      >
+        <div style={{ width: `${progress}%` , height: 30, backgroundColor: 'blue', pointerEvents: 'none'}} />
+      </div>
+
+      <div>{progress} %</div>
+      <div>{mixer.currentDuration}</div>
 
     </div>
   );

@@ -33,13 +33,13 @@ class BaseMixerController {
     return true
   }
 
-  seekChannels(offset: number) {
+  seekChannels(when: number, offset: number) {
     if (!this.mixer.channelsLoaded) {
       return false
     }
 
     for (let channel of this.mixer.channels) {
-      channel.seek(offset)
+      channel.seek(when, offset)
     }
     return true
   }
@@ -50,7 +50,7 @@ export class DefaultMixerController extends BaseMixerController implements Mixer
   play = (when: number = 0) => false;
   stop = () => false;
   pause = () => false;
-  seek = (offset: number) => false;
+  seek = (when: number, offset: number) => false;
 }
 
 
@@ -75,8 +75,8 @@ class RunningMixerController extends BaseMixerController implements MixerControl
     return this.stopChannels()
   }
 
-  seek(offset: number) {
-    return this.seekChannels(offset)
+  seek(when: number, offset: number) {
+    return this.seekChannels(when, offset)
   }
 }
 
@@ -96,8 +96,8 @@ class SuspendedMixerController extends BaseMixerController implements MixerContr
     return false
   }
 
-  seek(offset: number) {
-    if (this.seekChannels(offset)) {
+  seek(when: number, offset: number) {
+    if (this.seekChannels(when, offset)) {
       this.resumeChannels()
       return true
     } else {
@@ -122,8 +122,8 @@ class StoppedMixerController extends BaseMixerController implements MixerControl
     return false
   }
 
-  seek(offset: number) {
-    return this.seekChannels(offset)
+  seek(when: number, offset: number) {
+    return false
   }
 }
 
