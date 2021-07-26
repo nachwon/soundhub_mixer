@@ -51,6 +51,17 @@ class Mixer {
     return this.channels.every((channel) => channel.loaded)
   }
 
+  get currentDuration(): number {
+    if (this.state === 'stopped' || this.duration === 0) {
+      return 0
+    }
+    return Math.min(this.offsetTime + (this.timeElapsed), this.duration)
+  }
+
+  get timeElapsed(): number {
+    return this.audioCtx.currentTime - this.startTime
+  }
+
   get duration(): number {
     const maxChannel = this.channels.reduce((prevChannel, currentChannel) =>
       prevChannel.duration < currentChannel.duration ?
@@ -58,17 +69,6 @@ class Mixer {
         prevChannel
       , { duration: 0 })
     return maxChannel.duration
-  }
-
-  get timeElapsed(): number {
-    return this.audioCtx.currentTime - this.startTime
-  }
-
-  get currentDuration(): number {
-    if (this.state === 'stopped' || this.duration === 0) {
-      return 0
-    }
-    return Math.min(this.offsetTime + (this.audioCtx.currentTime - this.startTime), this.duration)
   }
 
   async addChannel(dto: ChannelDto) {
