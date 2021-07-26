@@ -1,24 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
+import Mixer from './models/mixer';
+
+const mixer = new Mixer();
 
 function App() {
+  const [currentTime, setCurrentTime] = useState(0)
+
+  useEffect(() => {
+    setInterval(() => {
+      setCurrentTime(mixer.audioCtx.currentTime)
+    }, 1000)
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="file" onChange={(e) => console.log(e.target.files ? e.target.files[0].arrayBuffer().then((arrayBuffer) => mixer.addChannel(arrayBuffer)).catch((error) => console.log(error)) : null)} />
+      <button onClick={() => mixer.play()}>Play</button>
+      <button onClick={() => mixer.stop()}>Stop</button>
+      <button onClick={() => mixer.pause()}>Pause</button>
+      <div>{currentTime}</div>
     </div>
   );
 }
