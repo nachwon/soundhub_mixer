@@ -73,14 +73,13 @@ class Mixer {
   }
 
   play() {
-    if (this.controller.play()) {
+    if (this.controller.play(this.audioCtx.currentTime + 1)) {
       this.setMixerState('running')
       this.isPlaying = true;
     }
   }
 
   stop() {
-    
     if (this.controller.stop()) {
       this.setMixerState('stopped')
       this.isPlaying = false;

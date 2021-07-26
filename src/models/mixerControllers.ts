@@ -9,9 +9,9 @@ class BaseMixerController {
     this.mixer = mixer
   }
 
-  playChannels() {
+  playChannels(when: number = 0) {
     for (let channel of this.mixer.channels) {
-      channel.play()
+      channel.play(when)
     }
     return true
   }
@@ -47,7 +47,7 @@ class BaseMixerController {
 
 
 export class DefaultMixerController extends BaseMixerController implements MixerController {
-  play = () => false;
+  play = (when: number = 0) => false;
   stop = () => false;
   pause = () => false;
   seek = (offset: number) => false;
@@ -55,12 +55,12 @@ export class DefaultMixerController extends BaseMixerController implements Mixer
 
 
 class RunningMixerController extends BaseMixerController implements MixerController {
-  play() {
+  play(when: number = 0) {
     if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
       return false
     }
 
-    return this.playChannels()
+    return this.playChannels(when)
   }
 
   pause() {
@@ -81,7 +81,7 @@ class RunningMixerController extends BaseMixerController implements MixerControl
 }
 
 class SuspendedMixerController extends BaseMixerController implements MixerController {
-  play() {
+  play(when: number = 0) {
     this.resumeChannels()
     return true
   }
@@ -107,11 +107,11 @@ class SuspendedMixerController extends BaseMixerController implements MixerContr
 }
 
 class StoppedMixerController extends BaseMixerController implements MixerController {
-  play() {
+  play(when: number = 0) {
     if (!this.mixer.channelsLoaded) {
       return false
     }
-    return this.playChannels()
+    return this.playChannels(when)
   }
 
   stop() {

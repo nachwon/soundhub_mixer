@@ -11,7 +11,7 @@ export type ChannelMeta = {
 
 
 export interface MixerController {
-  play: () => boolean
+  play: (when: number) => boolean
   stop: () => boolean
   pause: () => boolean
   seek: (offset: number) => boolean

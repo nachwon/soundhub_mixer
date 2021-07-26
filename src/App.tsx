@@ -38,6 +38,16 @@ function App() {
         )
       })}
       <div>{mixer.duration}</div>
+
+      <div
+        style={{ width: 500, height: 30, backgroundColor: 'red', margin: '0 auto' }}
+        onClick={(e) => {
+          const offsetX = e.nativeEvent.offsetX;
+          const relativeDuration = offsetX / 500 * mixer.duration;
+          mixer.seek(relativeDuration)
+        }}
+      />
+
     </div>
   );
 }
