@@ -1,4 +1,5 @@
-import Channel from "./channel";
+import { ChannelDto } from "../types";
+import Channel, { BufferExtractor } from "./channel";
 
 interface MixerController {
   play: () => boolean
@@ -6,23 +7,29 @@ interface MixerController {
   pause: () => boolean
 }
 
-
-class RunningMixerController implements MixerController {
+class BaseMixerController {
   mixer: Mixer;
 
   constructor(mixer: Mixer) {
     this.mixer = mixer
   }
 
-  play() {
-    if (this.mixer.isPlaying) {
+  playChannels() {
+    if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
       return false
     }
 
     for (let channel of this.mixer.channels) {
-      channel.play();
+      channel.play()
     }
     return true
+  }
+}
+
+
+class RunningMixerController extends BaseMixerController implements MixerController {
+  play() {
+    return this.playChannels()
   }
 
   pause() {
@@ -41,13 +48,7 @@ class RunningMixerController implements MixerController {
   }
 }
 
-class SuspendedMixerController implements MixerController {
-  mixer: Mixer;
-
-  constructor(mixer: Mixer) {
-    this.mixer = mixer
-  }
-
+class SuspendedMixerController extends BaseMixerController implements MixerController {
   play() {
     this.mixer.audioCtx.resume()
     return true
@@ -66,19 +67,9 @@ class SuspendedMixerController implements MixerController {
   }
 }
 
-class StoppedMixerController implements MixerController {
-  mixer: Mixer;
-
-  constructor(mixer: Mixer) {
-    this.mixer = mixer
-  }
-
+class StoppedMixerController extends BaseMixerController implements MixerController {
   play() {
-    for (let channel of this.mixer.channels) {
-      channel.reloadChannel();
-      channel.play();
-    }
-    return true
+    return this.playChannels()
   }
 
   stop() {
@@ -126,7 +117,7 @@ class Mixer {
     this.analyserNodeR = this.audioCtx.createAnalyser();
 
     this.connectNodes()
-    this.setMixerState('running')
+    this.setMixerState('stopped')
   }
 
   connectNodes() {
@@ -136,14 +127,28 @@ class Mixer {
     this.masterGainNode.connect(this.audioCtx.destination);
   }
 
-  addChannel(src: ArrayBuffer | string) {
-    const channel = new Channel(src, this.channelsCount, this.audioCtx);
+  async addChannel(dto: ChannelDto) {
+    if (this.state !== 'stopped') {
+      return
+    }
+
+    const channelConstructor = new BufferExtractor()
+    const buffer = await channelConstructor.extract(dto.src)
+    if (!buffer) {
+      return
+    }
+
+    const channel = new Channel(buffer, this.audioCtx, { channelIndex: this.channelsCount, src: dto.src, title: dto.title})
     this.channels.push(channel);
-    channel.connectToMixer(this.masterGainNode);
+    channel.connect(this.masterGainNode);
   }
 
   get channelsCount() {
     return this.channels.length
+  }
+
+  get channelsLoaded() {
+    return this.channels.every((channel) => channel.loaded)
   }
 
   setMixerState(state: 'running' | 'suspended' | 'stopped' | 'closed') {

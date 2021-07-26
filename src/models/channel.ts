@@ -1,4 +1,31 @@
 import axios from "axios";
+import { ChannelMeta } from "../types";
+
+
+export class BufferExtractor {
+  async extract(src: File | string): Promise<ArrayBuffer | undefined> {
+    if (typeof (src) === 'string') {
+      return await this.fromUrl(src)
+    } else if (src instanceof File) {
+      return await this.fromFile(src)
+    } else {
+      return undefined
+    }
+  }
+
+  async fromFile(file: File) {
+    return await file.arrayBuffer();
+  }
+
+  async fromUrl(url: string) {
+    try {
+      const response = await axios.get(url, { responseType: 'arraybuffer' });
+      return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
 
 class Channel {
   audioCtx: AudioContext;
@@ -12,29 +39,14 @@ class Channel {
   pannerNode: StereoPannerNode;
   analyserNode: AnalyserNode;
 
-  constructor(src: string | ArrayBuffer, channelIndex: number, audioCtx: AudioContext) {
-    this.channelIndex = channelIndex;
+  constructor(buffer: ArrayBuffer, audioCtx: AudioContext, meta: ChannelMeta) {
+    this.channelIndex = meta.channelIndex;
+
     this.audioCtx = audioCtx;
     this.gainNode = this.audioCtx.createGain();    
     this.pannerNode = this.audioCtx.createStereoPanner();
     this.analyserNode = this.audioCtx.createAnalyser();
-  
-    if (typeof (src) === 'string') {
-      this.fetchBufferFromSrc(src)
-    } else if (src instanceof ArrayBuffer) {
-      this.setAudioBuffer(src)
-    }
-  }
-
-  private connectNodes() {
-    this.sourceNode?.connect(this.gainNode);
-    this.gainNode.connect(this.pannerNode);
-    this.pannerNode.connect(this.analyserNode);
-  }
-
-  private fetchBufferFromSrc(src: string) {
-    const request = axios.get(src, { responseType: 'arraybuffer' });
-    request.then((response) => this.setAudioBuffer(response.data));
+    this.setAudioBuffer(buffer);
   }
 
   private setAudioBuffer(buffer: ArrayBuffer) {
@@ -52,7 +64,13 @@ class Channel {
     this.sourceNode = sourceNode;
   }
 
-  connectToMixer(masterGainNode: GainNode) {
+  private connectNodes() {
+    this.sourceNode?.connect(this.gainNode);
+    this.gainNode.connect(this.pannerNode);
+    this.pannerNode.connect(this.analyserNode);
+  }
+
+  connect(masterGainNode: GainNode) {
     this.analyserNode.connect(masterGainNode);
   }
 
@@ -64,7 +82,7 @@ class Channel {
   }
 
   play() {
-    console.log("play")
+    this.reloadChannel();
     this.sourceNode?.start(0)
   }
 
