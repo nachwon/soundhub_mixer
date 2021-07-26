@@ -1,5 +1,6 @@
 import { ChannelDto, MixerController } from "../types";
-import Channel, { BufferExtractor } from "./channel";
+import { BufferExtractor } from "../utils";
+import Channel from "./channel";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 
 
