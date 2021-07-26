@@ -94,6 +94,12 @@ class Channel {
     this.sourceNode?.disconnect();
     this.sourceNode = undefined;
   }
+
+  seek(offset: number) {
+    this.stop();
+    this.reloadChannel();
+    this.sourceNode?.start(0, offset)
+  }
 }
 
 export default Channel;

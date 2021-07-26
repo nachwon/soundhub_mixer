@@ -27,6 +27,9 @@ function App() {
       <button onClick={() => mixer.play()}>Play</button>
       <button onClick={() => mixer.stop()}>Stop</button>
       <button onClick={() => mixer.pause()}>Pause</button>
+      <button onClick={() => mixer.seek(15)}>Seek to 15</button>
+      <button onClick={() => mixer.seek(100)}>Seek to 100</button>
+      <button onClick={() => mixer.seek(1000)}>Seek to 1000</button>
       <div>{currentTime}</div>
 
       {mixer.channels.map((value) => {

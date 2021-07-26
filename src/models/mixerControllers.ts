@@ -1,10 +1,6 @@
+import { MixerController } from "../types";
 import Mixer from "./mixer";
 
-interface MixerController {
-  play: () => boolean
-  stop: () => boolean
-  pause: () => boolean
-}
 
 class BaseMixerController {
   mixer: Mixer;
@@ -14,69 +10,120 @@ class BaseMixerController {
   }
 
   playChannels() {
-    if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
+    for (let channel of this.mixer.channels) {
+      channel.play()
+    }
+    return true
+  }
+
+  stopChannels() {
+    for (let channel of this.mixer.channels) {
+      channel.stop();
+    }
+    return true
+  }
+
+  pauseChannels() {
+    this.mixer.audioCtx.suspend()
+    return true
+  }
+
+  resumeChannels() {
+    this.mixer.audioCtx.resume()
+    return true
+  }
+
+  seekChannels(offset: number) {
+    if (!this.mixer.channelsLoaded) {
       return false
     }
 
     for (let channel of this.mixer.channels) {
-      channel.play()
+      channel.seek(offset)
     }
     return true
   }
 }
 
 
+export class DefaultMixerController extends BaseMixerController implements MixerController {
+  play = () => false;
+  stop = () => false;
+  pause = () => false;
+  seek = (offset: number) => false;
+}
+
+
 class RunningMixerController extends BaseMixerController implements MixerController {
   play() {
+    if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
+      return false
+    }
+
     return this.playChannels()
   }
 
   pause() {
-    this.mixer.audioCtx.suspend()
-    return true
+    return this.pauseChannels()
   }
 
   stop() {
     if (!this.mixer.isPlaying) {
       return false
     }
-    for (let channel of this.mixer.channels) {
-      channel.stop();
-    }
-    return true
+
+    return this.stopChannels()
+  }
+
+  seek(offset: number) {
+    return this.seekChannels(offset)
   }
 }
 
 class SuspendedMixerController extends BaseMixerController implements MixerController {
   play() {
-    this.mixer.audioCtx.resume()
+    this.resumeChannels()
     return true
   }
 
   stop() {
-    for (let channel of this.mixer.channels) {
-      channel.stop();
-    }
-    this.mixer.audioCtx.resume()
+    this.stopChannels()
+    this.resumeChannels()
     return true
   }
 
   pause() {
-    return true
+    return false
+  }
+
+  seek(offset: number) {
+    if (this.seekChannels(offset)) {
+      this.resumeChannels()
+      return true
+    } else {
+      return false
+    }
   }
 }
 
 class StoppedMixerController extends BaseMixerController implements MixerController {
   play() {
+    if (!this.mixer.channelsLoaded) {
+      return false
+    }
     return this.playChannels()
   }
 
   stop() {
-    return true
+    return false
   }
 
   pause() {
-    return true
+    return false
+  }
+
+  seek(offset: number) {
+    return this.seekChannels(offset)
   }
 }
 
@@ -84,6 +131,6 @@ class StoppedMixerController extends BaseMixerController implements MixerControl
 export const ControllerMap = {
   'running': RunningMixerController,
   'suspended': SuspendedMixerController,
-  'closed': undefined,
+  'closed': DefaultMixerController,
   'stopped': StoppedMixerController
 }

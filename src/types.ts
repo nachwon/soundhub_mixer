@@ -8,3 +8,11 @@ export type ChannelMeta = {
   src: File | string
   title?: string
 }
+
+
+export interface MixerController {
+  play: () => boolean
+  stop: () => boolean
+  pause: () => boolean
+  seek: (offset: number) => boolean
+}

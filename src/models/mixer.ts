@@ -1,6 +1,6 @@
-import { ChannelDto } from "../types";
+import { ChannelDto, MixerController } from "../types";
 import Channel, { BufferExtractor } from "./channel";
-import { ControllerMap } from "./mixerControllers";
+import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 
 
 class Mixer {
@@ -13,7 +13,7 @@ class Mixer {
   // States
   isPlaying: boolean = false;
   state: 'running' | 'suspended' | 'stopped' | 'closed' = 'stopped';
-  controller: any | undefined;
+  controller: MixerController = new DefaultMixerController(this);
 
   // Nodes
   masterGainNode: GainNode;
@@ -91,6 +91,13 @@ class Mixer {
     if (this.controller.pause()) {
       this.setMixerState('suspended')
       this.isPlaying = false;
+    }
+  }
+
+  seek(offset: number) {
+    if (this.controller.seek(offset)) {
+      this.setMixerState('running')
+      this.isPlaying = true;
     }
   }
 
