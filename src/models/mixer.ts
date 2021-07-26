@@ -33,11 +33,19 @@ class Mixer {
     this.setMixerState('stopped')
   }
 
-  connectNodes() {
+  private connectNodes() {
     this.masterGainNode.connect(this.splitterNode);
     this.splitterNode.connect(this.analyserNodeL, 0);
     this.splitterNode.connect(this.analyserNodeR, 1);
     this.masterGainNode.connect(this.audioCtx.destination);
+  }
+
+  get channelsCount() {
+    return this.channels.length
+  }
+
+  get channelsLoaded() {
+    return this.channels.every((channel) => channel.loaded)
   }
 
   async addChannel(dto: ChannelDto) {
@@ -51,25 +59,9 @@ class Mixer {
       return
     }
 
-    const channel = new Channel(buffer, this.audioCtx, { channelIndex: this.channelsCount, src: dto.src, title: dto.title})
+    const channel = new Channel(buffer, this.audioCtx, { channelIndex: this.channelsCount, src: dto.src, title: dto.title })
     this.channels.push(channel);
     channel.connect(this.masterGainNode);
-  }
-
-  get channelsCount() {
-    return this.channels.length
-  }
-
-  get channelsLoaded() {
-    return this.channels.every((channel) => channel.loaded)
-  }
-
-  setMixerState(state: 'running' | 'suspended' | 'stopped' | 'closed') {
-    this.state = state;
-    const controller = ControllerMap[state]
-    if (controller) {
-      this.controller = new controller(this)
-    }
   }
 
   play() {
@@ -91,6 +83,14 @@ class Mixer {
     if (this.controller.pause()) {
       this.setMixerState('suspended')
       this.isPlaying = false;
+    }
+  }
+
+  private setMixerState(state: 'running' | 'suspended' | 'stopped' | 'closed') {
+    this.state = state;
+    const controller = ControllerMap[state]
+    if (controller) {
+      this.controller = new controller(this)
     }
   }
 }
