@@ -9,7 +9,6 @@ class Mixer {
 
   // Channels
   channels: Array<Channel> = [];
-  maxChannel?: Channel = undefined;
 
   // States
   isPlaying: boolean = false;
@@ -46,6 +45,15 @@ class Mixer {
 
   get channelsLoaded() {
     return this.channels.every((channel) => channel.loaded)
+  }
+
+  get duration(): number {
+    const maxChannel = this.channels.reduce((prevChannel, currentChannel) =>
+      prevChannel.duration < currentChannel.duration ?
+        currentChannel :
+        prevChannel
+      , { duration: 0 })
+    return maxChannel.duration
   }
 
   async addChannel(dto: ChannelDto) {

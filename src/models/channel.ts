@@ -33,6 +33,8 @@ class Channel {
   buffer?: AudioBuffer;
   loaded: boolean = false;
 
+  duration: number = 0;
+
   // Nodes
   sourceNode: AudioBufferSourceNode | undefined;
   gainNode: GainNode;
@@ -46,12 +48,13 @@ class Channel {
     this.gainNode = this.audioCtx.createGain();    
     this.pannerNode = this.audioCtx.createStereoPanner();
     this.analyserNode = this.audioCtx.createAnalyser();
-    this.setAudioBuffer(buffer);
+    this.setupAudioBuffer(buffer);
   }
 
-  private setAudioBuffer(buffer: ArrayBuffer) {
+  private setupAudioBuffer(buffer: ArrayBuffer) {
     this.audioCtx.decodeAudioData(buffer, (buffer) => {
       this.buffer = buffer;
+      this.duration = buffer.duration;
       this.createBufferSourceNode(buffer)
       this.connectNodes();
       this.loaded = true;

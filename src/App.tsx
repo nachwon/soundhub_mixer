@@ -12,7 +12,7 @@ function App() {
     const intervalId = setInterval(() => {
       setCurrentTime(mixer.audioCtx.currentTime)
     }, 1000)
-    
+
     return () => clearInterval(intervalId)
   }, [])
 
@@ -34,6 +34,7 @@ function App() {
           <div key={value.channelIndex}>channel {value.channelIndex} loaded: {value.loaded ? 'true' : 'false'}</div>
         )
       })}
+      <div>{mixer.duration}</div>
     </div>
   );
 }
