@@ -8,6 +8,7 @@ const mixer = new Mixer();
 function App() {
   const [currentTime, setCurrentTime] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [offset, setOffset] = useState(0)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -30,8 +31,8 @@ function App() {
           src: e.target.files[0]
         }) : null
       } />
-      <button onClick={() => mixer.play()}>Play</button>
-      <button onClick={() => { mixer.stop(); setCurrentTime(0)}}>Stop</button>
+      <button onClick={() => mixer.play(offset)}>Play</button>
+      <button onClick={() => { mixer.stop(); setCurrentTime(0); setOffset(0)}}>Stop</button>
       <button onClick={() => mixer.pause()}>Pause</button>
       <button onClick={() => mixer.seek(15)}>Seek to 15</button>
       <button onClick={() => mixer.seek(100)}>Seek to 100</button>
@@ -51,6 +52,7 @@ function App() {
           const offsetX = e.nativeEvent.offsetX;
           const relativeDuration = offsetX / 500 * mixer.duration;
           console.log(relativeDuration, progress)
+          setOffset(relativeDuration)
           mixer.seek(relativeDuration)
         }}
       >

@@ -9,9 +9,9 @@ class BaseMixerController {
     this.mixer = mixer
   }
 
-  playChannels(when: number = 0) {
+  playChannels(when: number, offset: number) {
     for (let channel of this.mixer.channels) {
-      channel.play(when)
+      channel.play(when, offset)
     }
     return true
   }
@@ -47,7 +47,7 @@ class BaseMixerController {
 
 
 export class DefaultMixerController extends BaseMixerController implements MixerController {
-  play = (when: number = 0) => false;
+  play = (when: number = 0, offset: number = 0) => false;
   stop = () => false;
   pause = () => false;
   seek = (when: number, offset: number) => false;
@@ -55,12 +55,12 @@ export class DefaultMixerController extends BaseMixerController implements Mixer
 
 
 class RunningMixerController extends BaseMixerController implements MixerController {
-  play(when: number = 0) {
+  play(when: number = 0, offset: number = 0) {
     if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
       return false
     }
 
-    return this.playChannels(when)
+    return this.playChannels(when, offset)
   }
 
   pause() {
@@ -81,7 +81,7 @@ class RunningMixerController extends BaseMixerController implements MixerControl
 }
 
 class SuspendedMixerController extends BaseMixerController implements MixerController {
-  play(when: number = 0) {
+  play(when: number = 0, offset: number = 0) {
     this.resumeChannels()
     return true
   }
@@ -98,7 +98,7 @@ class SuspendedMixerController extends BaseMixerController implements MixerContr
 
   seek(when: number, offset: number) {
     if (this.seekChannels(when, offset)) {
-      this.resumeChannels()
+      // this.resumeChannels()
       return true
     } else {
       return false
@@ -107,11 +107,11 @@ class SuspendedMixerController extends BaseMixerController implements MixerContr
 }
 
 class StoppedMixerController extends BaseMixerController implements MixerController {
-  play(when: number = 0) {
+  play(when: number = 0, offset: number = 0) {
     if (!this.mixer.channelsLoaded) {
       return false
     }
-    return this.playChannels(when)
+    return this.playChannels(when, offset)
   }
 
   stop() {

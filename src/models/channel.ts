@@ -84,9 +84,9 @@ class Channel {
     }
   }
 
-  play(when: number = 0) {
+  play(when: number, offset: number = 0) {
     this.reloadChannel();
-    this.sourceNode?.start(when)
+    this.sourceNode?.start(when, offset)
   }
 
   stop() {

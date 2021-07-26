@@ -87,12 +87,13 @@ class Mixer {
     channel.connect(this.masterGainNode);
   }
 
-  play() {
+  play(offset: number = 0) {
     const startTime = this.audioCtx.currentTime
-    if (this.controller.play(startTime)) {
+    if (this.controller.play(startTime, offset)) {
       this.setMixerState('running')
       this.isPlaying = true;
       this.startTime = startTime;
+      this.offsetTime = offset;
     }
   }
 
@@ -115,7 +116,6 @@ class Mixer {
   seek(offset: number) {
     const startTime = this.audioCtx.currentTime
     if (this.controller.seek(startTime, offset)) {
-      this.setMixerState('running')
       this.isPlaying = true;
       this.startTime = startTime
       this.offsetTime = offset;
