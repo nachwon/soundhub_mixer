@@ -16,7 +16,9 @@ function App() {
       if (mixer.duration === 0) {
         setProgress(0)
       } else {
-        setProgress(mixer.currentDuration / mixer.duration * 100)
+        if (mixer.isPlaying) {
+          setProgress(mixer.currentDuration / mixer.duration * 100)
+        }
       } 
     }, 10)
 
@@ -32,7 +34,7 @@ function App() {
         }) : null
       } />
       <button onClick={() => mixer.play(offset)}>Play</button>
-      <button onClick={() => { mixer.stop(); setCurrentTime(0); setOffset(0)}}>Stop</button>
+      <button onClick={() => { mixer.stop(); setCurrentTime(0); setOffset(0); setProgress(0)}}>Stop</button>
       <button onClick={() => mixer.pause()}>Pause</button>
       <button onClick={() => mixer.seek(15)}>Seek to 15</button>
       <button onClick={() => mixer.seek(100)}>Seek to 100</button>
@@ -41,7 +43,12 @@ function App() {
 
       {mixer.channels.map((value) => {
         return (
-          <div key={value.channelIndex}>channel {value.channelIndex} loaded: {value.loaded ? 'true' : 'false'}</div>
+          <div key={value.channelIndex}>
+            channel {value.channelIndex} loaded: {value.loaded ? 'true' : 'false'}
+            <button onClick={() => mixer.gainController.mute(value.channelIndex)}>Mute</button>
+            <button onClick={() => mixer.gainController.unMute(value.channelIndex)}>unMute</button>
+            <button onClick={() => mixer.gainController.solo(value.channelIndex)}>Solo</button>
+          </div>
         )
       })}
       <div>{mixer.duration}</div>
@@ -53,6 +60,7 @@ function App() {
           const relativeDuration = offsetX / 500 * mixer.duration;
           console.log(relativeDuration, progress)
           setOffset(relativeDuration)
+          setProgress(relativeDuration / mixer.duration * 100)
           mixer.seek(relativeDuration)
         }}
       >

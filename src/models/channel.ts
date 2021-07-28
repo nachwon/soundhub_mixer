@@ -1,4 +1,5 @@
 import { ChannelMeta } from "../types";
+import { ChannelGainController } from "./gainControllers";
 
 
 class Channel {
@@ -15,6 +16,9 @@ class Channel {
   pannerNode: StereoPannerNode;
   analyserNode: AnalyserNode;
 
+  // Controllers
+  gainController: ChannelGainController;
+
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, meta: ChannelMeta) {
     this.channelIndex = meta.channelIndex;
 
@@ -23,6 +27,8 @@ class Channel {
     this.pannerNode = this.audioCtx.createStereoPanner();
     this.analyserNode = this.audioCtx.createAnalyser();
     this.setupAudioBuffer(buffer);
+
+    this.gainController = new ChannelGainController(this.gainNode);
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
