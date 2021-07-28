@@ -1,7 +1,7 @@
 import { ChannelDto, MixerController } from "../types";
 import { BufferExtractor } from "../utils";
 import Channel from "./channel";
-import { MasterGainController } from "./gainControllers";
+import { ChannelSetGainController, MasterGainController } from "./gainControllers";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 
 
@@ -29,6 +29,7 @@ class Mixer {
 
   // Controllers
   gainController: MasterGainController;
+  channelSetGainController: ChannelSetGainController;
 
   constructor() {
     this.audioCtx = new AudioContext();
@@ -38,6 +39,7 @@ class Mixer {
     this.analyserNodeR = this.audioCtx.createAnalyser();
 
     this.gainController = new MasterGainController(this.masterGainNode)
+    this.channelSetGainController = new ChannelSetGainController()
 
     this.connectNodes()
     this.setMixerState('stopped')
@@ -96,7 +98,7 @@ class Mixer {
   }
 
   private connectControllers(channel: Channel) {
-    this.gainController.addChannelGainController(channel.gainController)
+    this.channelSetGainController.add(channel.gainController)
   }
 
   play(offset: number = 0) {

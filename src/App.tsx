@@ -45,10 +45,10 @@ function App() {
         return (
           <div key={value.channelIndex}>
             channel {value.channelIndex}: { value.title} loaded: {value.loaded ? 'true' : 'false'}
-            <button onClick={() => mixer.gainController.mute(value.channelIndex)}>Mute</button>
-            <button onClick={() => mixer.gainController.unMute(value.channelIndex)}>unMute</button>
-            <button onClick={() => mixer.gainController.solo(value.channelIndex)}>Solo</button>
-            <button onClick={() => mixer.gainController.unSolo(value.channelIndex)}>unSolo</button>
+            <button onClick={() => mixer.channelSetGainController.mute(value.channelIndex)}>Mute</button>
+            <button onClick={() => mixer.channelSetGainController.unMute(value.channelIndex)}>unMute</button>
+            <button onClick={() => mixer.channelSetGainController.solo(value.channelIndex)}>Solo</button>
+            <button onClick={() => mixer.channelSetGainController.unSolo(value.channelIndex)}>unSolo</button>
           </div>
         )
       })}
@@ -71,8 +71,8 @@ function App() {
 
       <div>{progress} %</div>
       <div>{mixer.currentDuration}</div>
-      <div>{mixer.gainController.mutedControllers.map((value) => value.index).join(', ')}</div>
-      <div>solo count : { mixer.gainController.soloCount}</div>
+      <div>{mixer.channelSetGainController.mutedControllers.map((value) => value.index).join(', ')}</div>
+      <div>solo count : { mixer.channelSetGainController.soloCount}</div>
 
     </div>
   );

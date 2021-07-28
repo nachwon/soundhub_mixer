@@ -44,26 +44,12 @@ export class ChannelGainController {
   }
 }
 
-export class MasterGainController {
-  masterGainNode: GainNode;
+export class ChannelSetGainController {
   channelGainControllers: Array<ChannelGainController> = [];
-
   #mutedControllers: Array<ChannelGainController> = [];
   #soloedControllers: Array<ChannelGainController> = [];
 
-  constructor(masterGainNode: GainNode) {
-    this.masterGainNode = masterGainNode
-  }
-
-  setGain(value: number, when: number) {
-    const boundedValue = Math.max(
-      this.masterGainNode.gain.minValue,
-      Math.min(this.masterGainNode.gain.maxValue, value)
-    )
-    this.masterGainNode.gain.setValueAtTime(boundedValue, when)
-  }
-
-  addChannelGainController(channelGainController: ChannelGainController) {
+  add(channelGainController: ChannelGainController) {
     this.channelGainControllers.push(channelGainController)
   }
 
@@ -135,5 +121,21 @@ export class MasterGainController {
 
   get mutedControllers() {
     return this.#mutedControllers
+  }
+}
+
+export class MasterGainController {
+  masterGainNode: GainNode;
+
+  constructor(masterGainNode: GainNode) {
+    this.masterGainNode = masterGainNode
+  }
+
+  setGain(value: number, when: number) {
+    const boundedValue = Math.max(
+      this.masterGainNode.gain.minValue,
+      Math.min(this.masterGainNode.gain.maxValue, value)
+    )
+    this.masterGainNode.gain.setValueAtTime(boundedValue, when)
   }
 }
