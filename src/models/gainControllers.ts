@@ -1,12 +1,14 @@
-import { GainController } from "../types";
-
-
-export class ChannelGainController implements GainController {
+export class ChannelGainController {
+  #index: number;
   gainNode: GainNode;
 
   // States
   #currentGain: number = 0;
   #isMuted: boolean = false;
+
+  get index() {
+    return this.#index
+  }
 
   get currentGain() {
     return this.#currentGain
@@ -16,7 +18,8 @@ export class ChannelGainController implements GainController {
     return this.#isMuted
   }
 
-  constructor(gainNode: GainNode) {
+  constructor(index: number, gainNode: GainNode) {
+    this.#index = index
     this.gainNode = gainNode
     this.#currentGain = gainNode.gain.defaultValue
   }
@@ -41,9 +44,12 @@ export class ChannelGainController implements GainController {
   }
 }
 
-export class MasterGainController implements GainController {
+export class MasterGainController {
   masterGainNode: GainNode;
   channelGainControllers: Array<ChannelGainController> = [];
+
+  #mutedControllers: Array<ChannelGainController> = [];
+  #soloedControllers: Array<ChannelGainController> = [];
 
   constructor(masterGainNode: GainNode) {
     this.masterGainNode = masterGainNode
@@ -64,11 +70,19 @@ export class MasterGainController implements GainController {
   mute(index: number, when: number = 0) {
     const controller = this.channelGainControllers[index]
     controller.mute(when)
+    if (!this.soloMode && !this.#mutedControllers.includes(controller)) {
+      this.#mutedControllers.push(controller)
+    }
   }
 
   unMute(index: number, when: number = 0) {
     const controller = this.channelGainControllers[index]
     controller.unMute(when)
+    if (!this.soloMode) {
+      this.#mutedControllers = this.#mutedControllers.filter(
+        (mutedController) => mutedController.index !== controller.index
+      )
+    }
   }
 
   muteAll(when: number) {
@@ -84,8 +98,42 @@ export class MasterGainController implements GainController {
   }
 
   solo(index: number, when: number = 0) {
-    this.muteAll(0)
     const controller = this.channelGainControllers[index]
-    controller.unMute(when)
+    if (!this.#soloedControllers.includes(controller)) {
+      this.#soloedControllers.push(controller)
+    }
+
+    this.muteAll(0)
+    for (let controller of this.#soloedControllers) {
+      controller.unMute(when)
+    }
+  }
+
+  unSolo(index: number, when: number = 0) {
+    const controller = this.channelGainControllers[index]
+    this.#soloedControllers = this.#soloedControllers.filter((soloedController) => soloedController.index !== controller.index)
+    if (this.#soloedControllers.length === 0) {
+      this.unMuteAll(0)
+      for (let controller of this.#mutedControllers) {
+        controller.mute(when)
+      }
+    } else {
+      this.muteAll(0)
+      for (let controller of this.#soloedControllers) {
+        controller.unMute(when)
+      }
+    }
+  }
+
+  get soloCount() {
+    return this.#soloedControllers.length
+  }
+
+  get soloMode() {
+    return this.#soloedControllers.length > 0
+  }
+
+  get mutedControllers() {
+    return this.#mutedControllers
   }
 }

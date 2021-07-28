@@ -4,10 +4,14 @@ import { ChannelGainController } from "./gainControllers";
 
 class Channel {
   audioCtx: AudioContext;
-  channelIndex: number;
   buffer?: AudioBuffer;
-  loaded: boolean = false;
 
+  // Meta
+  channelIndex: number;
+  title?: string;
+
+  // States
+  loaded: boolean = false;
   duration: number = 0;
 
   // Nodes
@@ -21,6 +25,7 @@ class Channel {
 
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, meta: ChannelMeta) {
     this.channelIndex = meta.channelIndex;
+    this.title = meta.title;
 
     this.audioCtx = audioCtx;
     this.gainNode = this.audioCtx.createGain();    
@@ -28,7 +33,7 @@ class Channel {
     this.analyserNode = this.audioCtx.createAnalyser();
     this.setupAudioBuffer(buffer);
 
-    this.gainController = new ChannelGainController(this.gainNode);
+    this.gainController = new ChannelGainController(this.channelIndex, this.gainNode);
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {

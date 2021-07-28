@@ -16,7 +16,3 @@ export interface MixerController {
   pause: () => boolean
   seek: (when: number, offset: number) => boolean
 }
-
-export interface GainController {
-  setGain: (value: number, when: number) => void
-}
