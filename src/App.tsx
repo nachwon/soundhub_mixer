@@ -1,9 +1,41 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import './App.css';
+import Channel from './models/channel';
 import Mixer from './models/mixer';
 
 const mixer = new Mixer();
+
+interface MuteProps {
+  channel: Channel
+}
+
+function MuteSolo({ channel } : MuteProps) {
+  const [muted, setMuted] = useState(false);
+  const [soloed, setSoloed] = useState(false);
+
+  useEffect(() => {
+    setMuted(channel.gainController.isMuted)
+    setSoloed(channel.gainController.isSoloed)
+  }, [channel.gainController.isMuted, channel.gainController.isSoloed])
+
+
+  const toggleMuted = () => {
+    channel.gainController.toggleMute()
+  }
+
+  const toggleSoloed = () => {
+    channel.gainController.toggleSolo()
+  }
+
+  return (
+    <div style={{ display: 'inline-block' }}>
+      <div style={{ display: 'inline-block' }} onClick={toggleMuted}>{muted ? '[M]' : '[ ]'}</div>
+      <div style={{ display: 'inline-block' }} onClick={toggleSoloed}>{soloed ? '[S]' : '[ ]'}</div>
+    </div>
+  )
+
+}
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0)
@@ -44,11 +76,12 @@ function App() {
       {mixer.channels.map((value) => {
         return (
           <div key={value.channelIndex}>
-            channel {value.channelIndex}: { value.title} loaded: {value.loaded ? 'true' : 'false'}
-            <button onClick={() => mixer.channelSetGainController.mute(value.channelIndex)}>Mute</button>
-            <button onClick={() => mixer.channelSetGainController.unMute(value.channelIndex)}>unMute</button>
-            <button onClick={() => mixer.channelSetGainController.solo(value.channelIndex)}>Solo</button>
-            <button onClick={() => mixer.channelSetGainController.unSolo(value.channelIndex)}>unSolo</button>
+            channel {value.channelIndex}: {value.title} loaded: {value.loaded ? 'true' : 'false'}
+            <MuteSolo key={value.channelIndex} channel={value} />
+            <button onClick={() => value.gainController.toggleMute(value.channelIndex)}>Mute</button>
+            {/* <button onClick={() => value.gainController.unMute(value.channelIndex)}>unMute</button> */}
+            <button onClick={() => value.gainController.toggleSolo(value.channelIndex)}>Solo</button>
+            {/* <button onClick={() => value.gainController.unSolo(value.channelIndex)}>unSolo</button> */}
           </div>
         )
       })}
@@ -71,8 +104,8 @@ function App() {
 
       <div>{progress} %</div>
       <div>{mixer.currentDuration}</div>
-      <div>{mixer.channelSetGainController.mutedControllers.map((value) => value.index).join(', ')}</div>
-      <div>solo count : { mixer.channelSetGainController.soloCount}</div>
+      <div>{mixer.masterChannelGainController.mutedControllers.map((value) => value.index).join(', ')}</div>
+      <div>solo count : { mixer.masterChannelGainController.soloCount}</div>
 
     </div>
   );
