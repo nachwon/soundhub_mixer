@@ -16,7 +16,6 @@ class Channel {
 
   // Nodes
   sourceNode: AudioBufferSourceNode | undefined;
-  gainNode: GainNode;
   pannerNode: StereoPannerNode;
   analyserNode: AnalyserNode;
 
@@ -27,13 +26,12 @@ class Channel {
     this.channelIndex = meta.channelIndex;
     this.title = meta.title;
 
-    this.audioCtx = audioCtx;
-    this.gainNode = this.audioCtx.createGain();    
+    this.audioCtx = audioCtx;  
     this.pannerNode = this.audioCtx.createStereoPanner();
     this.analyserNode = this.audioCtx.createAnalyser();
     this.setupAudioBuffer(buffer);
 
-    this.gainController = new ChannelGainController(this.channelIndex, this.gainNode);
+    this.gainController = new ChannelGainController(this.channelIndex, audioCtx);
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
@@ -53,8 +51,11 @@ class Channel {
   }
 
   private connectNodes() {
-    this.sourceNode?.connect(this.gainNode);
-    this.gainNode.connect(this.pannerNode);
+    if (!this.sourceNode) {
+      return
+    }
+
+    this.gainController.connect(this.sourceNode, this.pannerNode)
     this.pannerNode.connect(this.analyserNode);
   }
 

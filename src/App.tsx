@@ -104,8 +104,6 @@ function App() {
 
       <div>{progress} %</div>
       <div>{mixer.currentDuration}</div>
-      <div>{mixer.masterChannelGainController.mutedControllers.map((value) => value.index).join(', ')}</div>
-      <div>solo count : { mixer.masterChannelGainController.soloCount}</div>
 
     </div>
   );

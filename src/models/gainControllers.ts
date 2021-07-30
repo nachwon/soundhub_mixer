@@ -1,43 +1,33 @@
 export class ChannelGainController {
   #index: number;
   gainNode: GainNode;
-
-  // Controller
-  masterController?: MasterChannelGainController;
+  muteGainNode: GainNode;
+  soloGainNode: GainNode;
+  broadcaster?: channelGainBroadcaster
 
   // States
   #currentGain: number = 0;
   #isMuted: boolean = false;
   #isSoloed: boolean = false;
 
-  get index() {
-    return this.#index
-  }
+  get index() {return this.#index}
+  get currentGain() {return this.#currentGain}
+  get isMuted() {return this.#isMuted}
+  get isSoloed() {return this.#isSoloed}
 
-  get currentGain() {
-    return this.#currentGain
-  }
-
-  get isMuted() {
-    if (this.#isSoloed) {
-      return false
-    }
-    return this.#isMuted
-  }
-
-  get isSoloed() {
-    return this.#isSoloed
-  }
-
-  constructor(index: number, gainNode: GainNode) {
+  constructor(index: number, audioCtx: AudioContext) {
     this.#index = index
-    this.gainNode = gainNode
-    this.#currentGain = gainNode.gain.defaultValue
+    this.gainNode = audioCtx.createGain();
+    this.#currentGain = this.gainNode.gain.defaultValue
+    this.muteGainNode = audioCtx.createGain();
+    this.soloGainNode = audioCtx.createGain();
   }
-  
-  connectSetController(masterController: MasterChannelGainController) {
-    this.masterController = masterController
-    this.masterController.add(this)
+
+  connect(source: AudioNode, target: AudioNode) {
+    source?.connect(this.gainNode);
+    this.gainNode.connect(this.muteGainNode);
+    this.muteGainNode.connect(this.soloGainNode);
+    this.soloGainNode.connect(target);
   }
 
   setGain(value: number, when: number = 0) {
@@ -49,120 +39,73 @@ export class ChannelGainController {
     this.#currentGain = boundedValue
   }
 
-  turnOn(when: number = 0) {
-    this.gainNode.gain.setValueAtTime(this.#currentGain, when)
+  setBroadcaster(broadcaster: channelGainBroadcaster) {
+    this.broadcaster = broadcaster
   }
-
-  turnOff(when: number = 0) {
-    this.gainNode.gain.setValueAtTime(0, when)
-  }
-
+  
   mute(when: number = 0) {
     this.#isMuted = true
-    if (this.masterController?.soloMode) {
-      this.masterController.removeFromSoloedControllers(this)
-    } else {
-      this.masterController?.addToMutedControllers(this)
-    }
+    this.muteGainNode.gain.setValueAtTime(0, when)
   }
 
   unMute(when: number = 0) {
     this.#isMuted = false
-    if (this.masterController?.soloMode) {
-      this.solo()
-    } else {
-      this.masterController?.removeFromMutedControllers(this)
-    }
+    this.muteGainNode.gain.setValueAtTime(1, when)
   }
 
   toggleMute(when: number = 0) {
-    if (this.#isMuted) {
-      this.unMute(when)
-    } else {
-      this.mute(when)
-    }
-    this.masterController?.updateGains()
+    this.#isMuted ? this.unMute(when) : this.mute(when)
   }
 
   solo(when: number = 0) {
     this.#isSoloed = true
-    this.masterController?.addToSoloedControllers(this)
+    this.broadcaster?.applySolo()
   }
 
   unSolo(when: number = 0) {
     this.#isSoloed = false
-    this.masterController?.removeFromSoloedControllers(this)
+    this.broadcaster?.applySolo()
   }
 
   toggleSolo(when: number = 0) {
-    if (this.#isSoloed) {
-      this.unSolo(when)
-    } else {
-      this.solo(when)
-    }
-    this.masterController?.updateGains()
+    this.#isSoloed ? this.unSolo(when) : this.solo(when)
   }
 }
 
-export class MasterChannelGainController {
-  channelGainControllers: Array<ChannelGainController> = [];
-  #mutedControllers: Array<ChannelGainController> = [];
-  #soloedControllers: Array<ChannelGainController> = [];
 
-  add(channelGainController: ChannelGainController) {
-    this.channelGainControllers.push(channelGainController)
+export class channelGainBroadcaster {
+  channelGainControllers: Array<ChannelGainController>
+  soloedControllers: Array<ChannelGainController>
+
+  constructor() {
+    this.channelGainControllers = []
+    this.soloedControllers = []
   }
 
-  addToMutedControllers(controller: ChannelGainController) {
-    if (!this.#mutedControllers.includes(controller)) {
-      this.#mutedControllers.push(controller)
-    }
+  add(controller: ChannelGainController) {
+    this.channelGainControllers.push(controller)
+    controller.setBroadcaster(this)
   }
 
-  removeFromMutedControllers(controller: ChannelGainController) {
-    this.#mutedControllers = this.#mutedControllers.filter((mutedController) => mutedController.index !== controller.index)
-  }
-
-  addToSoloedControllers(controller: ChannelGainController) {
-    if (!this.#soloedControllers.includes(controller)) {
-      this.#soloedControllers.push(controller)
-    }
-  }
-
-  removeFromSoloedControllers(controller: ChannelGainController) {
-    this.#soloedControllers = this.#soloedControllers.filter((soloedController) => soloedController.index !== controller.index)
-  }
-
-  updateGains() {
-    if (this.soloMode) {
+  applySolo() {
+    this.soloedControllers = this.channelGainControllers.filter((controller) => controller.isSoloed)
+    console.log(this.soloedControllers)
+    if (this.soloedControllers.length === 0) {
       for (let controller of this.channelGainControllers) {
-        controller.turnOff(0)
+        controller.soloGainNode.gain.setValueAtTime(1, 0)
       }
-      for (let controller of this.#soloedControllers) {
-       controller.turnOn(0)
-      }
-    } else {
-      for (let controller of this.channelGainControllers) {
-        controller.turnOn(0)
-      }
-      for (let controller of this.#mutedControllers) {
-        controller.turnOff(0)
-      }
+      return
     }
-  }
 
-  get soloCount() {
-    return this.#soloedControllers.length
-  }
-
-  get soloMode() {
-    return this.#soloedControllers.length > 0
-  }
-
-  get mutedControllers() {
-    return this.#mutedControllers
+    for (let controller of this.channelGainControllers) {
+      controller.soloGainNode.gain.setValueAtTime(0, 0)
+    }
+    for (let controller of this.soloedControllers) {
+      controller.soloGainNode.gain.setValueAtTime(1, 0)
+    }
   }
 }
+
 
 export class MasterGainController {
   masterGainNode: GainNode;
