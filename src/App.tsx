@@ -19,6 +19,14 @@ function ChannelComponent({ channel } : MuteProps) {
     setSoloed(channel.gainController.isSoloed)
   }, [channel.gainController.isMuted, channel.gainController.isSoloed])
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log(channel.audioAnalyser.getCurrentLevel())
+    }, 10)
+
+    return () => clearInterval(intervalId)
+  }, [channel.audioAnalyser])
+
 
   const toggleMuted = () => {
     channel.gainController.toggleMute()
