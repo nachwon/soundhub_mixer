@@ -3,7 +3,18 @@ export class AudioAnalyser {
   leftAnalyserNode: AnalyserNode;
   rightAnalyserNode: AnalyserNode;
   spliterNode: ChannelSplitterNode;
+
+  // Levels
+  maxLevelLeft: number = 0;
+  maxLevelRight: number = 0;
   
+  // Counter
+  leftCounter: number = 0;
+  rightCounter: number = 0;
+
+  // Const
+  maxCount: number = 100;
+
   constructor(index: number, audioCtx: AudioContext) {
     this.index = index;
     this.leftAnalyserNode = audioCtx.createAnalyser();
@@ -19,12 +30,19 @@ export class AudioAnalyser {
   }
 
   getCurrentLevel() {
+    this.leftCounter++
+    this.rightCounter++
+
     const leftArray = new Uint8Array(this.leftAnalyserNode.frequencyBinCount);
     const rightArray = new Uint8Array(this.rightAnalyserNode.frequencyBinCount);
     this.leftAnalyserNode.getByteFrequencyData(leftArray);
     this.rightAnalyserNode.getByteFrequencyData(rightArray);
 
-    return [this.getAverage(leftArray), this.getAverage(rightArray)]
+    const levels = [this.getAverage(leftArray), this.getAverage(rightArray)]
+    this.setMaxLevel(levels)
+    this.resetMaxLevel()
+
+    return levels
   }
 
   private getAverage(array: Uint8Array) {
@@ -33,5 +51,32 @@ export class AudioAnalyser {
         total += value;
     }
     return total / array.length;
+  }
+
+  private setMaxLevel(levels: Array<number>) {
+    const leftLevel = levels[0]
+    const rightLevel = levels[1]
+
+    if (this.maxLevelLeft < leftLevel) {
+      this.maxLevelLeft = leftLevel;
+      this.leftCounter = 0
+    }
+
+    if (this.maxLevelRight < rightLevel) {
+      this.maxLevelRight = rightLevel
+      this.rightCounter = 0
+    }
+  }
+
+  private resetMaxLevel() {
+    if (this.leftCounter === this.maxCount) {
+      this.maxLevelLeft = 0
+      this.leftCounter = 0
+    }
+
+    if (this.rightCounter === this.maxCount) {
+      this.maxLevelRight = 0
+      this.rightCounter = 0
+    }
   }
 }

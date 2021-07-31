@@ -21,7 +21,8 @@ function ChannelComponent({ channel } : MuteProps) {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log(channel.audioAnalyser.getCurrentLevel())
+      channel.audioAnalyser.getCurrentLevel()
+      console.log(channel.audioAnalyser.maxLevelLeft, channel.audioAnalyser.maxLevelRight)
     }, 10)
 
     return () => clearInterval(intervalId)
