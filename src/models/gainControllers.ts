@@ -89,7 +89,6 @@ export class channelGainBroadcaster {
 
   applySolo() {
     this.soloedControllers = this.channelGainControllers.filter((controller) => controller.isSoloed)
-    console.log(this.soloedControllers)
     if (this.soloedControllers.length === 0) {
       for (let controller of this.channelGainControllers) {
         controller.soloGainNode.gain.setValueAtTime(1, 0)

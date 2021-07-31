@@ -10,7 +10,7 @@ interface MuteProps {
   channel: Channel
 }
 
-function MuteSolo({ channel } : MuteProps) {
+function ChannelComponent({ channel } : MuteProps) {
   const [muted, setMuted] = useState(false);
   const [soloed, setSoloed] = useState(false);
 
@@ -30,6 +30,10 @@ function MuteSolo({ channel } : MuteProps) {
 
   return (
     <div style={{ display: 'inline-block' }}>
+      <button onClick={() => channel.gainController.toggleMute(channel.channelIndex)}>Mute</button>
+      <button onClick={() => channel.gainController.toggleSolo(channel.channelIndex)}>Solo</button>
+      <button onClick={() => channel.gainController.setGain(1.5)}>V1.5</button>
+      <button onClick={() => channel.gainController.setGain(0.5)}>V0.5</button>
       <div style={{ display: 'inline-block' }} onClick={toggleMuted}>{muted ? '[M]' : '[ ]'}</div>
       <div style={{ display: 'inline-block' }} onClick={toggleSoloed}>{soloed ? '[S]' : '[ ]'}</div>
     </div>
@@ -77,11 +81,7 @@ function App() {
         return (
           <div key={value.channelIndex}>
             channel {value.channelIndex}: {value.title} loaded: {value.loaded ? 'true' : 'false'}
-            <MuteSolo key={value.channelIndex} channel={value} />
-            <button onClick={() => value.gainController.toggleMute(value.channelIndex)}>Mute</button>
-            {/* <button onClick={() => value.gainController.unMute(value.channelIndex)}>unMute</button> */}
-            <button onClick={() => value.gainController.toggleSolo(value.channelIndex)}>Solo</button>
-            {/* <button onClick={() => value.gainController.unSolo(value.channelIndex)}>unSolo</button> */}
+            <ChannelComponent key={value.channelIndex} channel={value} />
           </div>
         )
       })}
