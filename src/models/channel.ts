@@ -1,4 +1,5 @@
 import { ChannelMeta } from "../types";
+import { AudioAnalyser } from "./analysers";
 import { ChannelGainController } from "./gainControllers";
 import { PanController } from "./panControllers";
 
@@ -17,22 +18,26 @@ class Channel {
 
   // Nodes
   sourceNode: AudioBufferSourceNode | undefined;
-  analyserNode: AnalyserNode;
+  outputNode?: AudioNode;
+  destinationNode: AudioNode;
 
   // Controllers
   gainController: ChannelGainController;
   panController: PanController;
+  audioAnalyser: AudioAnalyser;
 
-  constructor(buffer: ArrayBuffer, audioCtx: AudioContext, meta: ChannelMeta) {
+  constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {
     this.channelIndex = meta.channelIndex;
     this.title = meta.title;
 
     this.audioCtx = audioCtx;  
-    this.analyserNode = this.audioCtx.createAnalyser();
     this.setupAudioBuffer(buffer);
 
     this.gainController = new ChannelGainController(this.channelIndex, audioCtx);
     this.panController = new PanController(this.channelIndex, audioCtx);
+    this.audioAnalyser = new AudioAnalyser(this.channelIndex, audioCtx);
+
+    this.destinationNode = destinationNode;
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
@@ -57,18 +62,23 @@ class Channel {
     }
 
     const gainNode = this.gainController.connect(this.sourceNode);
-    const pannerNode = this.panController.connect(gainNode)
-    pannerNode.connect(this.analyserNode)
+    const pannerNode = this.panController.connect(gainNode);
+    const analyserNode = this.audioAnalyser.connect(pannerNode);
+    analyserNode.connect(this.destinationNode)
   }
 
-  connect(masterGainNode: GainNode) {
-    this.analyserNode.connect(masterGainNode);
+  private reconnectSourceNode() {
+    if (!this.sourceNode) {
+      return
+    }
+
+    this.gainController.connect(this.sourceNode);
   }
 
   reloadChannel() {
     if (!this.sourceNode && this.buffer) {
       this.createBufferSourceNode(this.buffer)
-      this.connectNodes();
+      this.reconnectSourceNode();
     }
   }
 

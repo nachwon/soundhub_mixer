@@ -91,10 +91,19 @@ class Mixer {
       return
     }
 
-    const channel = new Channel(buffer, this.audioCtx, { channelIndex: this.channelsCount, src: dto.src, title: dto.title })
+    const channel = new Channel(
+      buffer,
+      this.audioCtx,
+      this.masterGainNode,
+      {
+        channelIndex: this.channelsCount,
+        src: dto.src,
+        title: dto.title
+      }
+    )
+    
     this.channels.push(channel);
     this.channelBroadcaster.add(channel.gainController)
-    channel.connect(this.masterGainNode);
   }
 
   play(offset: number = 0) {
