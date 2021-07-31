@@ -23,11 +23,11 @@ export class ChannelGainController {
     this.soloGainNode = audioCtx.createGain();
   }
 
-  connect(source: AudioNode, target: AudioNode) {
+  connect(source: AudioNode) {
     source?.connect(this.gainNode);
     this.gainNode.connect(this.muteGainNode);
     this.muteGainNode.connect(this.soloGainNode);
-    this.soloGainNode.connect(target);
+    return this.soloGainNode
   }
 
   setGain(value: number, when: number = 0) {

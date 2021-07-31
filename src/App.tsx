@@ -34,6 +34,9 @@ function ChannelComponent({ channel } : MuteProps) {
       <button onClick={() => channel.gainController.toggleSolo(channel.channelIndex)}>Solo</button>
       <button onClick={() => channel.gainController.setGain(1.5)}>V1.5</button>
       <button onClick={() => channel.gainController.setGain(0.5)}>V0.5</button>
+      <button onClick={() => channel.panController.setPan(-1)}>Pan Left</button>
+      <button onClick={() => channel.panController.setPan(1)}>Pan Right</button>
+      <button onClick={() => channel.panController.setPan(0)}>Pan Center</button>
       <div style={{ display: 'inline-block' }} onClick={toggleMuted}>{muted ? '[M]' : '[ ]'}</div>
       <div style={{ display: 'inline-block' }} onClick={toggleSoloed}>{soloed ? '[S]' : '[ ]'}</div>
     </div>

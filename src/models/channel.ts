@@ -1,5 +1,6 @@
 import { ChannelMeta } from "../types";
 import { ChannelGainController } from "./gainControllers";
+import { PanController } from "./panControllers";
 
 
 class Channel {
@@ -16,22 +17,22 @@ class Channel {
 
   // Nodes
   sourceNode: AudioBufferSourceNode | undefined;
-  pannerNode: StereoPannerNode;
   analyserNode: AnalyserNode;
 
   // Controllers
   gainController: ChannelGainController;
+  panController: PanController;
 
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, meta: ChannelMeta) {
     this.channelIndex = meta.channelIndex;
     this.title = meta.title;
 
     this.audioCtx = audioCtx;  
-    this.pannerNode = this.audioCtx.createStereoPanner();
     this.analyserNode = this.audioCtx.createAnalyser();
     this.setupAudioBuffer(buffer);
 
     this.gainController = new ChannelGainController(this.channelIndex, audioCtx);
+    this.panController = new PanController(this.channelIndex, audioCtx);
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
@@ -55,8 +56,9 @@ class Channel {
       return
     }
 
-    this.gainController.connect(this.sourceNode, this.pannerNode)
-    this.pannerNode.connect(this.analyserNode);
+    const gainNode = this.gainController.connect(this.sourceNode);
+    const pannerNode = this.panController.connect(gainNode)
+    pannerNode.connect(this.analyserNode)
   }
 
   connect(masterGainNode: GainNode) {
