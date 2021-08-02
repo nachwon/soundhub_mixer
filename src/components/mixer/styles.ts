@@ -25,6 +25,10 @@ export const MixerContainer = styled.div`
   border: 2px solid silver;
   box-shadow: inset -1px -1px 3px 0px black;
   padding: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 

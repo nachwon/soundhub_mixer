@@ -3,21 +3,21 @@ import MasterChannelComponent from "../masterChannel"
 
 import * as S from "./styles";
 
-interface MixerComponentProps {
-  mixer: Mixer
-}
 
+const SoundHubMixer: React.FC = () => {
+  const mixer = new Mixer();
 
-export const MixerComponent: React.FC<MixerComponentProps> = (props) => {
   return (
     <S.MixerContainer>
       <S.MixerInnerWrapper>
         <S.ChannelsContainer>{ }</S.ChannelsContainer>
         <S.MasterChannelContainer>
           <S.SoundHubLogo />
-          <MasterChannelComponent masterChannel={props.mixer.masterChannel} />
+          <MasterChannelComponent masterChannel={mixer.masterChannel} />
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
     </S.MixerContainer>
   )
 }
+
+export default SoundHubMixer

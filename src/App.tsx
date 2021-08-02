@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import './App.css';
-import { MixerComponent } from './components/mixer';
+import SoundHubMixer from './components/mixer';
 import Channel from './models/channels/channel';
 import Mixer from './models/mixer';
+
 
 const mixer = new Mixer();
 
@@ -51,7 +52,7 @@ function ChannelComponent({ channel } : MuteProps) {
   )
 }
 
-function App() {
+function MixerTest() {
   const [currentTime, setCurrentTime] = useState(0)
   const [progress, setProgress] = useState(0)
   const [offset, setOffset] = useState(0)
@@ -114,9 +115,13 @@ function App() {
 
       <div>{progress} %</div>
       <div>{mixer.currentDuration}</div>
-      <MixerComponent mixer={mixer} />
     </div>
   );
+}
+
+
+function App() {
+  return (<SoundHubMixer />)
 }
 
 export default App;
