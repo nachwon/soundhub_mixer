@@ -6,8 +6,6 @@ import Channel from './models/channels/channel';
 import Mixer from './models/mixer';
 
 
-const mixer = new Mixer();
-
 interface MuteProps {
   channel: Channel
 }
@@ -53,6 +51,7 @@ function ChannelComponent({ channel } : MuteProps) {
 }
 
 function MixerTest() {
+  const mixer = new Mixer();
   const [currentTime, setCurrentTime] = useState(0)
   const [progress, setProgress] = useState(0)
   const [offset, setOffset] = useState(0)
@@ -121,7 +120,7 @@ function MixerTest() {
 
 
 function App() {
-  return (<SoundHubMixer />)
+  return <SoundHubMixer />
 }
 
 export default App;

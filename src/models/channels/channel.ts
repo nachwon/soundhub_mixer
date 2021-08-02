@@ -6,6 +6,7 @@ class Channel {
   index: number;
   audioCtx: AudioContext;
   #buffer?: AudioBuffer;
+  #maxGain: number = 1.4;
 
   // Meta
   title?: string;

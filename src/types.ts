@@ -16,3 +16,8 @@ export interface MixerController {
   pause: () => boolean
   seek: (when: number, offset: number) => boolean
 }
+
+
+export interface FaderHandleProps {
+  position: number
+}

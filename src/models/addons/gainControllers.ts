@@ -127,6 +127,8 @@ export class MasterGainController {
     this.connectToDestination(audioCtx.destination)
   }
 
+  get currentGain() { return this.#masterGainNode.gain.value }
+
   private connectToDestination(destination: AudioDestinationNode) {
     this.#masterGainNode.connect(destination)
   }
