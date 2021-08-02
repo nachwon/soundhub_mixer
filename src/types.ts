@@ -4,7 +4,7 @@ export type ChannelDto = {
 }
 
 export type ChannelMeta = {
-  channelIndex: number
+  index: number
   src: File | string
   title?: string
 }

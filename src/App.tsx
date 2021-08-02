@@ -21,7 +21,7 @@ function ChannelComponent({ channel } : MuteProps) {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      channel.audioAnalyser.getCurrentLevel()
+      channel.audioAnalyser.getCurrentLevels()
       console.log(channel.audioAnalyser.maxLevelLeft, channel.audioAnalyser.maxLevelRight)
     }, 10)
 
@@ -39,13 +39,13 @@ function ChannelComponent({ channel } : MuteProps) {
 
   return (
     <div style={{ display: 'inline-block' }}>
-      <button onClick={() => channel.gainController.toggleMute(channel.channelIndex)}>Mute</button>
-      <button onClick={() => channel.gainController.toggleSolo(channel.channelIndex)}>Solo</button>
-      <button onClick={() => channel.gainController.setGain(1.5)}>V1.5</button>
-      <button onClick={() => channel.gainController.setGain(0.5)}>V0.5</button>
-      <button onClick={() => channel.panController.setPan(-1)}>Pan Left</button>
-      <button onClick={() => channel.panController.setPan(1)}>Pan Right</button>
-      <button onClick={() => channel.panController.setPan(0)}>Pan Center</button>
+      <button onClick={() => channel.toggleMute()}>Mute</button>
+      <button onClick={() => channel.toggleSolo()}>Solo</button>
+      <button onClick={() => channel.setGain(1.5)}>V1.5</button>
+      <button onClick={() => channel.setGain(0.5)}>V0.5</button>
+      <button onClick={() => channel.setPan(-1)}>Pan Left</button>
+      <button onClick={() => channel.setPan(1)}>Pan Right</button>
+      <button onClick={() => channel.setPan(0)}>Pan Center</button>
       <div style={{ display: 'inline-block' }} onClick={toggleMuted}>{muted ? '[M]' : '[ ]'}</div>
       <div style={{ display: 'inline-block' }} onClick={toggleSoloed}>{soloed ? '[S]' : '[ ]'}</div>
     </div>
@@ -91,9 +91,9 @@ function App() {
 
       {mixer.channels.map((value) => {
         return (
-          <div key={value.channelIndex}>
-            channel {value.channelIndex}: {value.title} loaded: {value.loaded ? 'true' : 'false'}
-            <ChannelComponent key={value.channelIndex} channel={value} />
+          <div key={value.index}>
+            channel {value.index}: {value.title} loaded: {value.loaded ? 'true' : 'false'}
+            <ChannelComponent key={value.index} channel={value} />
           </div>
         )
       })}
