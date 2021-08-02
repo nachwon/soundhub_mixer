@@ -1,5 +1,5 @@
-import { ChannelMeta } from "../types";
-import { AudioAnalyser, ChannelGainController, PanController } from "./addons";
+import { ChannelMeta } from "../../types";
+import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
 
 class Channel {

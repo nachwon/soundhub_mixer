@@ -120,9 +120,15 @@ export class SoloGainBroadcaster {
 
 export class MasterGainController {
   #masterGainNode: GainNode;
+  get masterGainNode() { return this.#masterGainNode }
 
-  constructor(masterGainNode: GainNode) {
-    this.#masterGainNode = masterGainNode
+  constructor(audioCtx: AudioContext) {
+    this.#masterGainNode = audioCtx.createGain();
+    this.connectToDestination(audioCtx.destination)
+  }
+
+  private connectToDestination(destination: AudioDestinationNode) {
+    this.#masterGainNode.connect(destination)
   }
 
   setGain(value: number, when: number) {

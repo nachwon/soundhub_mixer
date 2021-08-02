@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import './App.css';
-import { MixerComponent } from './components/mixer/mixer';
-import Channel from './models/channel';
+import { MixerComponent } from './components/mixer';
+import Channel from './models/channels/channel';
 import Mixer from './models/mixer';
 
 const mixer = new Mixer();

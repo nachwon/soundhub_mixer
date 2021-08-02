@@ -1,8 +1,8 @@
 import { ChannelDto, MixerController } from "../types";
 import { BufferExtractor } from "../utils";
-import Channel from "./channel";
-import { SoloGainBroadcaster, MasterGainController, AudioAnalyser } from "./addons";
+import { SoloGainBroadcaster } from "./addons";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
+import { Channel, MasterChannel } from "./channels";
 
 
 class Mixer {
@@ -10,6 +10,7 @@ class Mixer {
   audioCtx: AudioContext;
 
   // Channels
+  masterChannel: MasterChannel
   channels: Array<Channel> = [];
 
   // Time
@@ -23,29 +24,17 @@ class Mixer {
 
   get isPlaying() { return this.#isPlaying }
 
-  // Nodes
-  #masterGainNode: GainNode;
-
   // Controllers
-  gainController: MasterGainController;
   soloGainBroadcaster: SoloGainBroadcaster;
-  analyser: AudioAnalyser;
 
   constructor() {
     this.setMixerState('stopped')
     this.audioCtx = new AudioContext();
-    this.#masterGainNode = this.audioCtx.createGain();
 
-    this.gainController = new MasterGainController(this.#masterGainNode)
+    this.masterChannel = new MasterChannel(this.audioCtx)
+    this.masterChannel.connect()
+
     this.soloGainBroadcaster = new SoloGainBroadcaster()
-    this.analyser = new AudioAnalyser(this.audioCtx);
-
-    this.connectNodes()
-  }
-
-  private connectNodes() {
-    this.analyser.connect(this.#masterGainNode)
-    this.#masterGainNode.connect(this.audioCtx.destination);
   }
 
   private setMixerState(state: 'running' | 'suspended' | 'stopped' | 'closed') {
@@ -98,7 +87,7 @@ class Mixer {
     const channel = new Channel(
       buffer,
       this.audioCtx,
-      this.#masterGainNode,
+      this.masterChannel.node,
       {
         index: this.channelsCount,
         src: dto.src,
@@ -143,6 +132,10 @@ class Mixer {
       this.#startTime = startTime
       this.#offsetTime = offset;
     }
+  }
+
+  setMasterGain(value: number, when: number = 0) {
+    this.masterChannel.setGain(value, when)
   }
 }
 
