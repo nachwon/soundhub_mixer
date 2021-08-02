@@ -32,7 +32,7 @@ class Channel {
 
     this.gainController = new ChannelGainController(this.index, audioCtx);
     this.panController = new PanController(this.index, audioCtx);
-    this.audioAnalyser = new AudioAnalyser(this.index, audioCtx);
+    this.audioAnalyser = new AudioAnalyser(audioCtx);
 
     this.destinationNode = destinationNode;
   }

@@ -22,12 +22,10 @@ function ChannelComponent({ channel } : MuteProps) {
   useEffect(() => {
     const intervalId = setInterval(() => {
       channel.audioAnalyser.getCurrentLevels()
-      console.log(channel.audioAnalyser.maxLevelLeft, channel.audioAnalyser.maxLevelRight)
     }, 10)
 
     return () => clearInterval(intervalId)
   }, [channel.audioAnalyser])
-
 
   const toggleMuted = () => {
     channel.gainController.toggleMute()
@@ -50,7 +48,6 @@ function ChannelComponent({ channel } : MuteProps) {
       <div style={{ display: 'inline-block' }} onClick={toggleSoloed}>{soloed ? '[S]' : '[ ]'}</div>
     </div>
   )
-
 }
 
 function App() {
@@ -67,7 +64,7 @@ function App() {
         if (mixer.isPlaying) {
           setProgress(mixer.currentDuration / mixer.duration * 100)
         }
-      } 
+      }
     }, 10)
 
     return () => clearInterval(intervalId)

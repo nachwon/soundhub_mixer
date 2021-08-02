@@ -1,6 +1,4 @@
 export class AudioAnalyser {
-  #index: number;
-
   // Nodes
   #leftAnalyserNode: AnalyserNode;
   #rightAnalyserNode: AnalyserNode;
@@ -19,8 +17,7 @@ export class AudioAnalyser {
   // Const
   #maxCount: number = 100;
 
-  constructor(index: number, audioCtx: AudioContext) {
-    this.#index = index;
+  constructor(audioCtx: AudioContext) {
     this.#leftAnalyserNode = audioCtx.createAnalyser();
     this.#rightAnalyserNode = audioCtx.createAnalyser();
     this.#spliterNode = audioCtx.createChannelSplitter();

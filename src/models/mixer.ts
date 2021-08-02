@@ -1,7 +1,7 @@
 import { ChannelDto, MixerController } from "../types";
 import { BufferExtractor } from "../utils";
 import Channel from "./channel";
-import { SoloGainBroadcaster, MasterGainController } from "./addons";
+import { SoloGainBroadcaster, MasterGainController, AudioAnalyser } from "./addons";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 
 
@@ -19,38 +19,32 @@ class Mixer {
   // States
   #isPlaying: boolean = false;
   #state: 'running' | 'suspended' | 'stopped' | 'closed' = 'stopped';
-  #controller: MixerController = new DefaultMixerController(this);
+  #mixerController: MixerController = new DefaultMixerController(this);
 
   get isPlaying() { return this.#isPlaying }
 
   // Nodes
   #masterGainNode: GainNode;
-  #splitterNode: ChannelSplitterNode;
-  #analyserNodeL: AnalyserNode;
-  #analyserNodeR: AnalyserNode;
 
   // Controllers
   gainController: MasterGainController;
   soloGainBroadcaster: SoloGainBroadcaster;
+  analyser: AudioAnalyser;
 
   constructor() {
+    this.setMixerState('stopped')
     this.audioCtx = new AudioContext();
     this.#masterGainNode = this.audioCtx.createGain();
-    this.#splitterNode = this.audioCtx.createChannelSplitter(2);
-    this.#analyserNodeL = this.audioCtx.createAnalyser();
-    this.#analyserNodeR = this.audioCtx.createAnalyser();
 
     this.gainController = new MasterGainController(this.#masterGainNode)
     this.soloGainBroadcaster = new SoloGainBroadcaster()
+    this.analyser = new AudioAnalyser(this.audioCtx);
 
     this.connectNodes()
-    this.setMixerState('stopped')
   }
 
   private connectNodes() {
-    this.#masterGainNode.connect(this.#splitterNode);
-    this.#splitterNode.connect(this.#analyserNodeL, 0);
-    this.#splitterNode.connect(this.#analyserNodeR, 1);
+    this.analyser.connect(this.#masterGainNode)
     this.#masterGainNode.connect(this.audioCtx.destination);
   }
 
@@ -58,7 +52,7 @@ class Mixer {
     this.#state = state;
     const controller = ControllerMap[state]
     if (controller) {
-      this.#controller = new controller(this)
+      this.#mixerController = new controller(this)
     }
   }
 
@@ -118,7 +112,7 @@ class Mixer {
 
   play(offset: number = 0) {
     const startTime = this.audioCtx.currentTime
-    if (this.#controller.play(startTime, offset)) {
+    if (this.#mixerController.play(startTime, offset)) {
       this.setMixerState('running')
       this.#isPlaying = true;
       this.#startTime = startTime;
@@ -127,7 +121,7 @@ class Mixer {
   }
 
   stop() {
-    if (this.#controller.stop()) {
+    if (this.#mixerController.stop()) {
       this.setMixerState('stopped')
       this.#isPlaying = false;
       this.#startTime = 0
@@ -136,7 +130,7 @@ class Mixer {
   }
 
   pause() {
-    if (this.#controller.pause()) {
+    if (this.#mixerController.pause()) {
       this.setMixerState('suspended')
       this.#isPlaying = false;
     }
@@ -144,7 +138,7 @@ class Mixer {
 
   seek(offset: number) {
     const startTime = this.audioCtx.currentTime
-    if (this.#controller.seek(startTime, offset)) {
+    if (this.#mixerController.seek(startTime, offset)) {
       this.#isPlaying = true;
       this.#startTime = startTime
       this.#offsetTime = offset;
