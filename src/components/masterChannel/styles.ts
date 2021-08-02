@@ -87,3 +87,92 @@ export const MasterFaderHandle = styled.div.attrs<FaderHandleProps>((props) => (
     #3d0303 90%
   );
 `;
+
+export const MasterTrackNameSection = styled.div`
+  border-radius: 2px;
+  width: 100%;
+  height: 28px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const MasterTrackName = styled.div`
+  width: 90%;
+  height: 90%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0px 0px 2px black;
+`;
+
+export const MasterChannelMeter = styled.div`
+  display: inline-flex;
+  width: 50px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0px;
+  height: 350px;
+`;
+
+export const MeterLabel = styled.div`
+  color: white;
+  position: absolute;
+  bottom: -20px;
+  font-size: 13px;
+`;
+
+export const MasterChannelMeterTicksContainer = styled.div`
+  width: 30px;
+  height: 280px;
+  display: inline-flex;
+`;
+
+export const MasterMeterContainer = styled.div`
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;
+
+export const MasterMeterCenter = styled.div`
+  width: 60%;
+  height: 100%;
+  border-left: 1px solid #5f5f5f;
+  border-right: 1px solid #5f5f5f;
+`;
+
+export const MasterTick = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #5f5f5f;
+  margin-bottom: calc(279px / 10 - 1px);
+
+  :last-child {
+    margin-bottom: 0;
+  }
+`;
+
+
+// Volume Meter
+export const ChannelVolumeMeterContainer = styled.div`
+  width: 10px;
+  height: 280px;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+`;
+
+export const ChannelVolumeMeter = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 280px;
+`;

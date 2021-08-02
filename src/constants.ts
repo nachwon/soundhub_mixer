@@ -17,5 +17,6 @@ export const MIXER_STYLES = {
   channelHeight: 550,
   channelWidth: 80,
   numberOfChannels: 8,
-  faderLength: 280
+  faderLength: 280,
+  faderWidth: 10
 }

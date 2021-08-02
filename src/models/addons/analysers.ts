@@ -1,3 +1,5 @@
+import { toDBFS } from "../../utils/toDBFS";
+
 export class AudioAnalyser {
   // Nodes
   #leftAnalyserNode: AnalyserNode;
@@ -16,6 +18,7 @@ export class AudioAnalyser {
 
   // Const
   #maxCount: number = 100;
+  #maxLevel: number = 128;
 
   constructor(audioCtx: AudioContext) {
     this.#leftAnalyserNode = audioCtx.createAnalyser();
@@ -36,22 +39,22 @@ export class AudioAnalyser {
 
     const leftArray = new Uint8Array(this.#leftAnalyserNode.frequencyBinCount);
     const rightArray = new Uint8Array(this.#rightAnalyserNode.frequencyBinCount);
-    this.#leftAnalyserNode.getByteFrequencyData(leftArray);
-    this.#rightAnalyserNode.getByteFrequencyData(rightArray);
+    this.#leftAnalyserNode.getByteTimeDomainData(leftArray);
+    this.#rightAnalyserNode.getByteTimeDomainData(rightArray);
 
-    const levels = [this.getAverage(leftArray), this.getAverage(rightArray)]
+    const levels = [this.getDBFS(leftArray), this.getDBFS(rightArray)]
     this.setMaxLevels(levels)
     this.resetMaxLevels()
 
     return levels
   }
 
-  private getAverage(array: Uint8Array) {
-    let total = 0;
-    for (let value of array) {
-        total += value;
+  private getDBFS(array: Uint8Array): number {
+    const floats = new Array(array.length);
+    for (let i = 0; i < array.length; i++) {
+      floats[i] = (array[i] * 2) / 255 - 1;
     }
-    return total / array.length;
+    return toDBFS(floats)
   }
 
   private setMaxLevels(levels: Array<number>) {

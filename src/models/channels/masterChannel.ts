@@ -24,7 +24,7 @@ class MasterChannel {
     this.#masterGainController.setGain(value, when)
   }
 
-  getCurrentLevels() {
+  getCurrentLevels(toRate: boolean = false) {
     return this.#analyser.getCurrentLevels()
   }
 }
