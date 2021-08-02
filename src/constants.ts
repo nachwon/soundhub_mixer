@@ -10,3 +10,12 @@ export const THEME = {
   ERROR: '#F44336',
   PROFILE_IMG_BACKGROUND: '#333333',
 };
+
+
+export const MIXER_STYLES = {
+  mixerBackgroundColor: '#242526',
+  channelHeight: 550,
+  channelWidth: 80,
+  numberOfChannels: 8,
+  faderLength: 280
+}

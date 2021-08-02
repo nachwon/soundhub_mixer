@@ -1,22 +1,14 @@
 import styled from 'styled-components'
 import soundhubLogo from '../../assets/soundhub-logo.png';
 import soundhubIcon from '../../assets/soundhub-icon.png'
-
-
-const mixerBackgroundColor = '#242526';
-const channelHeight = 550;
-const channelWidth = 80;
-const channelTopBottomPadding = 5;
-const numberOfChannels = 8;
-
-const faderLength = 280;
+import { MIXER_STYLES } from '../../constants'
 
 
 export const MixerContainer = styled.div`
   user-select: none;
   height: fit-content;
   width: fit-content;
-  background: ${mixerBackgroundColor};
+  background: ${MIXER_STYLES.mixerBackgroundColor};
   margin: auto;
   display: flex;
   align-items: center;
@@ -42,8 +34,8 @@ export const MixerInnerWrapper = styled.div`
 `;
 
 export const ChannelsContainer = styled.div`
-  height: ${channelHeight}px;
-  width: ${channelWidth * numberOfChannels}px;
+  height: ${MIXER_STYLES.channelHeight}px;
+  width: ${MIXER_STYLES.channelWidth * MIXER_STYLES.numberOfChannels}px;
   display: inline-flex;
   box-shadow: inset 0px 0px 4px 0 black;
   border-radius: 4px;
@@ -60,7 +52,7 @@ export const MasterChannelContainer = styled.div`
   border: 1px solid #5d5d5d;
   margin-left: 10px;
   box-shadow: inset 1px 1px 3px 0 black;
-  height: ${channelHeight}px;
+  height: ${MIXER_STYLES.channelHeight}px;
 `;
 
 export const SoundHubLogo = styled.div`

@@ -1,8 +1,6 @@
 import styled from "styled-components"
 import { FaderHandleProps } from "../../types";
-
-const channelWidth = 80;
-const faderLength = 280;
+import { MIXER_STYLES } from "../../constants"
 
 
 export const MasterVolumeControlContainer = styled.div`
@@ -16,7 +14,7 @@ export const MasterChannelWrapper = styled.div`
 `;
 
 export const MasterChannelInnerWrapper = styled.div`
-  width: ${channelWidth - 10}px;
+  width: ${MIXER_STYLES.channelWidth - 10}px;
   display: inline-flex;
   padding: 5px 0;
   flex-direction: column;
@@ -33,7 +31,7 @@ export const FaderSection = styled.div`
 
 export const FaderRail = styled.div`
   width: 10px;
-  height: ${faderLength}px;
+  height: ${MIXER_STYLES.faderLength}px;
   background: #111111;
   border-radius: 2px;
   position: relative;
