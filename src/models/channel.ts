@@ -1,15 +1,13 @@
 import { ChannelMeta } from "../types";
-import { AudioAnalyser } from "./analysers";
-import { ChannelGainController } from "./gainControllers";
-import { PanController } from "./panControllers";
+import { AudioAnalyser, ChannelGainController, PanController } from "./addons";
 
 
 class Channel {
+  index: number;
   audioCtx: AudioContext;
-  buffer?: AudioBuffer;
+  #buffer?: AudioBuffer;
 
   // Meta
-  channelIndex: number;
   title?: string;
 
   // States
@@ -18,7 +16,6 @@ class Channel {
 
   // Nodes
   sourceNode: AudioBufferSourceNode | undefined;
-  outputNode?: AudioNode;
   destinationNode: AudioNode;
 
   // Controllers
@@ -27,22 +24,22 @@ class Channel {
   audioAnalyser: AudioAnalyser;
 
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {
-    this.channelIndex = meta.channelIndex;
+    this.index = meta.index;
     this.title = meta.title;
 
     this.audioCtx = audioCtx;  
     this.setupAudioBuffer(buffer);
 
-    this.gainController = new ChannelGainController(this.channelIndex, audioCtx);
-    this.panController = new PanController(this.channelIndex, audioCtx);
-    this.audioAnalyser = new AudioAnalyser(this.channelIndex, audioCtx);
+    this.gainController = new ChannelGainController(this.index, audioCtx);
+    this.panController = new PanController(this.index, audioCtx);
+    this.audioAnalyser = new AudioAnalyser(audioCtx);
 
     this.destinationNode = destinationNode;
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
     this.audioCtx.decodeAudioData(buffer, (buffer) => {
-      this.buffer = buffer;
+      this.#buffer = buffer;
       this.duration = buffer.duration;
       this.createBufferSourceNode(buffer)
       this.connectNodes();
@@ -75,9 +72,9 @@ class Channel {
     this.gainController.connect(this.sourceNode);
   }
 
-  reloadChannel() {
-    if (!this.sourceNode && this.buffer) {
-      this.createBufferSourceNode(this.buffer)
+  private reloadChannel() {
+    if (!this.sourceNode && this.#buffer) {
+      this.createBufferSourceNode(this.#buffer)
       this.reconnectSourceNode();
     }
   }
@@ -97,6 +94,22 @@ class Channel {
     this.stop();
     this.reloadChannel();
     this.sourceNode?.start(when, offset)
+  }
+
+  toggleMute(when: number = 0) {
+    this.gainController.toggleMute(when)
+  }
+
+  toggleSolo(when: number = 0) {
+    this.gainController.toggleSolo(when)
+  }
+
+  setGain(value: number, when: number = 0) {
+    this.gainController.setGain(value, when)
+  }
+
+  setPan(value: number, when: number = 0) {
+    this.panController.setPan(value, when)
   }
 }
 
