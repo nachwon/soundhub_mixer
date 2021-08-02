@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import './App.css';
+import { MixerComponent } from './components/mixer/mixer';
 import Channel from './models/channel';
 import Mixer from './models/mixer';
 
@@ -116,7 +117,7 @@ function App() {
 
       <div>{progress} %</div>
       <div>{mixer.currentDuration}</div>
-
+      <MixerComponent mixer={mixer} />
     </div>
   );
 }
