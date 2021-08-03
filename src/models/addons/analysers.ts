@@ -1,4 +1,4 @@
-import { toDBFS } from "../../utils/toDBFS";
+import { toDBFS } from "../../utils";
 
 export class AudioAnalyser {
   // Nodes
@@ -7,10 +7,8 @@ export class AudioAnalyser {
   #spliterNode: ChannelSplitterNode;
 
   // Levels
-  #maxLevelLeft: number = 0;
-  #maxLevelRight: number = 0;
-  get maxLevelLeft() { return this.#maxLevelLeft }
-  get maxLevelRight() { return this.#maxLevelRight }
+  #maxLevelLeft: number = -Infinity;
+  #maxLevelRight: number = -Infinity;
 
   // Counter
   #leftCounter: number = 0;
@@ -18,7 +16,6 @@ export class AudioAnalyser {
 
   // Const
   #maxCount: number = 100;
-  #maxLevel: number = 128;
 
   constructor(audioCtx: AudioContext) {
     this.#leftAnalyserNode = audioCtx.createAnalyser();
@@ -27,26 +24,32 @@ export class AudioAnalyser {
   }
 
   connect(source: AudioNode) {
-    this.#spliterNode.connect(this.#leftAnalyserNode, 0, 0)
-    this.#spliterNode.connect(this.#rightAnalyserNode, 1, 0)
-    source.connect(this.#spliterNode)
-    return source
+    this.#spliterNode.connect(this.#leftAnalyserNode, 0, 0);
+    this.#spliterNode.connect(this.#rightAnalyserNode, 1, 0);
+    source.connect(this.#spliterNode);
+    return source;
   }
 
   getCurrentLevels() {
-    this.#leftCounter++
-    this.#rightCounter++
+    this.#leftCounter++;
+    this.#rightCounter++;
 
     const leftArray = new Uint8Array(this.#leftAnalyserNode.frequencyBinCount);
-    const rightArray = new Uint8Array(this.#rightAnalyserNode.frequencyBinCount);
+    const rightArray = new Uint8Array(
+      this.#rightAnalyserNode.frequencyBinCount
+    );
     this.#leftAnalyserNode.getByteTimeDomainData(leftArray);
     this.#rightAnalyserNode.getByteTimeDomainData(rightArray);
 
-    const levels = [this.getDBFS(leftArray), this.getDBFS(rightArray)]
-    this.setMaxLevels(levels)
-    this.resetMaxLevels()
+    const levels = [this.getDBFS(leftArray), this.getDBFS(rightArray)];
+    this.setMaxLevels(levels);
+    this.resetMaxLevels();
 
-    return levels
+    return levels;
+  }
+
+  getPeaks() {
+    return [this.#maxLevelLeft, this.#maxLevelRight];
   }
 
   private getDBFS(array: Uint8Array): number {
@@ -54,33 +57,31 @@ export class AudioAnalyser {
     for (let i = 0; i < array.length; i++) {
       floats[i] = (array[i] * 2) / 255 - 1;
     }
-    return toDBFS(floats)
+    return toDBFS(floats);
   }
 
   private setMaxLevels(levels: Array<number>) {
-    const leftLevel = levels[0]
-    const rightLevel = levels[1]
-
+    const [leftLevel, rightLevel] = levels;
     if (this.#maxLevelLeft < leftLevel) {
       this.#maxLevelLeft = leftLevel;
-      this.#leftCounter = 0
+      this.#leftCounter = 0;
     }
 
     if (this.#maxLevelRight < rightLevel) {
-      this.#maxLevelRight = rightLevel
-      this.#rightCounter = 0
+      this.#maxLevelRight = rightLevel;
+      this.#rightCounter = 0;
     }
   }
 
   private resetMaxLevels() {
     if (this.#leftCounter === this.#maxCount) {
-      this.#maxLevelLeft = 0
-      this.#leftCounter = 0
+      this.#maxLevelLeft = -Infinity;
+      this.#leftCounter = -Infinity;
     }
 
     if (this.#rightCounter === this.#maxCount) {
-      this.#maxLevelRight = 0
-      this.#rightCounter = 0
+      this.#maxLevelRight = -Infinity;
+      this.#rightCounter = -Infinity;
     }
   }
 }

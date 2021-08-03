@@ -3,6 +3,7 @@ import { MasterChannel } from "../../models/channels";
 import * as S from "./styles";
 import { MIXER_STYLES } from "../../constants";
 import { useLayoutEffect } from "react";
+import { dBFSToMeterHeight } from "../../utils";
 
 interface MasterChannelVolumeMetersProps {
   channel: MasterChannel;
@@ -14,9 +15,15 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
   const masterChannel = props.channel;
   const leftCanvasRef = useRef<HTMLCanvasElement>(null);
   const rightCanvasRef = useRef<HTMLCanvasElement>(null);
+  const leftPeakRef = useRef<HTMLCanvasElement>(null);
+  const rightPeakRef = useRef<HTMLCanvasElement>(null);
   const [leftCanvasCtx, setLeftCanvasCtx] =
     useState<CanvasRenderingContext2D>();
   const [rightCanvasCtx, setRightCanvasCtx] =
+    useState<CanvasRenderingContext2D>();
+  const [leftPeakCanvasCtx, setLeftPeakCanvasCtx] =
+    useState<CanvasRenderingContext2D>();
+  const [rightPeakCanvasCtx, setRightPeakCanvasCtx] =
     useState<CanvasRenderingContext2D>();
 
   const renderMasterTicks = () => {
@@ -49,66 +56,85 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
       }
     };
 
+    const drawPeak = (
+      canvasCtx: CanvasRenderingContext2D | undefined,
+      peakHeight: number
+    ) => {
+      if (!canvasCtx) {
+        return;
+      }
+      canvasCtx.clearRect(
+        0,
+        0,
+        MIXER_STYLES.faderWidth,
+        MIXER_STYLES.faderLength
+      );
+      canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 2);
+    };
+
     const intervalId = setInterval(() => {
       const [dBFSL, dBFSR] = masterChannel.getCurrentLevels();
-      const meterHeightL = dBFSToMeterHeight(
-        -dBFSL,
-        48,
-        0,
-        0,
-        MIXER_STYLES.faderLength
-      );
-      const meterHeightR = dBFSToMeterHeight(
-        -dBFSR,
-        48,
-        0,
-        0,
-        MIXER_STYLES.faderLength
-      );
-      drawMeter(leftCanvasCtx, meterHeightL);
-      drawMeter(rightCanvasCtx, meterHeightR);
+      const [peakL, peakR] = masterChannel.getPeaks();
+      drawMeter(leftCanvasCtx, dBFSToMeterHeight(dBFSL));
+      drawMeter(rightCanvasCtx, dBFSToMeterHeight(dBFSR));
+      drawPeak(leftPeakCanvasCtx, dBFSToMeterHeight(peakL));
+      drawPeak(rightPeakCanvasCtx, dBFSToMeterHeight(peakR));
     }, 10);
 
     return () => clearInterval(intervalId);
-  }, [leftCanvasCtx, masterChannel, rightCanvasCtx]);
+  }, [
+    leftCanvasCtx,
+    leftPeakCanvasCtx,
+    masterChannel,
+    rightCanvasCtx,
+    rightPeakCanvasCtx,
+  ]);
 
   useLayoutEffect(() => {
-    const leftCanvasCtx = initCanvas(leftCanvasRef.current);
-    const rightCanvasCtx = initCanvas(rightCanvasRef.current);
-    if (leftCanvasRef) {
-      setLeftCanvasCtx(leftCanvasCtx);
-      setRightCanvasCtx(rightCanvasCtx);
-    }
+    const leftMeterCtx = initMeterCanvas(leftCanvasRef.current);
+    const rightCanvasCtx = initMeterCanvas(rightCanvasRef.current);
+    const leftPeakCtx = initPeakCanvas(leftPeakRef.current);
+    const rightPeakCtx = initPeakCanvas(rightPeakRef.current);
+    setLeftCanvasCtx(leftMeterCtx);
+    setRightCanvasCtx(rightCanvasCtx);
+    setLeftPeakCanvasCtx(leftPeakCtx);
+    setRightPeakCanvasCtx(rightPeakCtx);
   }, []);
 
-  const dBFSToMeterHeight = (
-    val: number,
-    f0: number,
-    f1: number,
-    t0: number,
-    t1: number
-  ) => {
-    return ((val - f0) * (t1 - t0)) / (f1 - f0) + t0;
-  };
-
-  const initCanvas = (
+  const initMeterCanvas = (
     canvas: HTMLCanvasElement | null
   ): CanvasRenderingContext2D | undefined => {
     if (canvas === null) {
       return;
     }
 
-    const volumeMeterCtx = canvas.getContext("2d");
-    if (volumeMeterCtx === null) {
+    const canvasCtx = canvas.getContext("2d");
+    if (canvasCtx === null) {
       return;
     }
-    const grd = volumeMeterCtx.createLinearGradient(5, 0, 5, 280);
+    const grd = canvasCtx.createLinearGradient(5, 0, 5, 280);
     grd.addColorStop(0.3, "#4afccd");
     grd.addColorStop(0.6, "#00b0f0");
     grd.addColorStop(1, "#005ae0");
 
-    volumeMeterCtx.fillStyle = grd;
-    return volumeMeterCtx;
+    canvasCtx.fillStyle = grd;
+    return canvasCtx;
+  };
+
+  const initPeakCanvas = (
+    canvas: HTMLCanvasElement | null
+  ): CanvasRenderingContext2D | undefined => {
+    if (canvas === null) {
+      return;
+    }
+
+    const canvasCtx = canvas.getContext("2d");
+    if (canvasCtx === null) {
+      return;
+    }
+
+    canvasCtx.fillStyle = "red";
+    return canvasCtx;
   };
 
   return (
@@ -117,6 +143,11 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
         <S.ChannelVolumeMeterContainer>
           <S.ChannelVolumeMeter
             ref={leftCanvasRef}
+            width={MIXER_STYLES.faderWidth}
+            height={MIXER_STYLES.faderLength}
+          />
+          <S.ChannelVolumeMeter
+            ref={leftPeakRef}
             width={MIXER_STYLES.faderWidth}
             height={MIXER_STYLES.faderLength}
           />
@@ -132,6 +163,11 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
         <S.ChannelVolumeMeterContainer>
           <S.ChannelVolumeMeter
             ref={rightCanvasRef}
+            width={MIXER_STYLES.faderWidth}
+            height={MIXER_STYLES.faderLength}
+          />
+          <S.ChannelVolumeMeter
+            ref={rightPeakRef}
             width={MIXER_STYLES.faderWidth}
             height={MIXER_STYLES.faderLength}
           />
