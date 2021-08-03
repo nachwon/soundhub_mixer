@@ -37,6 +37,10 @@ class MasterChannel {
   getPeaks() {
     return this.#analyser.getPeaks();
   }
+
+  getCounters() {
+    return this.#analyser.getCounters();
+  }
 }
 
 export default MasterChannel;

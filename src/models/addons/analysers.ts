@@ -52,6 +52,10 @@ export class AudioAnalyser {
     return [this.#maxLevelLeft, this.#maxLevelRight];
   }
 
+  getCounters() {
+    return [this.#leftCounter, this.#rightCounter];
+  }
+
   private getDBFS(array: Uint8Array): number {
     const floats = new Array(array.length);
     for (let i = 0; i < array.length; i++) {

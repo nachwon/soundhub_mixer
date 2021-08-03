@@ -58,7 +58,8 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
 
     const drawPeak = (
       canvasCtx: CanvasRenderingContext2D | undefined,
-      peakHeight: number
+      peakHeight: number,
+      counter: number
     ) => {
       if (!canvasCtx) {
         return;
@@ -69,16 +70,18 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
         MIXER_STYLES.faderWidth,
         MIXER_STYLES.faderLength
       );
+      canvasCtx.globalAlpha = counter < 70 ? 1 : (100 - counter) / 70;
       canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 2);
     };
 
     const intervalId = setInterval(() => {
       const [dBFSL, dBFSR] = masterChannel.getCurrentLevels();
       const [peakL, peakR] = masterChannel.getPeaks();
+      const [counterL, counterR] = masterChannel.getCounters();
       drawMeter(leftCanvasCtx, dBFSToMeterHeight(dBFSL));
       drawMeter(rightCanvasCtx, dBFSToMeterHeight(dBFSR));
-      drawPeak(leftPeakCanvasCtx, dBFSToMeterHeight(peakL));
-      drawPeak(rightPeakCanvasCtx, dBFSToMeterHeight(peakR));
+      drawPeak(leftPeakCanvasCtx, dBFSToMeterHeight(peakL), counterL);
+      drawPeak(rightPeakCanvasCtx, dBFSToMeterHeight(peakR), counterR);
     }, 10);
 
     return () => clearInterval(intervalId);
