@@ -1,13 +1,16 @@
 import { AudioAnalyser, MasterGainController } from "../addons";
+import Mixer from "../mixer";
 
 class MasterChannel {
+  mixer: Mixer;
   #masterGainController: MasterGainController;
   #analyser: AudioAnalyser;
   #maxGain: number = 1.4;
 
-  constructor(audioCtx: AudioContext) {
+  constructor(audioCtx: AudioContext, mixer: Mixer) {
+    this.mixer = mixer;
     this.#masterGainController = new MasterGainController(audioCtx);
-    this.#analyser = new AudioAnalyser(audioCtx);
+    this.#analyser = new AudioAnalyser(audioCtx, this);
   }
 
   get node() {
@@ -20,6 +23,10 @@ class MasterChannel {
 
   get maxGain() {
     return this.#maxGain;
+  }
+
+  get isPlaying() {
+    return this.mixer.isPlaying;
   }
 
   connect() {

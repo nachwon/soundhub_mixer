@@ -4,13 +4,12 @@ import { SoloGainBroadcaster } from "./addons";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 import { Channel, MasterChannel } from "./channels";
 
-
 class Mixer {
   // Context
   audioCtx: AudioContext;
 
   // Channels
-  masterChannel: MasterChannel
+  masterChannel: MasterChannel;
   channels: Array<Channel> = [];
 
   // Time
@@ -19,69 +18,73 @@ class Mixer {
 
   // States
   #isPlaying: boolean = false;
-  #state: 'running' | 'suspended' | 'stopped' | 'closed' = 'stopped';
+  #state: "running" | "suspended" | "stopped" | "closed" = "stopped";
   #mixerController: MixerController = new DefaultMixerController(this);
 
-  get isPlaying() { return this.#isPlaying }
+  get isPlaying() {
+    return this.#isPlaying;
+  }
 
   // Controllers
   soloGainBroadcaster: SoloGainBroadcaster;
 
   constructor() {
-    this.setMixerState('stopped')
+    this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 
-    this.masterChannel = new MasterChannel(this.audioCtx)
-    this.masterChannel.connect()
+    this.masterChannel = new MasterChannel(this.audioCtx, this);
+    this.masterChannel.connect();
 
-    this.soloGainBroadcaster = new SoloGainBroadcaster()
+    this.soloGainBroadcaster = new SoloGainBroadcaster();
   }
 
-  private setMixerState(state: 'running' | 'suspended' | 'stopped' | 'closed') {
+  private setMixerState(state: "running" | "suspended" | "stopped" | "closed") {
     this.#state = state;
-    const controller = ControllerMap[state]
+    const controller = ControllerMap[state];
     if (controller) {
-      this.#mixerController = new controller(this)
+      this.#mixerController = new controller(this);
     }
   }
 
   get channelsCount() {
-    return this.channels.length
+    return this.channels.length;
   }
 
   get channelsLoaded() {
-    return this.channels.every((channel) => channel.loaded)
+    return this.channels.every((channel) => channel.loaded);
   }
 
   get currentDuration(): number {
-    if (this.#state === 'stopped' || this.duration === 0) {
-      return 0
+    if (this.#state === "stopped" || this.duration === 0) {
+      return 0;
     }
-    return Math.min(this.#offsetTime + (this.timeElapsed), this.duration)
+    return Math.min(this.#offsetTime + this.timeElapsed, this.duration);
   }
 
   get timeElapsed(): number {
-    return this.audioCtx.currentTime - this.#startTime
+    return this.audioCtx.currentTime - this.#startTime;
   }
 
   get duration(): number {
-    const maxChannel = this.channels.reduce((prevChannel, currentChannel) =>
-      prevChannel.duration < currentChannel.duration ?
-        currentChannel :
-        prevChannel
-      , { duration: 0 })
-    return maxChannel.duration
+    const maxChannel = this.channels.reduce(
+      (prevChannel, currentChannel) =>
+        prevChannel.duration < currentChannel.duration
+          ? currentChannel
+          : prevChannel,
+      { duration: 0 }
+    );
+    return maxChannel.duration;
   }
 
   async addChannel(dto: ChannelDto) {
-    if (this.#state !== 'stopped') {
-      return
+    if (this.#state !== "stopped") {
+      return;
     }
 
-    const channelConstructor = new BufferExtractor()
-    const buffer = await channelConstructor.extract(dto.src)
+    const channelConstructor = new BufferExtractor();
+    const buffer = await channelConstructor.extract(dto.src);
     if (!buffer) {
-      return
+      return;
     }
 
     const channel = new Channel(
@@ -91,18 +94,18 @@ class Mixer {
       {
         index: this.channelsCount,
         src: dto.src,
-        title: dto.title
+        title: dto.title,
       }
-    )
-    
+    );
+
     this.channels.push(channel);
-    this.soloGainBroadcaster.add(channel.gainController)
+    this.soloGainBroadcaster.add(channel.gainController);
   }
 
   play(offset: number = 0) {
-    const startTime = this.audioCtx.currentTime
+    const startTime = this.audioCtx.currentTime;
     if (this.#mixerController.play(startTime, offset)) {
-      this.setMixerState('running')
+      this.setMixerState("running");
       this.#isPlaying = true;
       this.#startTime = startTime;
       this.#offsetTime = offset;
@@ -111,31 +114,31 @@ class Mixer {
 
   stop() {
     if (this.#mixerController.stop()) {
-      this.setMixerState('stopped')
+      this.setMixerState("stopped");
       this.#isPlaying = false;
-      this.#startTime = 0
-      this.#offsetTime = 0
+      this.#startTime = 0;
+      this.#offsetTime = 0;
     }
   }
 
   pause() {
     if (this.#mixerController.pause()) {
-      this.setMixerState('suspended')
+      this.setMixerState("suspended");
       this.#isPlaying = false;
     }
   }
 
   seek(offset: number) {
-    const startTime = this.audioCtx.currentTime
+    const startTime = this.audioCtx.currentTime;
     if (this.#mixerController.seek(startTime, offset)) {
       this.#isPlaying = true;
-      this.#startTime = startTime
+      this.#startTime = startTime;
       this.#offsetTime = offset;
     }
   }
 
   setMasterGain(value: number, when: number = 0) {
-    this.masterChannel.setGain(value, when)
+    this.masterChannel.setGain(value, when);
   }
 }
 
