@@ -1,7 +1,6 @@
-import styled from "styled-components"
+import styled from "styled-components";
 import { FaderHandleProps } from "../../types";
-import { MIXER_STYLES } from "../../constants"
-
+import { MIXER_STYLES } from "../../constants";
 
 export const MasterVolumeControlContainer = styled.div`
   display: inline-flex;
@@ -30,6 +29,17 @@ export const FaderSection = styled.div`
 `;
 
 export const FaderRail = styled.div`
+  width: 2px;
+  height: ${MIXER_STYLES.faderLength}px;
+  background: #8a8a8a;
+  border-radius: 2px;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  box-shadow: inset 2px 2px 2px 0 black;
+`;
+
+export const MeterRail = styled.div`
   width: 10px;
   height: ${MIXER_STYLES.faderLength}px;
   background: #111111;
@@ -63,12 +73,13 @@ export const FaderTick = styled.div`
   }
 `;
 
-
-export const MasterFaderHandle = styled.div.attrs<FaderHandleProps>((props) => ({
-  style: {
-    top: `${props.position}%`,
-  },
-}))<FaderHandleProps>`
+export const MasterFaderHandle = styled.div.attrs<FaderHandleProps>(
+  (props) => ({
+    style: {
+      top: `${props.position}%`,
+    },
+  })
+)<FaderHandleProps>`
   width: 25px;
   height: 50px;
 
@@ -158,7 +169,6 @@ export const MasterTick = styled.div`
     margin-bottom: 0;
   }
 `;
-
 
 // Volume Meter
 export const ChannelVolumeMeterContainer = styled.div`

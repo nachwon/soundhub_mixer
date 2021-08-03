@@ -142,7 +142,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
 
   return (
     <S.MasterChannelMeter>
-      <S.FaderRail>
+      <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
           <S.ChannelVolumeMeter
             ref={leftCanvasRef}
@@ -156,13 +156,13 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
           />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>L</S.MeterLabel>
-      </S.FaderRail>
+      </S.MeterRail>
       <S.MasterChannelMeterTicksContainer>
         <S.MasterMeterContainer>{renderMasterTicks()}</S.MasterMeterContainer>
         <S.MasterMeterCenter></S.MasterMeterCenter>
         <S.MasterMeterContainer>{renderMasterTicks()}</S.MasterMeterContainer>
       </S.MasterChannelMeterTicksContainer>
-      <S.FaderRail>
+      <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
           <S.ChannelVolumeMeter
             ref={rightCanvasRef}
@@ -176,7 +176,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
           />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>R</S.MeterLabel>
-      </S.FaderRail>
+      </S.MeterRail>
     </S.MasterChannelMeter>
   );
 };
