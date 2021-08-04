@@ -12,19 +12,18 @@ const MaxPanAngle = 125;
 const Panner: React.FC<PannerProps> = (props) => {
   const channel = props.channel;
   const pannerRef = useRef<HTMLDivElement>(null);
-  const [pannerCenterX, setPannerCenterX] = useState<number>(0);
-  const [pannerCenterY, setPannerCenterY] = useState<number>(0);
   const [pannerDeg, setPannerDeg] = useState<number>(0);
 
-  useLayoutEffect(() => {
+  const getPannerCenter = () => {
     if (!pannerRef.current) {
-      return;
+      return [];
     }
+
     const rect = pannerRef.current.getBoundingClientRect();
-    console.log(rect);
-    setPannerCenterX(rect.left + rect.width / 2);
-    setPannerCenterY(rect.top + rect.height / 2);
-  }, []);
+    const pannerCenterX = rect.left + rect.width / 2;
+    const pannerCenterY = rect.top + rect.height / 2;
+    return [pannerCenterX, pannerCenterY];
+  };
 
   const removeGlobalPannerEvents = () => {
     window.removeEventListener("mousemove", handlePannerMouseMove);
@@ -37,6 +36,7 @@ const Panner: React.FC<PannerProps> = (props) => {
   };
 
   const handlePannerMouseMove = (e: MouseEvent) => {
+    const [pannerCenterX, pannerCenterY] = getPannerCenter();
     const lenX = e.clientX - pannerCenterX;
     const lenY = pannerCenterY - e.clientY;
     const deg = Math.max(Math.min(Math.round(Math.atan2(lenX, lenY) * (180 / Math.PI)), MaxPanAngle), -MaxPanAngle);

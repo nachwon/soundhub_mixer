@@ -55,7 +55,11 @@ export const PannerValueDisplay = styled.div`
   margin-top: 5px;
   background: #0d031d;
   border-radius: 3px;
-  text-align: center;
   box-shadow: inset 1px 1px 1px 1px black;
   color: ${THEME.MAIN_COLOR_BLUE};
+  font-family: "Wallpoet";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
 `;

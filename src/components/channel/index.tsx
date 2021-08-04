@@ -1,7 +1,7 @@
 import React from "react";
 import { MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
-import MuteSoloComponent from "./addOns/muteSolo/muteSolo";
+import MuteSoloComponent from "./addOns/muteSolo";
 import Panner from "./addOns/panner";
 import * as S from "./styles";
 
