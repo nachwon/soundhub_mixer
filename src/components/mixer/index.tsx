@@ -1,24 +1,51 @@
+import { ChangeEvent, useState } from "react";
+import { useEffect } from "react";
+import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
-import MasterChannelComponent from "../masterChannel"
+import ChannelsContainer from "../channel";
+import MasterChannelComponent from "../masterChannel";
 
 import * as S from "./styles";
 
+interface SoundHubMixerProps {
+  mixer: Mixer;
+}
 
-const SoundHubMixer: React.FC = () => {
-  const mixer = new Mixer();
+const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
+  const mixer = props.mixer;
+  const [channels, setChannels] = useState<Array<Channel>>([]);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(mixer.audioCtx.currentTime);
+    }, 10);
+
+    return () => clearInterval(intervalId);
+  }, [mixer.audioCtx.currentTime]);
+
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (files) {
+      mixer.addChannel({
+        title: files[0]?.name,
+        src: files[0],
+      });
+
+      setChannels(mixer.channels);
+    } else {
+      return;
+    }
+  };
 
   return (
     <S.MixerContainer>
-      <input type="file" onChange={(e) => e.target.files ? mixer.addChannel(
-        {
-          title: e.target.files[0]?.name,
-          src: e.target.files[0]
-        }) : null
-      } />
+      <input type="file" onChange={handleFileSelect} />
       <button onClick={() => mixer.play()}>play</button>
       <button onClick={() => mixer.stop()}>stop</button>
       <S.MixerInnerWrapper>
-        <S.ChannelsContainer>{ }</S.ChannelsContainer>
+        <ChannelsContainer channels={channels} />
         <S.MasterChannelContainer>
           {/* <S.SoundHubIcon /> */}
           <S.SoundHubLogo />
@@ -26,7 +53,7 @@ const SoundHubMixer: React.FC = () => {
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
     </S.MixerContainer>
-  )
-}
+  );
+};
 
-export default SoundHubMixer
+export default SoundHubMixer;

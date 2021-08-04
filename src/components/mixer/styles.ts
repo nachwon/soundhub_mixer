@@ -1,8 +1,7 @@
-import styled from 'styled-components'
-import soundhubLogo from '../../assets/soundhub-logo.png';
-import soundhubIcon from '../../assets/soundhub-icon.png'
-import { MIXER_STYLES } from '../../constants'
-
+import styled from "styled-components";
+import soundhubLogo from "../../assets/soundhub-logo.png";
+import soundhubIcon from "../../assets/soundhub-icon.png";
+import { MIXER_STYLES } from "../../constants";
 
 export const MixerContainer = styled.div`
   user-select: none;
@@ -25,21 +24,11 @@ export const MixerContainer = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-
 export const MixerInnerWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
-`;
-
-export const ChannelsContainer = styled.div`
-  height: ${MIXER_STYLES.channelHeight}px;
-  width: ${MIXER_STYLES.channelWidth * MIXER_STYLES.numberOfChannels}px;
-  display: inline-flex;
-  box-shadow: inset 0px 0px 4px 0 black;
-  border-radius: 4px;
-  background-color: #292929;
 `;
 
 export const MasterChannelContainer = styled.div`
@@ -72,5 +61,5 @@ export const SoundHubIcon = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  background-image: url(${soundhubIcon})
-`
+  background-image: url(${soundhubIcon});
+`;

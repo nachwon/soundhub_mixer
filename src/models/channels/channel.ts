@@ -28,12 +28,7 @@ class Channel {
   panController: PanController;
   audioAnalyser: AudioAnalyser;
 
-  constructor(
-    buffer: ArrayBuffer,
-    audioCtx: AudioContext,
-    destinationNode: AudioNode,
-    meta: ChannelMeta
-  ) {
+  constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {
     this.index = meta.index;
     this.title = meta.title;
 
@@ -107,8 +102,16 @@ class Channel {
     this.play(when, offset);
   }
 
+  get isMuted() {
+    return this.gainController.isMuted;
+  }
+
   toggleMute(when: number = 0) {
     this.gainController.toggleMute(when);
+  }
+
+  get isSoloed() {
+    return this.gainController.isSoloed;
   }
 
   toggleSolo(when: number = 0) {

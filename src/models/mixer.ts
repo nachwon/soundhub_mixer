@@ -3,14 +3,16 @@ import { BufferExtractor } from "../utils";
 import { SoloGainBroadcaster } from "./addons";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
 import { Channel, MasterChannel } from "./channels";
+import { MaxChannelCount } from "../constants";
 
 class Mixer {
   // Context
   audioCtx: AudioContext;
 
   // Channels
+  maxChannelCount: number = MaxChannelCount;
   masterChannel: MasterChannel;
-  channels: Array<Channel> = [];
+  #channels: Array<Channel> = [];
 
   // Time
   #startTime: number = 0;
@@ -21,12 +23,16 @@ class Mixer {
   #state: "running" | "suspended" | "stopped" | "closed" = "stopped";
   #mixerController: MixerController = new DefaultMixerController(this);
 
+  // Controllers
+  soloGainBroadcaster: SoloGainBroadcaster;
+
   get isPlaying() {
     return this.#isPlaying;
   }
 
-  // Controllers
-  soloGainBroadcaster: SoloGainBroadcaster;
+  get channels() {
+    return this.#channels;
+  }
 
   constructor() {
     this.setMixerState("stopped");
@@ -47,11 +53,11 @@ class Mixer {
   }
 
   get channelsCount() {
-    return this.channels.length;
+    return this.#channels.length;
   }
 
   get channelsLoaded() {
-    return this.channels.every((channel) => channel.loaded);
+    return this.#channels.every((channel) => channel.loaded);
   }
 
   get currentDuration(): number {
@@ -66,7 +72,7 @@ class Mixer {
   }
 
   get duration(): number {
-    const maxChannel = this.channels.reduce(
+    const maxChannel = this.#channels.reduce(
       (prevChannel, currentChannel) =>
         prevChannel.duration < currentChannel.duration
           ? currentChannel
@@ -98,7 +104,7 @@ class Mixer {
       }
     );
 
-    this.channels.push(channel);
+    this.#channels.push(channel);
     this.soloGainBroadcaster.add(channel.gainController);
   }
 
