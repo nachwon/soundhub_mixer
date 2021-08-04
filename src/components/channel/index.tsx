@@ -2,6 +2,7 @@ import React from "react";
 import { MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
 import MuteSoloComponent from "./addOns/muteSolo/muteSolo";
+import Panner from "./addOns/panner";
 import * as S from "./styles";
 
 const LoadingSpinner: React.FC = () => {
@@ -36,6 +37,7 @@ const ChannelComponent: React.FC<ChannelComponentProps> = (props) => {
           {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
+        <Panner channel={channel} />
       </S.ChannelInnerWrapper>
     </S.Channel>
   );
