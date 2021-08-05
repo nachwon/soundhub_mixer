@@ -1,6 +1,7 @@
 import React from "react";
 import { MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
+import ChannelFader from "./addOns/channelFader";
 import MuteSoloComponent from "./addOns/muteSolo";
 import Panner from "./addOns/panner";
 import * as S from "./styles";
@@ -38,6 +39,7 @@ const ChannelComponent: React.FC<ChannelComponentProps> = (props) => {
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
         <Panner channel={channel} />
+        <ChannelFader channel={channel} />
       </S.ChannelInnerWrapper>
     </S.Channel>
   );

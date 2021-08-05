@@ -125,6 +125,18 @@ class Channel {
   setPan(value: number, when: number = 0) {
     this.panController.setPan(value, when);
   }
+
+  getCurrentLevels() {
+    return this.audioAnalyser.getCurrentLevels();
+  }
+
+  getPeaks() {
+    return this.audioAnalyser.getPeaks();
+  }
+
+  getCounters() {
+    return this.audioAnalyser.getCounters();
+  }
 }
 
 export default Channel;

@@ -11,6 +11,7 @@ export const ChannelMuteSoloSection = styled.div`
 `;
 
 export const MuteButton = styled.div`
+  font-family: "Wallpoet";
   height: 28px;
   width: 30px;
   display: inline-flex;
@@ -29,6 +30,7 @@ export const MuteButton = styled.div`
 `;
 
 export const SoloButton = styled.div`
+  font-family: "Wallpoet";
   height: 28px;
   width: 30px;
   display: inline-flex;

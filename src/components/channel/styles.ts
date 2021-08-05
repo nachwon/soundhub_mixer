@@ -103,6 +103,7 @@ export const EmptyChannel = styled.div`
 `;
 
 export const EmptyChannelInner = styled.div`
+  font-family: "Wallpoet";
   border-radius: 5px;
   border: 1px dashed #404040;
   width: 90%;

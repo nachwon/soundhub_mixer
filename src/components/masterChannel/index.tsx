@@ -9,22 +9,16 @@ interface MasterChannelVolumeMetersProps {
   channel: MasterChannel;
 }
 
-const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
-  props
-) => {
+const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (props) => {
   const masterChannel = props.channel;
   const leftCanvasRef = useRef<HTMLCanvasElement>(null);
   const rightCanvasRef = useRef<HTMLCanvasElement>(null);
   const leftPeakRef = useRef<HTMLCanvasElement>(null);
   const rightPeakRef = useRef<HTMLCanvasElement>(null);
-  const [leftCanvasCtx, setLeftCanvasCtx] =
-    useState<CanvasRenderingContext2D>();
-  const [rightCanvasCtx, setRightCanvasCtx] =
-    useState<CanvasRenderingContext2D>();
-  const [leftPeakCanvasCtx, setLeftPeakCanvasCtx] =
-    useState<CanvasRenderingContext2D>();
-  const [rightPeakCanvasCtx, setRightPeakCanvasCtx] =
-    useState<CanvasRenderingContext2D>();
+  const [leftCanvasCtx, setLeftCanvasCtx] = useState<CanvasRenderingContext2D>();
+  const [rightCanvasCtx, setRightCanvasCtx] = useState<CanvasRenderingContext2D>();
+  const [leftPeakCanvasCtx, setLeftPeakCanvasCtx] = useState<CanvasRenderingContext2D>();
+  const [rightPeakCanvasCtx, setRightPeakCanvasCtx] = useState<CanvasRenderingContext2D>();
 
   const renderMasterTicks = () => {
     const ticksArray = [];
@@ -35,19 +29,11 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
   };
 
   useEffect(() => {
-    const drawMeter = (
-      canvasCtx: CanvasRenderingContext2D | undefined,
-      meterHeight: number
-    ) => {
+    const drawMeter = (canvasCtx: CanvasRenderingContext2D | undefined, meterHeight: number) => {
       if (!canvasCtx) {
         return;
       }
-      canvasCtx.clearRect(
-        0,
-        0,
-        MIXER_STYLES.faderWidth,
-        MIXER_STYLES.faderLength
-      );
+      canvasCtx.clearRect(0, 0, MIXER_STYLES.faderWidth, MIXER_STYLES.faderLength);
       for (let i = 0; i < meterHeight; i++) {
         if (i % 3 === 0) {
           continue;
@@ -56,20 +42,11 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
       }
     };
 
-    const drawPeak = (
-      canvasCtx: CanvasRenderingContext2D | undefined,
-      peakHeight: number,
-      counter: number
-    ) => {
+    const drawPeak = (canvasCtx: CanvasRenderingContext2D | undefined, peakHeight: number, counter: number) => {
       if (!canvasCtx) {
         return;
       }
-      canvasCtx.clearRect(
-        0,
-        0,
-        MIXER_STYLES.faderWidth,
-        MIXER_STYLES.faderLength
-      );
+      canvasCtx.clearRect(0, 0, MIXER_STYLES.faderWidth, MIXER_STYLES.faderLength);
       canvasCtx.globalAlpha = counter < 70 ? 1 : (100 - counter) / 70;
       canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 2);
     };
@@ -85,13 +62,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
     }, 10);
 
     return () => clearInterval(intervalId);
-  }, [
-    leftCanvasCtx,
-    leftPeakCanvasCtx,
-    masterChannel,
-    rightCanvasCtx,
-    rightPeakCanvasCtx,
-  ]);
+  }, [leftCanvasCtx, leftPeakCanvasCtx, masterChannel, rightCanvasCtx, rightPeakCanvasCtx]);
 
   useLayoutEffect(() => {
     const leftMeterCtx = initMeterCanvas(leftCanvasRef.current);
@@ -104,9 +75,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
     setRightPeakCanvasCtx(rightPeakCtx);
   }, []);
 
-  const initMeterCanvas = (
-    canvas: HTMLCanvasElement | null
-  ): CanvasRenderingContext2D | undefined => {
+  const initMeterCanvas = (canvas: HTMLCanvasElement | null): CanvasRenderingContext2D | undefined => {
     if (canvas === null) {
       return;
     }
@@ -124,9 +93,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
     return canvasCtx;
   };
 
-  const initPeakCanvas = (
-    canvas: HTMLCanvasElement | null
-  ): CanvasRenderingContext2D | undefined => {
+  const initPeakCanvas = (canvas: HTMLCanvasElement | null): CanvasRenderingContext2D | undefined => {
     if (canvas === null) {
       return;
     }
@@ -144,16 +111,8 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
     <S.MasterChannelMeter>
       <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
-          <S.ChannelVolumeMeter
-            ref={leftCanvasRef}
-            width={MIXER_STYLES.faderWidth}
-            height={MIXER_STYLES.faderLength}
-          />
-          <S.ChannelVolumeMeter
-            ref={leftPeakRef}
-            width={MIXER_STYLES.faderWidth}
-            height={MIXER_STYLES.faderLength}
-          />
+          <S.ChannelVolumeMeter ref={leftCanvasRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
+          <S.ChannelVolumeMeter ref={leftPeakRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>L</S.MeterLabel>
       </S.MeterRail>
@@ -169,11 +128,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (
             width={MIXER_STYLES.faderWidth}
             height={MIXER_STYLES.faderLength}
           />
-          <S.ChannelVolumeMeter
-            ref={rightPeakRef}
-            width={MIXER_STYLES.faderWidth}
-            height={MIXER_STYLES.faderLength}
-          />
+          <S.ChannelVolumeMeter ref={rightPeakRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>R</S.MeterLabel>
       </S.MeterRail>
@@ -213,12 +168,8 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
     }
     const rect = faderRail.current.getBoundingClientRect();
     const faderRailTop = rect.top;
-    const faderPosition = Math.max(
-      Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight),
-      0
-    );
-    const faderPositionScaled =
-      ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
+    const faderPosition = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
+    const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
     const faderGainValue = masterChannel.maxGain - faderPositionScaled;
 
     masterChannel.setGain(faderGainValue);
@@ -237,10 +188,7 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
           <S.FaderSection>
             <S.FaderRail ref={faderRail}>
               <S.FaderTicksContainer>{renderTicks()}</S.FaderTicksContainer>
-              <S.MasterFaderHandle
-                onMouseDown={(e) => handleFaderMouseDown(e)}
-                position={faderPosition}
-              />
+              <S.MasterFaderHandle onMouseDown={(e) => handleFaderMouseDown(e)} position={faderPosition} />
             </S.FaderRail>
           </S.FaderSection>
           <S.MasterTrackNameSection>
