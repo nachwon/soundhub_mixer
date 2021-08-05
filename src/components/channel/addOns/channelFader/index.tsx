@@ -39,7 +39,7 @@ const ChannelVolumeMeterCanvas: React.FC<ChannelVolumeMeterCanvasProps> = (props
       }
       canvasCtx.clearRect(0, 0, MIXER_STYLES.faderWidth, MIXER_STYLES.faderLength);
       canvasCtx.globalAlpha = counter < 70 ? 1 : (100 - counter) / 70;
-      canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 2);
+      canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 1);
     };
 
     const [dBFSL, dBFSR] = channel.getCurrentLevels();
@@ -96,8 +96,14 @@ const ChannelVolumeMeterCanvas: React.FC<ChannelVolumeMeterCanvasProps> = (props
 
   return (
     <S.ChannelVolumeMeterContainer>
-      <S.ChannelVolumeMeter ref={leftCanvasRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
-      <S.ChannelVolumeMeter ref={leftPeakRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
+      <S.ChannelVolumeMeterLeft ref={leftCanvasRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
+      <S.ChannelVolumeMeterLeft ref={leftPeakRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
+      <S.ChannelVolumeMeterRight
+        ref={rightCanvasRef}
+        width={MIXER_STYLES.faderWidth}
+        height={MIXER_STYLES.faderLength}
+      />
+      <S.ChannelVolumeMeterRight ref={rightPeakRef} width={MIXER_STYLES.faderWidth} height={MIXER_STYLES.faderLength} />
     </S.ChannelVolumeMeterContainer>
   );
 };
