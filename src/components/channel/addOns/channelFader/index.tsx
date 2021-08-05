@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MIXER_STYLES } from "../../../../constants";
 import { Channel } from "../../../../models/channels";
 import { FaderInterface } from "../../../../types";
@@ -56,6 +56,12 @@ interface ChannelFaderProps {
 
 const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
   const channel = props.channel;
+  const getFaderPosition = (gain: number) => {
+    return (1 - gain / channel.maxGain) * 100;
+  };
+
+  const [faderPosition, setFaderPosition] = useState(getFaderPosition(1));
+  const faderRail = useRef<HTMLDivElement>(null);
 
   const renderTicks = () => {
     const ticksArray = [];
@@ -65,11 +71,35 @@ const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
     return ticksArray;
   };
 
+  const handleFaderMouseDown = (e: React.MouseEvent) => {
+    window.addEventListener("mousemove", handleFaderMouseMove);
+    window.addEventListener("mouseup", removeGlobalFaderEvents);
+  };
+
+  const handleFaderMouseMove = (e: MouseEvent) => {
+    if (!faderRail.current) {
+      return;
+    }
+    const rect = faderRail.current.getBoundingClientRect();
+    const faderRailTop = rect.top;
+    const faderPosition = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
+    const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
+    const faderGainValue = channel.maxGain - faderPositionScaled;
+
+    channel.setGain(faderGainValue);
+    setFaderPosition(getFaderPosition(faderGainValue));
+  };
+
+  const removeGlobalFaderEvents = (e: MouseEvent) => {
+    window.removeEventListener("mousemove", handleFaderMouseMove);
+    window.removeEventListener("mouseup", removeGlobalFaderEvents);
+  };
+
   return (
     <S.FaderSection>
-      <S.FaderRail>
+      <S.FaderRail ref={faderRail}>
         <S.FaderTicksContainer>{renderTicks()}</S.FaderTicksContainer>
-        <S.FaderHandle onMouseDown={() => {}} position={0} />
+        <S.FaderHandle onMouseDown={(e) => handleFaderMouseDown(e)} position={faderPosition} />
         <ChannelVolumeMeterCanvas channel={channel} />
       </S.FaderRail>
     </S.FaderSection>
