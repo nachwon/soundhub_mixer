@@ -1,7 +1,7 @@
-import { ChannelMeta } from "../../types";
+import { ChannelMeta, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
-class Channel {
+class Channel implements FaderInterface {
   index: number;
   #audioCtx: AudioContext;
   #buffer?: AudioBuffer;

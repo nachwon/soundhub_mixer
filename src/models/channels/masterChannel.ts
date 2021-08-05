@@ -1,16 +1,23 @@
+import { FaderInterface } from "../../types";
 import { AudioAnalyser, MasterGainController } from "../addons";
 import Mixer from "../mixer";
 
-class MasterChannel {
+class MasterChannel implements FaderInterface {
   mixer: Mixer;
+  #audioCtx: AudioContext;
   #masterGainController: MasterGainController;
   #analyser: AudioAnalyser;
   #maxGain: number = 1.4;
 
   constructor(audioCtx: AudioContext, mixer: Mixer) {
     this.mixer = mixer;
+    this.#audioCtx = audioCtx;
     this.#masterGainController = new MasterGainController(audioCtx);
     this.#analyser = new AudioAnalyser(audioCtx, this);
+  }
+
+  get audioCtx() {
+    return this.#audioCtx;
   }
 
   get node() {

@@ -79,19 +79,3 @@ export const ChannelVolumeMeterContainer = styled.div`
   overflow: hidden;
   position: relative;
 `;
-
-export const ChannelVolumeMeterLeft = styled.canvas`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 5px;
-  height: 280px;
-`;
-
-export const ChannelVolumeMeterRight = styled.canvas`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 5px;
-  height: 280px;
-`;
