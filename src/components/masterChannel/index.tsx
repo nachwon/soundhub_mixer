@@ -10,23 +10,31 @@ interface MasterChannelVolumeMetersProps {
 
 const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (props) => {
   const masterChannel = props.channel;
-  const [dBFSL, setDBFSL] = useState(-Infinity);
-  const [dBFSR, setDBFSR] = useState(-Infinity);
-  const [peakL, setPeakL] = useState(-Infinity);
-  const [peakR, setPeakR] = useState(-Infinity);
-  const [counterL, setCounterL] = useState(0);
-  const [counterR, setCounterR] = useState(0);
+  const [leftMeterProps, setLeftMeterProps] = useState({
+    dBFS: -Infinity,
+    peak: -Infinity,
+    counter: 0,
+  });
+  const [rightMeterProps, setRightMeterProps] = useState({
+    dBFS: -Infinity,
+    peak: -Infinity,
+    counter: 0,
+  });
 
   useEffect(() => {
-    const [dBFSLeft, dBFSRight] = masterChannel.getCurrentLevels();
-    const [peakLeft, peakRight] = masterChannel.getPeaks();
-    const [counterLeft, counterRight] = masterChannel.getCounters();
-    setDBFSL(dBFSLeft);
-    setDBFSR(dBFSRight);
-    setPeakL(peakLeft);
-    setPeakR(peakRight);
-    setCounterL(counterLeft);
-    setCounterR(counterRight);
+    const [dBFSL, dBFSR] = masterChannel.getCurrentLevels();
+    const [peakL, peakR] = masterChannel.getPeaks();
+    const [counterL, counterR] = masterChannel.getCounters();
+    setLeftMeterProps({
+      dBFS: dBFSL,
+      peak: peakL,
+      counter: counterL,
+    });
+    setRightMeterProps({
+      dBFS: dBFSR,
+      peak: peakR,
+      counter: counterR,
+    });
   }, [masterChannel, masterChannel.audioCtx.currentTime]);
 
   const renderMasterTicks = () => {
@@ -41,7 +49,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
     <S.MasterChannelMeter>
       <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
-          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} dBFS={dBFSL} peak={peakL} counter={counterL} />
+          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} {...leftMeterProps} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>L</S.MeterLabel>
       </S.MeterRail>
@@ -52,7 +60,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
       </S.MasterChannelMeterTicksContainer>
       <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
-          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} dBFS={dBFSR} peak={peakR} counter={counterR} />
+          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} {...rightMeterProps} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>R</S.MeterLabel>
       </S.MeterRail>
