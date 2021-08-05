@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useLayoutEffect } from "react";
 import { Channel } from "../../../../models/channels";
 import * as S from "./styles";
 
@@ -57,11 +56,15 @@ const Panner: React.FC<PannerProps> = (props) => {
 
   return (
     <S.PannerSection>
-      <S.PannerWrapper>
-        <S.Panner ref={pannerRef} value={pannerDeg} onMouseDown={handlePannerMouseDown}>
-          <S.PannerDot />
-        </S.Panner>
-      </S.PannerWrapper>
+      <S.PannerContainer>
+        <S.PannerKnobTop ref={pannerRef} onMouseDown={handlePannerMouseDown}>
+          <S.PannerPointerWrapper value={pannerDeg}>
+            <S.PannerPointer />
+          </S.PannerPointerWrapper>
+          <S.PannerKnobPlate />
+          <S.PannerKnobPlateMask />
+        </S.PannerKnobTop>
+      </S.PannerContainer>
       <S.PannerValueDisplay>{processPannerDisplayValue(pannerDeg)}</S.PannerValueDisplay>
     </S.PannerSection>
   );
