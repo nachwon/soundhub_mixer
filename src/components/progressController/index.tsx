@@ -13,6 +13,7 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
   const isSeeking = useRef(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [pointerPosition, setPointerPosition] = useState<number>(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,7 +22,9 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
     } else {
       if (mixer.isPlaying) {
         setProgress((mixer.currentDuration / mixer.duration) * 100);
-        setCurrentTime(mixer.currentDuration);
+        if (!isSeeking.current) {
+          setCurrentTime(mixer.currentDuration);
+        }
       }
     }
   }, [mixer.audioCtx.currentTime, mixer.currentDuration, mixer.duration, mixer.isPlaying, mixer.elapsedTime]);
@@ -38,18 +41,40 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
     window.addEventListener("mouseup", handleProgressBarMouseUp);
   };
 
-  const handleProgressBarMouseMove = (e: any) => {};
+  const calculateCurrentTime = (e: any) => {
+    if (!progressBarRef.current) {
+      return 0;
+    }
+    const positionX = e.clientX - progressBarRef.current.getBoundingClientRect().left;
+    const positionPercent = positionX / progressBarRef.current.getBoundingClientRect().width;
+    return mixer.duration * positionPercent;
+  };
+
+  const handleProgressBarMouseMove = (e: any) => {
+    if (!progressBarRef.current) {
+      return;
+    }
+    const positionX = e.clientX - progressBarRef.current.getBoundingClientRect().left;
+    setPointerPosition(positionX);
+    if (isSeeking.current) {
+      const newCurrentTime = calculateCurrentTime(e);
+      setCurrentTime(newCurrentTime);
+    }
+  };
 
   const handleProgressBarMouseUp = (e: any) => {
     const offsetX = e.offsetX;
     if (!offsetX || !progressBarRef.current) {
       return;
     }
+
+    console.log(offsetX);
     const relativeDuration = (offsetX / progressBarRef.current.getBoundingClientRect().width) * mixer.duration;
     setProgress((relativeDuration / mixer.duration) * 100);
     mixer.seek(relativeDuration);
     window.removeEventListener("mousemove", handleProgressBarMouseMove);
     window.removeEventListener("mouseup", handleProgressBarMouseUp);
+    isSeeking.current = false;
   };
 
   return (
@@ -70,7 +95,7 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
         >
           <S.MixerProgressBarGuide>
             <S.MixerProgressIndicator progress={progress}>
-              <S.MixerProgressPointer position={0} />
+              <S.MixerProgressPointer position={pointerPosition} />
             </S.MixerProgressIndicator>
           </S.MixerProgressBarGuide>
         </S.MixerProgressBar>

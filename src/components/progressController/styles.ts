@@ -24,17 +24,20 @@ export const MixerPlayButton = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const MixerStopButton = styled.div`
   display: inline-block;
-  width: 45px;
-  height: 45px;
+  width: 30px;
+  height: 30px;
+  margin: 0 10px;
   background-size: contain;
   background-image: url(${StopButton});
   background-position: center;
   background-repeat: no-repeat;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const MixerProgressBarContainer = styled.div`

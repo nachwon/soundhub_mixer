@@ -43,8 +43,6 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
   return (
     <S.MixerContainer>
       <input type="file" onChange={handleFileSelect} />
-      <button onClick={() => mixer.play()}>play</button>
-      <button onClick={() => mixer.stop()}>stop</button>
       <S.MixerInnerWrapper>
         <ChannelsContainer channels={channels} />
         <S.MasterChannelContainer>
