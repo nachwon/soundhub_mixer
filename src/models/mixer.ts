@@ -17,6 +17,7 @@ class Mixer {
   // Time
   #startTime: number = 0;
   #offsetTime: number = 0;
+  #elapsedTime: number = 0;
 
   // States
   #isPlaying: boolean = false;
@@ -71,6 +72,14 @@ class Mixer {
     return this.audioCtx.currentTime - this.#startTime;
   }
 
+  get elapsedTime(): number {
+    return this.#elapsedTime;
+  }
+
+  set elapsedTime(when: number) {
+    this.#elapsedTime = when;
+  }
+
   get duration(): number {
     const maxChannel = this.#channels.reduce(
       (prevChannel, currentChannel) => (prevChannel.duration < currentChannel.duration ? currentChannel : prevChannel),
@@ -111,18 +120,21 @@ class Mixer {
   }
 
   stop() {
+    this.#elapsedTime = 0;
     if (this.#mixerController.stop()) {
       this.setMixerState("stopped");
       this.#isPlaying = false;
       this.#startTime = 0;
       this.#offsetTime = 0;
     }
+    console.log(this.#elapsedTime);
   }
 
   pause() {
-    if (this.#mixerController.pause()) {
-      this.setMixerState("suspended");
+    if (this.#mixerController.stop()) {
+      this.setMixerState("stopped");
       this.#isPlaying = false;
+      this.#elapsedTime = this.#elapsedTime + this.timeElapsed;
     }
   }
 
@@ -130,7 +142,7 @@ class Mixer {
     if (this.isPlaying) {
       this.pause();
     } else {
-      this.play();
+      this.play(this.#elapsedTime);
     }
   }
 
@@ -140,6 +152,7 @@ class Mixer {
       this.#isPlaying = true;
       this.#startTime = startTime;
       this.#offsetTime = offset;
+      this.#elapsedTime = offset;
     }
   }
 

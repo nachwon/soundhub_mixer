@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { THEME } from "../../constants";
 import PlayImg from "../../assets/play-icon.png";
 import PauseImg from "../../assets/pause-icon.png";
+import StopButton from "../../assets/stop.png";
 
 export const MixerControllerContainer = styled.div`
   width: 100%;
@@ -20,6 +21,17 @@ export const MixerPlayButton = styled.div`
   height: 45px;
   background-size: contain;
   background-image: url(${(props: { playing: boolean }) => (props.playing ? PauseImg : PlayImg)});
+  background-position: center;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+`;
+
+export const MixerStopButton = styled.div`
+  display: inline-block;
+  width: 45px;
+  height: 45px;
+  background-size: contain;
+  background-image: url(${StopButton});
   background-position: center;
   background-repeat: no-repeat;
   flex-shrink: 0;

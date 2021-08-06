@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";
 import { toMMSS } from "../../utils";
@@ -12,8 +13,24 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
   const isSeeking = useRef(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [offset, setOffset] = useState(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mixer.duration === 0) {
+      setProgress(0);
+    } else {
+      if (mixer.isPlaying) {
+        setProgress((mixer.currentDuration / mixer.duration) * 100);
+        setCurrentTime(mixer.currentDuration);
+      }
+    }
+  }, [mixer.audioCtx.currentTime, mixer.currentDuration, mixer.duration, mixer.isPlaying, mixer.elapsedTime]);
+
+  const handleMixerStop = (e: React.MouseEvent) => {
+    mixer.stop();
+    setCurrentTime(0);
+    setProgress(0);
+  };
 
   const handleProgressBarMouseDown = (e: any) => {
     isSeeking.current = true;
@@ -24,10 +41,11 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
   const handleProgressBarMouseMove = (e: any) => {};
 
   const handleProgressBarMouseUp = (e: any) => {
-    const offsetX = e.nativeEvent.offsetX;
-    const relativeDuration = (offsetX / 500) * mixer.duration;
-    console.log(relativeDuration, progress);
-    setOffset(relativeDuration);
+    const offsetX = e.offsetX;
+    if (!offsetX || !progressBarRef.current) {
+      return;
+    }
+    const relativeDuration = (offsetX / progressBarRef.current.getBoundingClientRect().width) * mixer.duration;
     setProgress((relativeDuration / mixer.duration) * 100);
     mixer.seek(relativeDuration);
     window.removeEventListener("mousemove", handleProgressBarMouseMove);
@@ -36,7 +54,13 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
 
   return (
     <S.MixerControllerContainer>
-      <S.MixerPlayButton playing={mixer.isPlaying} onClick={() => mixer.playToggle()} />
+      <S.MixerPlayButton
+        playing={mixer.isPlaying}
+        onClick={() => {
+          mixer.playToggle();
+        }}
+      />
+      <S.MixerStopButton onClick={handleMixerStop} />
       <S.MixerProgressBarContainer>
         <S.MixerProgressBar
           ref={progressBarRef}
@@ -45,7 +69,7 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
           onMouseUp={handleProgressBarMouseUp}
         >
           <S.MixerProgressBarGuide>
-            <S.MixerProgressIndicator progress={0}>
+            <S.MixerProgressIndicator progress={progress}>
               <S.MixerProgressPointer position={0} />
             </S.MixerProgressIndicator>
           </S.MixerProgressBarGuide>

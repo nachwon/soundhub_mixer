@@ -1,50 +1,48 @@
 import { MixerController } from "../types";
 import Mixer from "./mixer";
 
-
 class BaseMixerController {
   mixer: Mixer;
 
   constructor(mixer: Mixer) {
-    this.mixer = mixer
+    this.mixer = mixer;
   }
 
   playChannels(when: number, offset: number) {
     for (let channel of this.mixer.channels) {
-      channel.play(when, offset)
+      channel.play(when, offset);
     }
-    return true
+    return true;
   }
 
   stopChannels() {
     for (let channel of this.mixer.channels) {
       channel.stop();
     }
-    return true
+    return true;
   }
 
   pauseChannels() {
-    this.mixer.audioCtx.suspend()
-    return true
+    this.mixer.audioCtx.suspend();
+    return true;
   }
 
   resumeChannels() {
-    this.mixer.audioCtx.resume()
-    return true
+    this.mixer.audioCtx.resume();
+    return true;
   }
 
   seekChannels(when: number, offset: number) {
     if (!this.mixer.channelsLoaded) {
-      return false
+      return false;
     }
 
     for (let channel of this.mixer.channels) {
-      channel.seek(when, offset)
+      channel.seek(when, offset);
     }
-    return true
+    return true;
   }
 }
-
 
 export class DefaultMixerController extends BaseMixerController implements MixerController {
   play = (when: number = 0, offset: number = 0) => false;
@@ -53,55 +51,54 @@ export class DefaultMixerController extends BaseMixerController implements Mixer
   seek = (when: number, offset: number) => false;
 }
 
-
 class RunningMixerController extends BaseMixerController implements MixerController {
   play(when: number = 0, offset: number = 0) {
     if (this.mixer.isPlaying || !this.mixer.channelsLoaded) {
-      return false
+      return false;
     }
 
-    return this.playChannels(when, offset)
+    return this.playChannels(when, offset);
   }
 
   pause() {
-    return this.pauseChannels()
+    return this.pauseChannels();
   }
 
   stop() {
     if (!this.mixer.isPlaying) {
-      return false
+      return false;
     }
 
-    return this.stopChannels()
+    return this.stopChannels();
   }
 
   seek(when: number, offset: number) {
-    return this.seekChannels(when, offset)
+    return this.seekChannels(when, offset);
   }
 }
 
 class SuspendedMixerController extends BaseMixerController implements MixerController {
   play(when: number = 0, offset: number = 0) {
-    this.resumeChannels()
-    return true
+    this.resumeChannels();
+    return true;
   }
 
   stop() {
-    this.stopChannels()
-    this.resumeChannels()
-    return true
+    this.stopChannels();
+    this.resumeChannels();
+    return true;
   }
 
   pause() {
-    return false
+    return false;
   }
 
   seek(when: number, offset: number) {
     if (this.seekChannels(when, offset)) {
       // this.resumeChannels()
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 }
@@ -109,28 +106,28 @@ class SuspendedMixerController extends BaseMixerController implements MixerContr
 class StoppedMixerController extends BaseMixerController implements MixerController {
   play(when: number = 0, offset: number = 0) {
     if (!this.mixer.channelsLoaded) {
-      return false
+      return false;
     }
-    return this.playChannels(when, offset)
+    return this.playChannels(when, offset);
   }
 
   stop() {
-    return false
+    return false;
   }
 
   pause() {
-    return false
+    return false;
   }
 
   seek(when: number, offset: number) {
-    return false
+    this.mixer.elapsedTime = offset;
+    return false;
   }
 }
 
-
 export const ControllerMap = {
-  'running': RunningMixerController,
-  'suspended': SuspendedMixerController,
-  'closed': DefaultMixerController,
-  'stopped': StoppedMixerController
-}
+  running: RunningMixerController,
+  suspended: SuspendedMixerController,
+  closed: DefaultMixerController,
+  stopped: StoppedMixerController,
+};
