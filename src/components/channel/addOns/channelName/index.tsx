@@ -6,47 +6,49 @@ interface ChannelNameProps {
   channel: Channel;
 }
 
+const TrackNameScrollSpeed = 0.3;
+const InitialTrackNamePosition = 3.5;
+
 const ChannelName: React.FC<ChannelNameProps> = (props) => {
   const channel = props.channel;
-  const initialTrackNamePosition = 3.5;
   const trackNameRef = useRef<HTMLDivElement>(null);
-  const trackNamePosition = useRef(initialTrackNamePosition);
+  const trackNamePosition = useRef(InitialTrackNamePosition);
   const [centered, setCentered] = useState(false);
-  const [position, setPosition] = useState(initialTrackNamePosition);
+  const [position, setPosition] = useState(InitialTrackNamePosition);
   const [animation, setAnimation] = useState<number | null>(null);
   const textAnimationReversed = useRef(false);
 
   useEffect(() => {
     if (trackNameRef.current) {
-      const width = trackNameRef.current.offsetWidth - initialTrackNamePosition;
+      const width = trackNameRef.current.offsetWidth - InitialTrackNamePosition;
       const child = trackNameRef.current.querySelector("div");
       if (!child) {
         return;
       }
-      const maxPosition = Math.max(0, child.offsetWidth - width + initialTrackNamePosition);
+      const maxPosition = Math.max(0, child.offsetWidth - width + InitialTrackNamePosition);
       setCentered(maxPosition <= 0);
     }
   }, []);
 
   const handleTrackNameMouseEnter = (e: MouseEvent) => {
     const target = e.target as HTMLDivElement;
-    const width = target.offsetWidth - initialTrackNamePosition;
+    const width = target.offsetWidth - InitialTrackNamePosition;
     const child = target.querySelector("div");
     if (!child) {
       return;
     }
 
-    const maxPosition = Math.max(0, child.offsetWidth - width + initialTrackNamePosition);
+    const maxPosition = Math.max(0, child.offsetWidth - width + InitialTrackNamePosition);
     if (maxPosition > 0) {
       const animation = setInterval(() => {
         if (!textAnimationReversed.current) {
-          trackNamePosition.current -= 0.1;
+          trackNamePosition.current -= TrackNameScrollSpeed;
           if (trackNamePosition.current <= -maxPosition) {
             textAnimationReversed.current = true;
           }
         } else {
-          trackNamePosition.current += 0.1;
-          if (trackNamePosition.current >= initialTrackNamePosition) {
+          trackNamePosition.current += TrackNameScrollSpeed;
+          if (trackNamePosition.current >= InitialTrackNamePosition) {
             textAnimationReversed.current = false;
           }
         }
@@ -58,9 +60,9 @@ const ChannelName: React.FC<ChannelNameProps> = (props) => {
   };
 
   const handleTrackNameMouseLeave = (e: MouseEvent) => {
-    trackNamePosition.current = initialTrackNamePosition;
+    trackNamePosition.current = InitialTrackNamePosition;
     textAnimationReversed.current = false;
-    setPosition(initialTrackNamePosition);
+    setPosition(InitialTrackNamePosition);
     if (animation) {
       clearInterval(animation);
       setAnimation(null);
@@ -68,15 +70,15 @@ const ChannelName: React.FC<ChannelNameProps> = (props) => {
   };
 
   return (
-    <S.TrackNameSection
+    <S.ChannelNameSection
       ref={trackNameRef}
       onMouseEnter={handleTrackNameMouseEnter}
       onMouseLeave={handleTrackNameMouseLeave}
     >
-      <S.TrackName position={position} centered={centered}>
+      <S.ChannelName position={position} centered={centered}>
         {channel.title}
-      </S.TrackName>
-    </S.TrackNameSection>
+      </S.ChannelName>
+    </S.ChannelNameSection>
   );
 };
 
