@@ -23,7 +23,7 @@ export const PannerContainer = styled.div.attrs<PannerComponentProps>((props) =>
     transform: `rotate(${props.value ? props.value : 0}deg)`,
   },
 }))<PannerComponentProps>`
-  box-shadow: 3px 1px 2px 0px black;
+  box-shadow: 8px 1px 7px -2px black;
   display: flex;
   justify-content: center;
   align-items: center;
