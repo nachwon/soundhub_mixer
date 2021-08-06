@@ -4,6 +4,7 @@ import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
 import ChannelsContainer from "../channel";
 import MasterChannelComponent from "../masterChannel";
+import ProgressController from "../progressController";
 
 import * as S from "./styles";
 
@@ -52,6 +53,7 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
           <MasterChannelComponent masterChannel={mixer.masterChannel} />
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
+      <ProgressController mixer={mixer} />
     </S.MixerContainer>
   );
 };

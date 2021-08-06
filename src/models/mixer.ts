@@ -73,10 +73,7 @@ class Mixer {
 
   get duration(): number {
     const maxChannel = this.#channels.reduce(
-      (prevChannel, currentChannel) =>
-        prevChannel.duration < currentChannel.duration
-          ? currentChannel
-          : prevChannel,
+      (prevChannel, currentChannel) => (prevChannel.duration < currentChannel.duration ? currentChannel : prevChannel),
       { duration: 0 }
     );
     return maxChannel.duration;
@@ -93,16 +90,11 @@ class Mixer {
       return;
     }
 
-    const channel = new Channel(
-      buffer,
-      this.audioCtx,
-      this.masterChannel.node,
-      {
-        index: this.channelsCount,
-        src: dto.src,
-        title: dto.title,
-      }
-    );
+    const channel = new Channel(buffer, this.audioCtx, this.masterChannel.node, {
+      index: this.channelsCount,
+      src: dto.src,
+      title: dto.title,
+    });
 
     this.#channels.push(channel);
     this.soloGainBroadcaster.add(channel.gainController);
@@ -131,6 +123,14 @@ class Mixer {
     if (this.#mixerController.pause()) {
       this.setMixerState("suspended");
       this.#isPlaying = false;
+    }
+  }
+
+  playToggle() {
+    if (this.isPlaying) {
+      this.pause();
+    } else {
+      this.play();
     }
   }
 
