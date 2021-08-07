@@ -58,3 +58,16 @@ export const toMMSS = (sec_num: number) => {
   }
   return minutes + ":" + seconds;
 };
+
+export const getScaledGainValue = (gainValue: number, maxGain: number) => {
+  let gainValueScaled;
+  if (gainValue >= 1) {
+    gainValueScaled =
+      ((maxGain - 1) / (MIXER_SETTINGS.faderMaxPosition - MIXER_SETTINGS.faderIdlePosition)) *
+        (gainValue - MIXER_SETTINGS.faderIdlePosition) +
+      1;
+  } else {
+    gainValueScaled = gainValue;
+  }
+  return gainValueScaled;
+};

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { Channel } from "../../../../models/channels";
 import { FaderInterface } from "../../../../types";
+import { getScaledGainValue } from "../../../../utils";
 import VolumeMeterCanvas from "../../../volumeMeter";
 import * as S from "./styles";
 
@@ -61,16 +62,6 @@ const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
   const getFaderPosition = (gain: number) => {
     return (1 - gain / FaderMaxPosition) * 100;
   };
-  const getScaledGainValue = (gainValue: number) => {
-    let gainValueScaled;
-    if (gainValue >= 1) {
-      gainValueScaled =
-        ((channel.maxGain - 1) / (FaderMaxPosition - FaderIdlePosition)) * (gainValue - FaderIdlePosition) + 1;
-    } else {
-      gainValueScaled = gainValue;
-    }
-    return gainValueScaled;
-  };
 
   const [faderPosition, setFaderPosition] = useState(getFaderPosition(FaderIdlePosition));
   const faderRail = useRef<HTMLDivElement>(null);
@@ -98,7 +89,7 @@ const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
     const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
     const faderGainValue = FaderMaxPosition - faderPositionScaled;
 
-    channel.setGain(getScaledGainValue(faderGainValue));
+    channel.setGain(getScaledGainValue(faderGainValue, channel.maxGain));
     setFaderPosition(getFaderPosition(faderGainValue));
   };
 
