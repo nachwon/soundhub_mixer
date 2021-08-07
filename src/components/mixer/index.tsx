@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useEffect } from "react";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
@@ -13,28 +13,27 @@ interface SoundHubMixerProps {
 }
 
 const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
-  const mixer = props.mixer;
+  const mixer = useRef(props.mixer);
   const [channels, setChannels] = useState<Array<Channel>>([]);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [_, setCurrentTime] = useState<number>(0);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentTime(mixer.audioCtx.currentTime);
+      setCurrentTime(mixer.current.currentTime);
     }, 10);
-
     return () => clearInterval(intervalId);
-  }, [mixer.audioCtx.currentTime]);
+  }, []);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
 
     if (files) {
-      mixer.addChannel({
+      mixer.current.addChannel({
         title: files[0]?.name,
         src: files[0],
       });
 
-      setChannels(mixer.channels);
+      setChannels(mixer.current.channels);
     } else {
       return;
     }
@@ -48,10 +47,10 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
         <S.MasterChannelContainer>
           {/* <S.SoundHubIcon /> */}
           <S.SoundHubLogo />
-          <MasterChannelComponent masterChannel={mixer.masterChannel} />
+          <MasterChannelComponent masterChannel={mixer.current.masterChannel} />
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
-      <ProgressController mixer={mixer} />
+      <ProgressController mixer={mixer.current} />
     </S.MixerContainer>
   );
 };

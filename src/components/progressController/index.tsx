@@ -1,4 +1,3 @@
-import { MouseEventHandler } from "react";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";

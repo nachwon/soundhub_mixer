@@ -35,7 +35,12 @@ class Mixer {
     return this.#channels;
   }
 
+  get currentTime() {
+    return this.audioCtx.currentTime;
+  }
+
   constructor() {
+    console.log("INIT!!!");
     this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 
@@ -127,7 +132,6 @@ class Mixer {
       this.#startTime = 0;
       this.#offsetTime = 0;
     }
-    console.log(this.#elapsedTime);
   }
 
   pause() {
