@@ -39,10 +39,12 @@ const ChannelVolumeMeterCanvas: React.FC<ChannelVolumeMeterCanvasProps> = (props
     });
   }, [channel, channel.audioCtx.currentTime]);
 
+  const faderWidth = MIXER_STYLES.faderWidth / 2;
+
   return (
     <S.ChannelVolumeMeterContainer>
-      <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth / 2} position={"L"} {...leftMeterProps} />
-      <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth / 2} position={"R"} {...rightMeterProps} />
+      <VolumeMeterCanvas meterWidth={faderWidth} position={"L"} {...leftMeterProps} />
+      <VolumeMeterCanvas meterWidth={faderWidth} position={"R"} {...rightMeterProps} />
     </S.ChannelVolumeMeterContainer>
   );
 };
