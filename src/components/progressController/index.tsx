@@ -1,3 +1,4 @@
+import { MouseEventHandler } from "react";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";
@@ -21,13 +22,25 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
       setProgress(0);
     } else {
       if (mixer.isPlaying) {
-        setProgress((mixer.currentDuration / mixer.duration) * 100);
         if (!isSeeking.current) {
           setCurrentTime(mixer.currentDuration);
+          setProgress((mixer.currentDuration / mixer.duration) * 100);
         }
       }
     }
   }, [mixer.audioCtx.currentTime, mixer.currentDuration, mixer.duration, mixer.isPlaying, mixer.elapsedTime]);
+
+  const getPointerPosition = (e: MouseEvent, toPercent: boolean = false) => {
+    if (!progressBarRef.current) {
+      return 0;
+    }
+    const progressBarRect = progressBarRef.current.getBoundingClientRect();
+    const positionX =
+      Math.min(Math.max(e.clientX, progressBarRect.left), progressBarRect.left + progressBarRect.width) -
+      progressBarRect.left;
+
+    return toPercent ? positionX / progressBarRect.width : positionX;
+  };
 
   const handleMixerStop = (e: React.MouseEvent) => {
     mixer.stop();
@@ -41,36 +54,29 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
     window.addEventListener("mouseup", handleProgressBarMouseUp);
   };
 
-  const calculateCurrentTime = (e: any) => {
-    if (!progressBarRef.current) {
-      return 0;
-    }
-    const positionX = e.clientX - progressBarRef.current.getBoundingClientRect().left;
-    const positionPercent = positionX / progressBarRef.current.getBoundingClientRect().width;
-    return mixer.duration * positionPercent;
-  };
-
   const handleProgressBarMouseMove = (e: any) => {
     if (!progressBarRef.current) {
       return;
     }
-    const positionX = e.clientX - progressBarRef.current.getBoundingClientRect().left;
+    const positionX = getPointerPosition(e);
     setPointerPosition(positionX);
     if (isSeeking.current) {
-      const newCurrentTime = calculateCurrentTime(e);
+      const positionXPercent = getPointerPosition(e, true);
+      setProgress(positionXPercent * 100);
+      const newCurrentTime = positionXPercent * mixer.duration;
       setCurrentTime(newCurrentTime);
     }
   };
 
   const handleProgressBarMouseUp = (e: any) => {
-    const offsetX = e.offsetX;
-    if (!offsetX || !progressBarRef.current) {
+    if (!progressBarRef.current) {
       return;
     }
 
-    console.log(offsetX);
-    const relativeDuration = (offsetX / progressBarRef.current.getBoundingClientRect().width) * mixer.duration;
-    setProgress((relativeDuration / mixer.duration) * 100);
+    const positionXPercent = getPointerPosition(e, true);
+    const relativeDuration = positionXPercent * mixer.duration;
+    setProgress(positionXPercent * 100);
+    setCurrentTime(mixer.duration * positionXPercent);
     mixer.seek(relativeDuration);
     window.removeEventListener("mousemove", handleProgressBarMouseMove);
     window.removeEventListener("mouseup", handleProgressBarMouseUp);

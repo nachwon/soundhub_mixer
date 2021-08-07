@@ -8,9 +8,13 @@ class BaseMixerController {
     this.mixer = mixer;
   }
 
+  private getBoundedNumber(when: number): number {
+    return Math.min(Math.max(when, 0), this.mixer.duration);
+  }
+
   playChannels(when: number, offset: number) {
     for (let channel of this.mixer.channels) {
-      channel.play(when, offset);
+      channel.play(this.getBoundedNumber(when), this.getBoundedNumber(offset));
     }
     return true;
   }
@@ -38,7 +42,7 @@ class BaseMixerController {
     }
 
     for (let channel of this.mixer.channels) {
-      channel.seek(when, offset);
+      channel.seek(this.getBoundedNumber(when), this.getBoundedNumber(offset));
     }
     return true;
   }
