@@ -12,13 +12,23 @@ export const PannerSection = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   border-bottom: 1px solid black;
+  position: relative;
 `;
 
 interface PannerComponentProps {
   value?: number;
 }
 
-export const PannerContainer = styled.div.attrs<PannerComponentProps>((props) => ({
+export const PannerContainer = styled.div`
+  width: 37px;
+  height: 37px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Panner = styled.div.attrs<PannerComponentProps>((props) => ({
   style: {
     transform: `rotate(${props.value ? props.value : 0}deg)`,
   },
@@ -30,6 +40,8 @@ export const PannerContainer = styled.div.attrs<PannerComponentProps>((props) =>
   width: ${knobSize}px;
   height: ${knobSize}px;
   border-radius: 50%;
+  z-index: 10;
+  position: absolute;
 `;
 
 export const PannerKnobTop = styled.div`
@@ -93,7 +105,6 @@ export const PannerPointer = styled.div`
 export const PannerValueDisplay = styled.div`
   width: 80%;
   height: 15px;
-  margin-top: 5px;
   background: #0d031d;
   border-radius: 3px;
   box-shadow: inset 1px 1px 1px 1px black;
@@ -103,4 +114,57 @@ export const PannerValueDisplay = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 11px;
+`;
+
+export const PannerRangeIndicator = styled.div`
+  width: 37px;
+  height: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  overflow: hidden;
+`;
+
+export const PannerRangeTick = styled.div`
+  width: 1px;
+  height: 100%;
+  position: absolute;
+  transform: rotate(${(props: { deg: number }) => props.deg}deg);
+  border-left: 1px solid #b7b7b7;
+`;
+
+export const PannerRangeCenterTick = styled.div`
+  width: 1px;
+  height: 50%;
+  top: 0;
+  position: absolute;
+  transform: rotate(${(props: { deg: number }) => props.deg}deg);
+  border-left: 1px solid #b7b7b7;
+`;
+
+export const PannerRangeMask = styled.div`
+  z-index: 1;
+  width: 29px;
+  height: 29px;
+  background-color: #222323;
+  position: absolute;
+  border-radius: 50%;
+`;
+
+export const PannerRangeOuterBorder = styled.div`
+  width: 37px;
+  height: 37px;
+  background-color: transparent;
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid #b7b7b7;
+`;
+
+export const PannerRangeBottomMask = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #222323;
+  z-index: 2;
+  transform: translateY(73%) rotate(45deg);
 `;

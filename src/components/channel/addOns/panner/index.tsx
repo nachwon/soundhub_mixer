@@ -57,13 +57,24 @@ const Panner: React.FC<PannerProps> = (props) => {
   return (
     <S.PannerSection>
       <S.PannerContainer>
-        <S.PannerKnobTop ref={pannerRef} onMouseDown={handlePannerMouseDown}>
-          <S.PannerPointerWrapper value={pannerDeg}>
-            <S.PannerPointer />
-          </S.PannerPointerWrapper>
-          <S.PannerKnobPlate />
-          <S.PannerKnobPlateMask />
-        </S.PannerKnobTop>
+        <S.PannerRangeIndicator>
+          <S.PannerRangeMask />
+          <S.PannerRangeBottomMask />
+          <S.PannerRangeOuterBorder />
+          <S.PannerRangeCenterTick deg={0} />
+          <S.PannerRangeTick deg={45} />
+          <S.PannerRangeTick deg={90} />
+          <S.PannerRangeTick deg={135} />
+        </S.PannerRangeIndicator>
+        <S.Panner>
+          <S.PannerKnobTop ref={pannerRef} onMouseDown={handlePannerMouseDown}>
+            <S.PannerPointerWrapper value={pannerDeg}>
+              <S.PannerPointer />
+            </S.PannerPointerWrapper>
+            <S.PannerKnobPlate />
+            <S.PannerKnobPlateMask />
+          </S.PannerKnobTop>
+        </S.Panner>
       </S.PannerContainer>
       <S.PannerValueDisplay>{processPannerDisplayValue(pannerDeg)}</S.PannerValueDisplay>
     </S.PannerSection>
