@@ -87,7 +87,9 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
       <S.MixerPlayButton
         playing={mixer.isPlaying}
         onClick={() => {
-          mixer.playToggle();
+          if (mixer.channelsLoaded) {
+            mixer.playToggle();
+          }
         }}
       />
       <S.MixerStopButton onClick={handleMixerStop} />

@@ -63,6 +63,9 @@ class Mixer {
   }
 
   get channelsLoaded() {
+    if (this.#channels.length === 0) {
+      return false;
+    }
     return this.#channels.every((channel) => channel.loaded);
   }
 
