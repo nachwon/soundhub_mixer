@@ -13,7 +13,7 @@ export const THEME = {
 
 export const MaxChannelCount = 8;
 
-export const MIXER_STYLES = {
+export const MIXER_SETTINGS = {
   mixerBackgroundColor: "#242526",
   channelHeight: 550,
   channelWidth: 80,
@@ -21,4 +21,6 @@ export const MIXER_STYLES = {
   numberOfChannels: MaxChannelCount,
   faderLength: 280,
   faderWidth: 10,
+  faderMaxPosition: 1.4,
+  faderIdlePosition: 1,
 };

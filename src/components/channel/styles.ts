@@ -1,17 +1,17 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
-import { MIXER_STYLES, THEME } from "../../constants";
+import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
-  height: ${MIXER_STYLES.channelHeight}px;
-  width: ${MIXER_STYLES.channelWidth}px;
+  height: ${MIXER_SETTINGS.channelHeight}px;
+  width: ${MIXER_SETTINGS.channelWidth}px;
   display: inline-flex;
   padding: 5px;
 `;
 
 export const ChannelsContainer = styled.div`
-  height: ${MIXER_STYLES.channelHeight}px;
-  width: ${MIXER_STYLES.channelWidth * MIXER_STYLES.numberOfChannels}px;
+  height: ${MIXER_SETTINGS.channelHeight}px;
+  width: ${MIXER_SETTINGS.channelWidth * MIXER_SETTINGS.numberOfChannels}px;
   display: inline-flex;
   box-shadow: inset 0px 0px 4px 0 black;
   border-radius: 4px;
@@ -20,8 +20,8 @@ export const ChannelsContainer = styled.div`
 
 export const ChannelInnerWrapper = styled.div`
   position: relative;
-  height: ${MIXER_STYLES.channelHeight - MIXER_STYLES.channelTopBottomPadding * 2}px;
-  width: ${MIXER_STYLES.channelWidth - 10}px;
+  height: ${MIXER_SETTINGS.channelHeight - MIXER_SETTINGS.channelTopBottomPadding * 2}px;
+  width: ${MIXER_SETTINGS.channelWidth - 10}px;
   background: #222222;
   display: inline-flex;
   padding: 5px 0;
@@ -90,8 +90,8 @@ export const ChannelUserInfoSection = styled.div`
 `;
 
 export const EmptyChannel = styled.div`
-  height: ${MIXER_STYLES.channelHeight - MIXER_STYLES.channelTopBottomPadding * 2}px;
-  width: ${MIXER_STYLES.channelWidth - 10}px;
+  height: ${MIXER_SETTINGS.channelHeight - MIXER_SETTINGS.channelTopBottomPadding * 2}px;
+  width: ${MIXER_SETTINGS.channelWidth - 10}px;
   background: linear-gradient(45deg, #222222 45%, #2a2a2a 100%);
   display: inline-flex;
   padding: 5px 0;

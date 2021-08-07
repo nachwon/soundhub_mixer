@@ -1,4 +1,4 @@
-import { MIXER_STYLES } from "../constants";
+import { MIXER_SETTINGS } from "../constants";
 import axios from "axios";
 
 export class BufferExtractor {
@@ -43,7 +43,7 @@ export const toDBFS = (buffer: Array<number>) => {
 };
 
 export const dBFSToMeterHeight = (dBFS: number) => {
-  return ((-dBFS - 48) * MIXER_STYLES.faderLength) / -48;
+  return ((-dBFS - 48) * MIXER_SETTINGS.faderLength) / -48;
 };
 
 export const toMMSS = (sec_num: number) => {

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MIXER_STYLES } from "../../../../constants";
+import { MIXER_SETTINGS } from "../../../../constants";
 
 export const FaderSection = styled.div`
   width: 100%;
@@ -12,7 +12,7 @@ export const FaderSection = styled.div`
 
 export const FaderRail = styled.div`
   width: 10px;
-  height: ${MIXER_STYLES.faderLength}px;
+  height: ${MIXER_SETTINGS.faderLength}px;
   background: #111111;
   border-radius: 2px;
   position: relative;

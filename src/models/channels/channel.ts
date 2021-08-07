@@ -5,7 +5,6 @@ class Channel implements FaderInterface {
   index: number;
   #audioCtx: AudioContext;
   #buffer?: AudioBuffer;
-  #maxGain: number = 1.4;
 
   // Meta
   title?: string;
@@ -29,7 +28,7 @@ class Channel implements FaderInterface {
   }
 
   get maxGain() {
-    return this.#maxGain;
+    return this.gainController.maxGain;
   }
 
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {

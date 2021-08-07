@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { MIXER_STYLES } from "../../constants";
+import { MIXER_SETTINGS } from "../../constants";
 import { dBFSToMeterHeight } from "../../utils";
 import * as S from "./styles";
 
@@ -22,12 +22,12 @@ const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = (props) => {
       if (!canvasCtx) {
         return;
       }
-      canvasCtx.clearRect(0, 0, MIXER_STYLES.faderWidth, MIXER_STYLES.faderLength);
+      canvasCtx.clearRect(0, 0, MIXER_SETTINGS.faderWidth, MIXER_SETTINGS.faderLength);
       for (let i = 0; i < meterHeight; i++) {
         if (i % 3 === 0) {
           continue;
         }
-        canvasCtx.fillRect(2, MIXER_STYLES.faderLength - i, 8, 1);
+        canvasCtx.fillRect(2, MIXER_SETTINGS.faderLength - i, 8, 1);
       }
     };
 
@@ -35,9 +35,9 @@ const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = (props) => {
       if (!canvasCtx) {
         return;
       }
-      canvasCtx.clearRect(0, 0, MIXER_STYLES.faderWidth, MIXER_STYLES.faderLength);
+      canvasCtx.clearRect(0, 0, MIXER_SETTINGS.faderWidth, MIXER_SETTINGS.faderLength);
       canvasCtx.globalAlpha = counter < 70 ? 1 : (100 - counter) / 70;
-      canvasCtx.fillRect(1, MIXER_STYLES.faderLength - peakHeight, 8, 1);
+      canvasCtx.fillRect(1, MIXER_SETTINGS.faderLength - peakHeight, 8, 1);
     };
 
     drawMeter(canvasCtx, dBFSToMeterHeight(props.dBFS));
@@ -91,14 +91,14 @@ const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = (props) => {
         meterWidth={props.meterWidth}
         ref={canvasRef}
         width={props.meterWidth}
-        height={MIXER_STYLES.faderLength}
+        height={MIXER_SETTINGS.faderLength}
       />
       <S.ChannelVolumeMeter
         position={props.position}
         meterWidth={props.meterWidth}
         ref={peakRef}
         width={props.meterWidth}
-        height={MIXER_STYLES.faderLength}
+        height={MIXER_SETTINGS.faderLength}
       />
     </>
   );

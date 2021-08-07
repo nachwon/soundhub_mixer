@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MasterChannel } from "../../models/channels";
 import * as S from "./styles";
-import { MIXER_STYLES } from "../../constants";
+import { MIXER_SETTINGS } from "../../constants";
 import VolumeMeterCanvas from "../volumeMeter";
 
 interface MasterChannelVolumeMetersProps {
@@ -49,7 +49,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
     <S.MasterChannelMeter>
       <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
-          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} {...leftMeterProps} />
+          <VolumeMeterCanvas meterWidth={MIXER_SETTINGS.faderWidth} {...leftMeterProps} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>L</S.MeterLabel>
       </S.MeterRail>
@@ -60,7 +60,7 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
       </S.MasterChannelMeterTicksContainer>
       <S.MeterRail>
         <S.ChannelVolumeMeterContainer>
-          <VolumeMeterCanvas meterWidth={MIXER_STYLES.faderWidth} {...rightMeterProps} />
+          <VolumeMeterCanvas meterWidth={MIXER_SETTINGS.faderWidth} {...rightMeterProps} />
         </S.ChannelVolumeMeterContainer>
         <S.MeterLabel>R</S.MeterLabel>
       </S.MeterRail>
@@ -72,13 +72,26 @@ interface MasterChannelProps {
   masterChannel: MasterChannel;
 }
 
+const FaderMaxPosition = MIXER_SETTINGS.faderMaxPosition;
+const FaderIdlePosition = MIXER_SETTINGS.faderIdlePosition;
+
 const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
   const masterChannel: MasterChannel = props.masterChannel;
   const getFaderPosition = (gain: number) => {
-    return (1 - gain / masterChannel.maxGain) * 100;
+    return (1 - gain / FaderMaxPosition) * 100;
+  };
+  const getScaledGainValue = (gainValue: number) => {
+    let gainValueScaled;
+    if (gainValue >= 1) {
+      gainValueScaled =
+        ((masterChannel.maxGain - 1) / (FaderMaxPosition - FaderIdlePosition)) * (gainValue - FaderIdlePosition) + 1;
+    } else {
+      gainValueScaled = gainValue;
+    }
+    return gainValueScaled;
   };
 
-  const [faderPosition, setFaderPosition] = useState(getFaderPosition(1));
+  const [faderPosition, setFaderPosition] = useState(getFaderPosition(FaderIdlePosition));
   const faderRail = useRef<HTMLDivElement>(null);
 
   const renderTicks = () => {
@@ -102,9 +115,9 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
     const faderRailTop = rect.top;
     const faderPosition = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
     const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
-    const faderGainValue = masterChannel.maxGain - faderPositionScaled;
+    const faderGainValue = FaderMaxPosition - faderPositionScaled;
 
-    masterChannel.setGain(faderGainValue);
+    masterChannel.setGain(getScaledGainValue(faderGainValue));
     setFaderPosition(getFaderPosition(faderGainValue));
   };
 

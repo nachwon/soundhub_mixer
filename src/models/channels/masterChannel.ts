@@ -7,7 +7,7 @@ class MasterChannel implements FaderInterface {
   #audioCtx: AudioContext;
   #masterGainController: MasterGainController;
   #analyser: AudioAnalyser;
-  #maxGain: number = 1.4;
+  #maxGain: number = 3;
 
   constructor(audioCtx: AudioContext, mixer: Mixer) {
     this.mixer = mixer;

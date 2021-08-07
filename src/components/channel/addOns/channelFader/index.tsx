@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MIXER_STYLES } from "../../../../constants";
+import { MIXER_SETTINGS } from "../../../../constants";
 import { Channel } from "../../../../models/channels";
 import { FaderInterface } from "../../../../types";
 import VolumeMeterCanvas from "../../../volumeMeter";
@@ -39,7 +39,7 @@ const ChannelVolumeMeterCanvas: React.FC<ChannelVolumeMeterCanvasProps> = (props
     });
   }, [channel, channel.audioCtx.currentTime]);
 
-  const faderWidth = MIXER_STYLES.faderWidth / 2;
+  const faderWidth = MIXER_SETTINGS.faderWidth / 2;
 
   return (
     <S.ChannelVolumeMeterContainer>
@@ -53,13 +53,26 @@ interface ChannelFaderProps {
   channel: Channel;
 }
 
+const FaderMaxPosition = MIXER_SETTINGS.faderMaxPosition;
+const FaderIdlePosition = MIXER_SETTINGS.faderIdlePosition;
+
 const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
   const channel = props.channel;
   const getFaderPosition = (gain: number) => {
-    return (1 - gain / channel.maxGain) * 100;
+    return (1 - gain / FaderMaxPosition) * 100;
+  };
+  const getScaledGainValue = (gainValue: number) => {
+    let gainValueScaled;
+    if (gainValue >= 1) {
+      gainValueScaled =
+        ((channel.maxGain - 1) / (FaderMaxPosition - FaderIdlePosition)) * (gainValue - FaderIdlePosition) + 1;
+    } else {
+      gainValueScaled = gainValue;
+    }
+    return gainValueScaled;
   };
 
-  const [faderPosition, setFaderPosition] = useState(getFaderPosition(1));
+  const [faderPosition, setFaderPosition] = useState(getFaderPosition(FaderIdlePosition));
   const faderRail = useRef<HTMLDivElement>(null);
 
   const renderTicks = () => {
@@ -83,9 +96,9 @@ const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
     const faderRailTop = rect.top;
     const faderPosition = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
     const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
-    const faderGainValue = channel.maxGain - faderPositionScaled;
+    const faderGainValue = FaderMaxPosition - faderPositionScaled;
 
-    channel.setGain(faderGainValue);
+    channel.setGain(getScaledGainValue(faderGainValue));
     setFaderPosition(getFaderPosition(faderGainValue));
   };
 
