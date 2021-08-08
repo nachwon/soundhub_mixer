@@ -52,23 +52,52 @@ const ChannelVolumeMeterCanvas: React.FC<ChannelVolumeMeterCanvasProps> = (props
 
 interface ChannelFaderProps {
   channel: Channel;
+  pressedKey?: string;
 }
 
 const FaderMaxPosition = MIXER_SETTINGS.faderMaxPosition;
 const FaderIdlePosition = MIXER_SETTINGS.faderIdlePosition;
+const NumberOfTicks = 15;
 
-const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
-  const channel = props.channel;
-  const getFaderPosition = (gain: number) => {
-    return (1 - gain / FaderMaxPosition) * 100;
-  };
+const defaultCalculator = (gain: number) => {
+  const faderPosition = (1 - gain / FaderMaxPosition) * 100;
+  const tickUnitHeightPercent = 100 / ((NumberOfTicks - 1) * 2);
+  return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
+};
 
-  const [faderPosition, setFaderPosition] = useState(getFaderPosition(FaderIdlePosition));
+const fineTuningCalculator = (gain: number) => {
+  return (1 - gain / FaderMaxPosition) * 100;
+};
+
+const snappingClaculator = (gain: number) => {
+  const faderPosition = (1 - gain / FaderMaxPosition) * 100;
+  const tickUnitHeightPercent = 100 / (NumberOfTicks - 1);
+  return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
+};
+
+const FaderPositionCalculator: { [k: string]: (gain: number) => number } = {
+  default: defaultCalculator,
+  ShiftLeft: fineTuningCalculator,
+  MetaLeft: snappingClaculator,
+};
+
+const ChannelFader: React.FC<ChannelFaderProps> = ({ channel, pressedKey = "default" }) => {
+  const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
+  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(FaderIdlePosition));
   const faderRail = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const calcFunc = FaderPositionCalculator[pressedKey];
+    if (!calcFunc) {
+      faderPositionCalculator.current = defaultCalculator;
+    } else {
+      faderPositionCalculator.current = calcFunc;
+    }
+  }, [pressedKey]);
 
   const renderTicks = () => {
     const ticksArray = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < NumberOfTicks; i++) {
       ticksArray.push(<S.FaderTick key={i} />);
     }
     return ticksArray;
@@ -90,7 +119,7 @@ const ChannelFader: React.FC<ChannelFaderProps> = (props) => {
     const faderGainValue = FaderMaxPosition - faderPositionScaled;
 
     channel.setGain(getScaledGainValue(faderGainValue, channel.maxGain));
-    setFaderPosition(getFaderPosition(faderGainValue));
+    setFaderPosition(faderPositionCalculator.current(faderGainValue));
   };
 
   const removeGlobalFaderEvents = (e: MouseEvent) => {

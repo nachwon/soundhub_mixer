@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
 import ChannelFader from "./addOns/channelFader";
@@ -27,10 +28,10 @@ const EmptyChannel: React.FC = () => {
 
 interface ChannelComponentProps {
   channel: Channel;
+  pressedKey?: string;
 }
 
-const ChannelComponent: React.FC<ChannelComponentProps> = (props) => {
-  const channel = props.channel;
+const ChannelComponent: React.FC<ChannelComponentProps> = ({ channel, pressedKey = "default" }) => {
   return (
     <S.Channel>
       <S.ChannelInnerWrapper>
@@ -40,7 +41,7 @@ const ChannelComponent: React.FC<ChannelComponentProps> = (props) => {
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
         <Panner channel={channel} />
-        <ChannelFader channel={channel} />
+        <ChannelFader channel={channel} pressedKey={pressedKey} />
         <ChannelName channel={channel} />
       </S.ChannelInnerWrapper>
     </S.Channel>
@@ -53,11 +54,31 @@ interface ChannelsContainerProps {
 
 const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
   const channels = props.channels.concat(Array(MaxChannelCount - props.channels.length));
+  const [pressedKey, setPressedKey] = useState<string>("default");
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    setPressedKey(e.code);
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    setPressedKey("default");
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+  }, []);
 
   const renderChannels = () => {
     const children = [];
     for (let i = 0; i < channels.length; i++) {
-      children.push(channels[i] ? <ChannelComponent key={i} channel={channels[i]} /> : <EmptyChannel key={i} />);
+      children.push(
+        channels[i] ? (
+          <ChannelComponent key={i} channel={channels[i]} pressedKey={pressedKey} />
+        ) : (
+          <EmptyChannel key={i} />
+        )
+      );
     }
     return children;
   };
