@@ -54,6 +54,14 @@ const Panner: React.FC<PannerProps> = (props) => {
     }
   };
 
+  const renderTicks = () => {
+    const ticks = [];
+    for (let i of [...Array(4).keys()]) {
+      ticks.push(i === 0 ? <S.PannerRangeCenterTick key={i} deg={i} /> : <S.PannerRangeTick key={i} deg={i * 45} />);
+    }
+    return ticks;
+  };
+
   return (
     <S.PannerSection>
       <S.PannerContainer>
@@ -61,10 +69,7 @@ const Panner: React.FC<PannerProps> = (props) => {
           <S.PannerRangeMask />
           <S.PannerRangeBottomMask />
           <S.PannerRangeOuterBorder />
-          <S.PannerRangeCenterTick deg={0} />
-          <S.PannerRangeTick deg={45} />
-          <S.PannerRangeTick deg={90} />
-          <S.PannerRangeTick deg={135} />
+          {renderTicks()}
         </S.PannerRangeIndicator>
         <S.Panner>
           <S.PannerKnobTop ref={pannerRef} onMouseDown={handlePannerMouseDown}>
