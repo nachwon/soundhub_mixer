@@ -87,13 +87,15 @@ export const MasterFaderHandle = styled.div.attrs<FaderHandleProps>((props) => (
   border-radius: 1px;
   background: linear-gradient(
     180deg,
+    #a50000 0%,
     #c02727 10%,
     #490303 4%,
     #8b3232 48%,
     white 4%,
     #5c1717 52%,
-    #ff4747 89%,
-    #3d0303 90%
+    #ff3d3d 89%,
+    #770202 90%,
+    #0c0000 100%
   );
 `;
 

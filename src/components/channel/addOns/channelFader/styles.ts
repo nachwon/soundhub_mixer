@@ -57,13 +57,15 @@ export const FaderHandle = styled.div.attrs<FaderHandleProps>((props) => ({
   height: 50px;
   background: linear-gradient(
     180deg,
+    #2b2b2b 0%,
     #4e4e4e 10%,
     #080808 4%,
     #333333 48%,
     white 4%,
     #333333 52%,
     dimgrey 89%,
-    #232323 90%
+    #232323 90%,
+    #0e0e0e 100%
   );
   box-shadow: 7px 4px 7px 1px black;
   position: absolute;
