@@ -1,5 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { useEffect } from "react";
+import { FileInputId } from "../../constants";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
 import ChannelsContainer from "../channel";
@@ -48,6 +49,7 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
       });
 
       setChannels(mixer.current.channels);
+      e.target.value = "";
     } else {
       return;
     }
@@ -55,7 +57,7 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
 
   return (
     <S.MixerContainer>
-      <input type="file" onChange={handleFileSelect} />
+      <input type="file" id={FileInputId} onChange={handleFileSelect} />
       <S.MixerInnerWrapper>
         <ChannelsContainer channels={channels} pressedKey={pressedKey} />
         <S.MasterChannelContainer>

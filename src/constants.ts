@@ -11,6 +11,7 @@ export const THEME = {
   PROFILE_IMG_BACKGROUND: "#333333",
 };
 
+export const FileInputId = "file-input";
 export const MaxChannelCount = 8;
 
 export const MIXER_SETTINGS = {

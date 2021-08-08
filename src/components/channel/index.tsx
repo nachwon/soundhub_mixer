@@ -1,5 +1,5 @@
 import React from "react";
-import { MaxChannelCount } from "../../constants";
+import { FileInputId, MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
@@ -19,6 +19,7 @@ const EmptyChannel: React.FC = () => {
   return (
     <S.Channel>
       <S.EmptyChannel>
+        <S.AddFileButton htmlFor={FileInputId} />
         <S.EmptyChannelInner>SOUNDHUB</S.EmptyChannelInner>
       </S.EmptyChannel>
     </S.Channel>

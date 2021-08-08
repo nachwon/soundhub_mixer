@@ -90,6 +90,23 @@ export const ChannelUserInfoSection = styled.div`
   flex-shrink: 0;
 `;
 
+export const AddFileButton = styled.label`
+  border-radius: 5px;
+  position: absolute;
+  top: 24px;
+  height: 35px;
+  width: 35px;
+  background-size: 25px;
+  background-repeat: no-repeat;
+  border: 1px solid #1d1d1d;
+  background-color: transparent;
+  background-position: center;
+  background-image: url(${musicFile});
+  opacity: 0;
+  transition-duration: 0.2s;
+  cursor: pointer;
+`;
+
 export const EmptyChannel = styled.div`
   height: ${MIXER_SETTINGS.channelHeight - MIXER_SETTINGS.channelTopBottomPadding * 2}px;
   width: ${MIXER_SETTINGS.channelWidth - 10}px;
@@ -101,6 +118,12 @@ export const EmptyChannel = styled.div`
   box-shadow: 0 0 3px 0px black;
   justify-content: center;
   align-items: center;
+  position: relative;
+  :hover {
+    ${AddFileButton} {
+      opacity: 1;
+    }
+  }
 `;
 
 export const EmptyChannelInner = styled.div`
