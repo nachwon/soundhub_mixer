@@ -6,7 +6,7 @@ interface PannerProps {
   channel: Channel;
 }
 
-const MaxPanAngle = 125;
+const MaxPanAngle = 136;
 
 const Panner: React.FC<PannerProps> = (props) => {
   const channel = props.channel;
