@@ -39,7 +39,7 @@ const ChannelComponent: React.FC<ChannelComponentProps> = ({ channel, pressedKey
           {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
-        <Panner channel={channel} />
+        <Panner channel={channel} pressedKey={pressedKey} />
         <ChannelFader channel={channel} pressedKey={pressedKey} />
         <ChannelName channel={channel} />
       </S.ChannelInnerWrapper>

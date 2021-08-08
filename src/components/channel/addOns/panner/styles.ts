@@ -92,7 +92,7 @@ export const PannerPointerWrapper = styled.div.attrs<PannerComponentProps>((prop
 
 export const PannerPointer = styled.div`
   width: 3px;
-  height: ${knobSize / 2 - 2}px;
+  height: 11px;
   background: #c5c5c5;
   display: inline-block;
   border-radius: 2px;

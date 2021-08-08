@@ -1,17 +1,49 @@
 import React, { useState, useRef } from "react";
+import { useEffect } from "react";
 import { Channel } from "../../../../models/channels";
 import * as S from "./styles";
 
 interface PannerProps {
   channel: Channel;
+  pressedKey?: string;
 }
 
-const MaxPanAngle = 136;
+const MaxPanAngle = 135;
+const UnitPannerValue = 5;
 
-const Panner: React.FC<PannerProps> = (props) => {
-  const channel = props.channel;
+const unitDegCalculator = (deg: number) => {
+  const unitAngle = (MaxPanAngle / 100) * UnitPannerValue;
+  return Math.round(deg / unitAngle) * unitAngle;
+};
+
+const doubleUnitDegCalculator = (deg: number) => {
+  const unitAngle = (MaxPanAngle / 100) * UnitPannerValue * 2;
+  return Math.round(deg / unitAngle) * unitAngle;
+};
+
+const fineTuningCalculator = (deg: number) => {
+  return deg;
+};
+
+const PannerDegCalculatorMap: { [k: string]: (deg: number) => number } = {
+  default: unitDegCalculator,
+  ShiftLeft: fineTuningCalculator,
+  MetaLeft: doubleUnitDegCalculator,
+};
+
+const Panner: React.FC<PannerProps> = ({ channel, pressedKey = "default" }) => {
   const pannerRef = useRef<HTMLDivElement>(null);
   const [pannerDeg, setPannerDeg] = useState<number>(0);
+  const pannerDegCalculator = useRef<(deg: number) => number>(unitDegCalculator);
+
+  useEffect(() => {
+    const calcFunc = PannerDegCalculatorMap[pressedKey];
+    if (!calcFunc) {
+      pannerDegCalculator.current = unitDegCalculator;
+    } else {
+      pannerDegCalculator.current = calcFunc;
+    }
+  }, [pressedKey]);
 
   const getPannerCenter = () => {
     if (!pannerRef.current) {
@@ -39,8 +71,9 @@ const Panner: React.FC<PannerProps> = (props) => {
     const lenX = e.clientX - pannerCenterX;
     const lenY = pannerCenterY - e.clientY;
     const deg = Math.max(Math.min(Math.round(Math.atan2(lenX, lenY) * (180 / Math.PI)), MaxPanAngle), -MaxPanAngle);
-    setPannerDeg(deg);
-    channel.setPan(deg / MaxPanAngle);
+    const calculatedDeg = pannerDegCalculator.current(deg);
+    setPannerDeg(calculatedDeg);
+    channel.setPan(calculatedDeg / MaxPanAngle);
   };
 
   const processPannerDisplayValue = (boundedDeg: number) => {

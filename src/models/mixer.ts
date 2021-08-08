@@ -40,7 +40,6 @@ class Mixer {
   }
 
   constructor() {
-    console.log("INIT!!!");
     this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 
