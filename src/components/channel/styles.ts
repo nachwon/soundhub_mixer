@@ -1,5 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
+import musicFile from "../../assets/music-file.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`

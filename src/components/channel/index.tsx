@@ -10,7 +10,7 @@ import * as S from "./styles";
 const LoadingSpinner: React.FC = () => {
   return (
     <S.SpinnerContainer>
-      <S.ChannelLoadingSpinner></S.ChannelLoadingSpinner>
+      <S.ChannelLoadingSpinner />
     </S.SpinnerContainer>
   );
 };

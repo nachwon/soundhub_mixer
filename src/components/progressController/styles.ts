@@ -52,7 +52,7 @@ export const MixerProgressBarContainer = styled.div`
 
 export const MixerProgressBarGuide = styled.div`
   width: 100%;
-  height: 10px;
+  height: 19px;
   border-radius: 3px;
   background: #393939;
   box-shadow: inset 1px 1px 2px 0 black;

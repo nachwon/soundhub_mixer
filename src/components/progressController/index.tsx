@@ -59,7 +59,7 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
     }
     const positionX = getPointerPosition(e);
     setPointerPosition(positionX);
-    if (isSeeking.current) {
+    if (isSeeking.current && mixer.channelsLoaded) {
       const positionXPercent = getPointerPosition(e, true);
       setProgress(positionXPercent * 100);
       const newCurrentTime = positionXPercent * mixer.duration;
@@ -68,7 +68,7 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
   };
 
   const handleProgressBarMouseUp = (e: any) => {
-    if (!progressBarRef.current) {
+    if (!progressBarRef.current || !mixer.channelsLoaded) {
       return;
     }
 
