@@ -22,6 +22,8 @@ export interface FaderHandleProps {
 
 export interface FaderInterface {
   audioCtx: AudioContext;
+  maxGain: number;
+  setGain: (value: number, when?: number) => void;
   getCurrentLevels: () => Array<number>;
   getPeaks: () => Array<number>;
   getCounters: () => Array<number>;

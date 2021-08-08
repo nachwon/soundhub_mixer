@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
-import { Channel, MasterChannel } from "../../../../models/channels";
+import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";
 
 interface useChannelFaderProps {
-  channel: Channel | MasterChannel;
+  channel: FaderInterface;
   pressedKey?: string;
 }
 
