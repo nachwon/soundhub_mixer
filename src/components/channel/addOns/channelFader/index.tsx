@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { Channel } from "../../../../models/channels";
 import { FaderInterface } from "../../../../types";
-import { getScaledGainValue } from "../../../../utils";
 import VolumeMeterCanvas from "../../../volumeMeter";
 import { useChannelFader } from "./hooks";
 import * as S from "./styles";

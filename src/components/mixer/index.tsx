@@ -16,12 +16,26 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
   const mixer = useRef(props.mixer);
   const [channels, setChannels] = useState<Array<Channel>>([]);
   const [_, setCurrentTime] = useState<number>(0);
+  const [pressedKey, setPressedKey] = useState<string>("default");
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(mixer.current.currentTime);
     }, 10);
     return () => clearInterval(intervalId);
+  }, []);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    setPressedKey(e.code);
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    setPressedKey("default");
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
   }, []);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,11 +57,11 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
     <S.MixerContainer>
       <input type="file" onChange={handleFileSelect} />
       <S.MixerInnerWrapper>
-        <ChannelsContainer channels={channels} />
+        <ChannelsContainer channels={channels} pressedKey={pressedKey} />
         <S.MasterChannelContainer>
           {/* <S.SoundHubIcon /> */}
           <S.SoundHubLogo />
-          <MasterChannelComponent masterChannel={mixer.current.masterChannel} />
+          <MasterChannelComponent masterChannel={mixer.current.masterChannel} pressedKey={pressedKey} />
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
       <ProgressController mixer={mixer.current} />

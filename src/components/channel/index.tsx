@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React from "react";
 import { MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
 import ChannelFader from "./addOns/channelFader";
@@ -50,31 +49,18 @@ const ChannelComponent: React.FC<ChannelComponentProps> = ({ channel, pressedKey
 
 interface ChannelsContainerProps {
   channels: Array<Channel>;
+  pressedKey?: string;
 }
 
 const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
   const channels = props.channels.concat(Array(MaxChannelCount - props.channels.length));
-  const [pressedKey, setPressedKey] = useState<string>("default");
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    setPressedKey(e.code);
-  };
-
-  const handleKeyUp = (e: KeyboardEvent) => {
-    setPressedKey("default");
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-  }, []);
 
   const renderChannels = () => {
     const children = [];
     for (let i = 0; i < channels.length; i++) {
       children.push(
         channels[i] ? (
-          <ChannelComponent key={i} channel={channels[i]} pressedKey={pressedKey} />
+          <ChannelComponent key={i} channel={channels[i]} pressedKey={props.pressedKey} />
         ) : (
           <EmptyChannel key={i} />
         )
