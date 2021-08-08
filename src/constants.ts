@@ -21,6 +21,6 @@ export const MIXER_SETTINGS = {
   numberOfChannels: MaxChannelCount,
   faderLength: 280,
   faderWidth: 10,
-  faderMaxPosition: 1.4,
-  faderIdlePosition: 1,
+  faderMaxPercent: 1.4,
+  faderIdlePercent: 1,
 };

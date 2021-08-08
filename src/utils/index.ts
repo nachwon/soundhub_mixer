@@ -63,8 +63,8 @@ export const getScaledGainValue = (gainValue: number, maxGain: number) => {
   let gainValueScaled;
   if (gainValue >= 1) {
     gainValueScaled =
-      ((maxGain - 1) / (MIXER_SETTINGS.faderMaxPosition - MIXER_SETTINGS.faderIdlePosition)) *
-        (gainValue - MIXER_SETTINGS.faderIdlePosition) +
+      ((maxGain - 1) / (MIXER_SETTINGS.faderMaxPercent - MIXER_SETTINGS.faderIdlePercent)) *
+        (gainValue - MIXER_SETTINGS.faderIdlePercent) +
       1;
   } else {
     gainValueScaled = gainValue;

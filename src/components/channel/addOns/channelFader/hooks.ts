@@ -8,22 +8,22 @@ interface useChannelFaderProps {
   pressedKey?: string;
 }
 
-const FaderMaxPosition = MIXER_SETTINGS.faderMaxPosition;
-const FaderIdlePosition = MIXER_SETTINGS.faderIdlePosition;
+const FaderMaxPercent = MIXER_SETTINGS.faderMaxPercent;
+const FaderIdlePercent = MIXER_SETTINGS.faderIdlePercent;
 const NumberOfTicks = 15;
 
 const defaultCalculator = (gain: number) => {
-  const faderPosition = (1 - gain / FaderMaxPosition) * 100;
+  const faderPosition = (1 - gain / FaderMaxPercent) * 100;
   const tickUnitHeightPercent = 100 / ((NumberOfTicks - 1) * 2);
   return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
 };
 
 const fineTuningCalculator = (gain: number) => {
-  return (1 - gain / FaderMaxPosition) * 100;
+  return (1 - gain / FaderMaxPercent) * 100;
 };
 
 const snappingClaculator = (gain: number) => {
-  const faderPosition = (1 - gain / FaderMaxPosition) * 100;
+  const faderPosition = (1 - gain / FaderMaxPercent) * 100;
   const tickUnitHeightPercent = 100 / (NumberOfTicks - 1);
   return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
 };
@@ -36,7 +36,7 @@ const FaderPositionCalculator: { [k: string]: (gain: number) => number } = {
 
 export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
-  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(FaderIdlePosition));
+  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(FaderIdlePercent));
   const faderRail = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,11 +59,12 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     }
     const rect = faderRail.current.getBoundingClientRect();
     const faderRailTop = rect.top;
-    const faderPosition = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
-    const faderPositionScaled = ((faderPosition / faderRail.current.offsetHeight) * 140) / 100;
-    const faderGainValue = FaderMaxPosition - faderPositionScaled;
+    const faderPositionPx = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
+    const faderGainValue = FaderMaxPercent - (faderPositionPx * FaderMaxPercent) / faderRail.current.offsetHeight;
+    const calculatedFaderPosition = faderPositionCalculator.current(faderGainValue);
+    const calculatedFaderGainValue = FaderMaxPercent - FaderMaxPercent * (calculatedFaderPosition / 100);
 
-    channel.setGain(getScaledGainValue(faderGainValue, channel.maxGain));
+    channel.setGain(getScaledGainValue(calculatedFaderGainValue, channel.maxGain));
     setFaderPosition(faderPositionCalculator.current(faderGainValue));
   };
 
