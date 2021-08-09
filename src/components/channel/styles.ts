@@ -113,6 +113,7 @@ export const AddFileButton = styled.label`
   transition-duration: 0.2s;
   cursor: pointer;
   animation: ${slideIn} linear 0.2s;
+  transition-duration: 0.2s;
 `;
 
 export const LinkFileButton = styled.label`
@@ -128,6 +129,24 @@ export const LinkFileButton = styled.label`
   transition-duration: 0.2s;
   cursor: pointer;
   animation: ${slideIn} linear 0.2s;
+  transition-duration: 0.2s;
+`;
+
+const expend = keyframes`
+  from {
+    width: 0%;
+  }
+  to {
+    width: 35%;
+  }
+`;
+
+export const ButtonsDivider = styled.div`
+  height: 1px;
+  width: 35%;
+  margin: 5px 0;
+  background-color: ${THEME.MAIN_COLOR_GREEN};
+  animation: ${expend} linear 0.2s;
 `;
 
 const fadeIn = keyframes`
@@ -151,11 +170,12 @@ export const AddChannelButtonsContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0000003d;
+  background: #00000070;
   border-radius: 5px;
   animation: ${fadeIn} linear 0.3s;
   border: 2px solid ${THEME.MAIN_COLOR_GREEN};
   box-shadow: 0px 0px 11px 0px #4cf7cf78;
+  cursor: auto;
 `;
 
 export const EmptyChannel = styled.div`

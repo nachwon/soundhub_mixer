@@ -47,6 +47,7 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
             }}
           >
             <S.AddFileButton htmlFor={FileInputId} />
+            <S.ButtonsDivider />
             <S.LinkFileButton htmlFor={FileInputId} />
           </S.AddChannelButtonsContainer>
         ) : null}
