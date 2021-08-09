@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
 import musicFile from "../../assets/music-file.png";
+import linkFile from "../../assets/cloud-computing.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
@@ -90,21 +91,71 @@ export const ChannelUserInfoSection = styled.div`
   flex-shrink: 0;
 `;
 
+const slideIn = keyframes`
+  from {
+    height: 0px;
+  }
+  to {
+    height: 35px;
+  }
+`;
+
 export const AddFileButton = styled.label`
   border-radius: 5px;
-  position: absolute;
-  top: 24px;
   height: 35px;
   width: 35px;
   background-size: 25px;
   background-repeat: no-repeat;
-  border: 1px solid #1d1d1d;
-  background-color: transparent;
   background-position: center;
   background-image: url(${musicFile});
-  opacity: 0;
+  opacity: 1;
+  -webkit-transition-duration: 0.2s;
   transition-duration: 0.2s;
   cursor: pointer;
+  animation: ${slideIn} linear 0.2s;
+`;
+
+export const LinkFileButton = styled.label`
+  border-radius: 5px;
+  height: 35px;
+  width: 35px;
+  background-size: 25px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(${linkFile});
+  opacity: 1;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  cursor: pointer;
+  animation: ${slideIn} linear 0.2s;
+`;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    border-color: #232626;
+    box-shadow: 0px 0px 0px 0px ${THEME.MAIN_COLOR_GREEN};
+  }
+  to {
+    opacity: 1;
+    border-color: ${THEME.MAIN_COLOR_GREEN};
+    box-shadow: 0px 0px 11px 0px #4cf7cf78;
+  }
+`;
+
+export const AddChannelButtonsContainer = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0000003d;
+  border-radius: 5px;
+  animation: ${fadeIn} linear 0.3s;
+  border: 2px solid ${THEME.MAIN_COLOR_GREEN};
+  box-shadow: 0px 0px 11px 0px #4cf7cf78;
 `;
 
 export const EmptyChannel = styled.div`
@@ -119,11 +170,7 @@ export const EmptyChannel = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  :hover {
-    ${AddFileButton} {
-      opacity: 1;
-    }
-  }
+  cursor: pointer;
 `;
 
 export const EmptyChannelInner = styled.div`

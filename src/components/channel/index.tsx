@@ -1,4 +1,6 @@
 import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 import { FileInputId, MaxChannelCount } from "../../constants";
 import { Channel } from "../../models/channels";
 import ChannelFader from "./addOns/channelFader";
@@ -15,11 +17,40 @@ const LoadingSpinner: React.FC = () => {
   );
 };
 
-const EmptyChannel: React.FC = () => {
+interface EmptyChannelProps {
+  index: number;
+  showingIndex?: number;
+  onClick: Function;
+}
+
+const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
+  const setShowingIndex = props.onClick;
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(props.index === props.showingIndex);
+  }, [props]);
+
   return (
     <S.Channel>
-      <S.EmptyChannel>
-        <S.AddFileButton htmlFor={FileInputId} />
+      <S.EmptyChannel
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowingIndex(props.index);
+        }}
+      >
+        {show ? (
+          <S.AddChannelButtonsContainer
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowingIndex(undefined);
+            }}
+          >
+            <S.AddFileButton htmlFor={FileInputId} />
+            <S.LinkFileButton htmlFor={FileInputId} />
+          </S.AddChannelButtonsContainer>
+        ) : null}
+
         <S.EmptyChannelInner>SOUNDHUB</S.EmptyChannelInner>
       </S.EmptyChannel>
     </S.Channel>
@@ -55,6 +86,16 @@ interface ChannelsContainerProps {
 
 const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
   const channels = props.channels.concat(Array(MaxChannelCount - props.channels.length));
+  const [showingIndex, setShowingIndex] = useState<number | undefined>();
+
+  useEffect(() => {
+    const eventHandler = (e: MouseEvent) => {
+      e.stopPropagation();
+      setShowingIndex(undefined);
+    };
+    window.addEventListener("click", eventHandler);
+    return () => window.removeEventListener("click", eventHandler);
+  }, []);
 
   const renderChannels = () => {
     const children = [];
@@ -63,7 +104,7 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
         channels[i] ? (
           <ChannelComponent key={i} channel={channels[i]} pressedKey={props.pressedKey} />
         ) : (
-          <EmptyChannel key={i} />
+          <EmptyChannel key={i} index={i} showingIndex={showingIndex} onClick={setShowingIndex} />
         )
       );
     }
