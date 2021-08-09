@@ -1,7 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
 import musicFile from "../../assets/music-file.png";
-import linkFile from "../../assets/cloud-computing.png";
+import linkFile from "../../assets/link.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
@@ -191,6 +191,10 @@ export const EmptyChannel = styled.div`
   align-items: center;
   position: relative;
   cursor: pointer;
+  transition-duration: 0.2s;
+  :hover {
+    border: 1px solid #4cf7cf;
+  }
 `;
 
 export const EmptyChannelInner = styled.div`
