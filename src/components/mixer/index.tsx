@@ -1,7 +1,5 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
-import { FileInputId } from "../../constants";
-import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
 import ChannelsContainer from "../channel";
 import MasterChannelComponent from "../masterChannel";
@@ -16,7 +14,6 @@ interface SoundHubMixerProps {
 
 const SoundHubMixer: React.FC<SoundHubMixerProps> = observer((props) => {
   const mixer = useRef(props.mixer);
-  const [channels, setChannels] = useState<Array<Channel>>([]);
   const [pressedKey, setPressedKey] = useState<string>("default");
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -32,27 +29,10 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = observer((props) => {
     window.addEventListener("keyup", handleKeyUp);
   }, []);
 
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files) {
-      mixer.current.addChannel({
-        title: files[0]?.name,
-        src: files[0],
-      });
-
-      setChannels(mixer.current.channels);
-      e.target.value = "";
-    } else {
-      return;
-    }
-  };
-
   return (
     <S.MixerContainer>
-      <input type="file" id={FileInputId} onChange={handleFileSelect} />
       <S.MixerInnerWrapper>
-        <ChannelsContainer channels={channels} pressedKey={pressedKey} />
+        <ChannelsContainer mixer={mixer.current} pressedKey={pressedKey} />
         <S.MasterChannelContainer>
           {/* <S.SoundHubIcon /> */}
           <S.SoundHubLogo />

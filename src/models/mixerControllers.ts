@@ -14,14 +14,14 @@ class BaseMixerController {
 
   playChannels(when: number, offset: number) {
     for (let channel of this.mixer.channels) {
-      channel.play(this.getBoundedNumber(when), this.getBoundedNumber(offset));
+      channel?.play(this.getBoundedNumber(when), this.getBoundedNumber(offset));
     }
     return true;
   }
 
   stopChannels() {
     for (let channel of this.mixer.channels) {
-      channel.stop();
+      channel?.stop();
     }
     return true;
   }
@@ -42,7 +42,7 @@ class BaseMixerController {
     }
 
     for (let channel of this.mixer.channels) {
-      channel.seek(this.getBoundedNumber(when), this.getBoundedNumber(offset));
+      channel?.seek(this.getBoundedNumber(when), this.getBoundedNumber(offset));
     }
     return true;
   }
