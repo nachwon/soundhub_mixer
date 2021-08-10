@@ -21,6 +21,11 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
 
   useEffect(() => {
     const updateProgress = () => {
+      if (!mixer.isPlaying) {
+        cancelAnimationFrame(animationRef.current);
+        return;
+      }
+
       if (mixer.isPlaying && !isSeeking.current) {
         const currentDuration = mixer.getCurrentDuration();
         setCurrentTime(currentDuration);
@@ -32,7 +37,7 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
     animationRef.current = requestAnimationFrame(updateProgress);
 
     return () => cancelAnimationFrame(animationRef.current);
-  }, [mixer]);
+  }, [mixer, mixer.isPlaying]);
 
   const getPointerPosition = (e: MouseEvent, toPercent: boolean = false) => {
     if (!progressBarRef.current) {
