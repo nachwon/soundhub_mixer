@@ -1,10 +1,11 @@
+import { makeAutoObservable } from "mobx";
 import { ChannelMeta, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
 class Channel implements FaderInterface {
   index: number;
-  #audioCtx: AudioContext;
-  #buffer?: AudioBuffer;
+  audioCtx: AudioContext;
+  buffer?: AudioBuffer;
 
   // Meta
   title?: string;
@@ -23,19 +24,16 @@ class Channel implements FaderInterface {
   panController: PanController;
   audioAnalyser: AudioAnalyser;
 
-  get audioCtx() {
-    return this.#audioCtx;
-  }
-
   get maxGain() {
     return this.gainController.maxGain;
   }
 
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {
+    makeAutoObservable(this);
     this.index = meta.index;
     this.title = meta.title;
 
-    this.#audioCtx = audioCtx;
+    this.audioCtx = audioCtx;
     this.setupAudioBuffer(buffer);
 
     this.gainController = new ChannelGainController(this.index, audioCtx);
@@ -46,8 +44,8 @@ class Channel implements FaderInterface {
   }
 
   private setupAudioBuffer(buffer: ArrayBuffer) {
-    this.#audioCtx.decodeAudioData(buffer, (buffer) => {
-      this.#buffer = buffer;
+    this.audioCtx.decodeAudioData(buffer, (buffer) => {
+      this.buffer = buffer;
       this.duration = buffer.duration;
       this.createBufferSourceNode(buffer);
       this.connectNodes();
@@ -56,7 +54,7 @@ class Channel implements FaderInterface {
   }
 
   private createBufferSourceNode(buffer: AudioBuffer) {
-    const sourceNode = this.#audioCtx.createBufferSource();
+    const sourceNode = this.audioCtx.createBufferSource();
     sourceNode.buffer = buffer;
     this.sourceNode = sourceNode;
   }
@@ -81,8 +79,8 @@ class Channel implements FaderInterface {
   }
 
   private reloadChannel() {
-    if (!this.sourceNode && this.#buffer) {
-      this.createBufferSourceNode(this.#buffer);
+    if (!this.sourceNode && this.buffer) {
+      this.createBufferSourceNode(this.buffer);
       this.reconnectSourceNode();
     }
   }

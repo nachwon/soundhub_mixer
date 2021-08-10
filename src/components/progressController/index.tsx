@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";
@@ -8,8 +9,10 @@ interface ProgressControllerProps {
   mixer: Mixer;
 }
 
-const ProgressController: React.FC<ProgressControllerProps> = (props) => {
-  const mixer = props.mixer;
+const ProgressController: React.FC<ProgressControllerProps> = observer((props) => {
+  const mixerRef = useRef(props.mixer);
+  const mixer = mixerRef.current;
+  const animationRef = useRef<number>(0);
   const isSeeking = useRef(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -17,17 +20,19 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (mixer.duration === 0) {
-      setProgress(0);
-    } else {
-      if (mixer.isPlaying) {
-        if (!isSeeking.current) {
-          setCurrentTime(mixer.currentDuration);
-          setProgress((mixer.currentDuration / mixer.duration) * 100);
-        }
+    const updateProgress = () => {
+      if (mixer.isPlaying && !isSeeking.current) {
+        const currentDuration = mixer.getCurrentDuration();
+        setCurrentTime(currentDuration);
+        setProgress((currentDuration / mixer.duration) * 100);
       }
-    }
-  }, [mixer.audioCtx.currentTime, mixer.currentDuration, mixer.duration, mixer.isPlaying, mixer.elapsedTime]);
+      animationRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    animationRef.current = requestAnimationFrame(updateProgress);
+
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [mixer]);
 
   const getPointerPosition = (e: MouseEvent, toPercent: boolean = false) => {
     if (!progressBarRef.current) {
@@ -109,11 +114,11 @@ const ProgressController: React.FC<ProgressControllerProps> = (props) => {
         <S.CurrentTimeDisplay>
           <S.TimeText>{toMMSS(currentTime)}</S.TimeText>
           <S.Splitter />
-          <S.TimeText>{toMMSS(mixer.duration)}</S.TimeText>
+          <S.TimeText>{toMMSS(mixer.duration ? mixer.duration : 0)}</S.TimeText>
         </S.CurrentTimeDisplay>
       </S.MixerProgressBarContainer>
     </S.MixerControllerContainer>
   );
-};
+});
 
 export default ProgressController;

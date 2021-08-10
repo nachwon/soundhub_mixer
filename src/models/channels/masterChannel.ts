@@ -4,32 +4,24 @@ import Mixer from "../mixer";
 
 class MasterChannel implements FaderInterface {
   mixer: Mixer;
-  #audioCtx: AudioContext;
-  #masterGainController: MasterGainController;
-  #analyser: AudioAnalyser;
-  #maxGain: number = 3;
+  audioCtx: AudioContext;
+  masterGainController: MasterGainController;
+  analyser: AudioAnalyser;
+  maxGain: number = 3;
 
   constructor(audioCtx: AudioContext, mixer: Mixer) {
     this.mixer = mixer;
-    this.#audioCtx = audioCtx;
-    this.#masterGainController = new MasterGainController(audioCtx);
-    this.#analyser = new AudioAnalyser(audioCtx, this);
-  }
-
-  get audioCtx() {
-    return this.#audioCtx;
+    this.audioCtx = audioCtx;
+    this.masterGainController = new MasterGainController(audioCtx);
+    this.analyser = new AudioAnalyser(audioCtx, this);
   }
 
   get node() {
-    return this.#masterGainController.masterGainNode;
+    return this.masterGainController.masterGainNode;
   }
 
   get currentGain() {
-    return this.#masterGainController.currentGain;
-  }
-
-  get maxGain() {
-    return this.#maxGain;
+    return this.masterGainController.currentGain;
   }
 
   get isPlaying() {
@@ -37,23 +29,23 @@ class MasterChannel implements FaderInterface {
   }
 
   connect() {
-    this.#analyser.connect(this.#masterGainController.masterGainNode);
+    this.analyser.connect(this.masterGainController.masterGainNode);
   }
 
   setGain(value: number, when: number = 0) {
-    this.#masterGainController.setGain(value, when);
+    this.masterGainController.setGain(value, when);
   }
 
   getCurrentLevels() {
-    return this.#analyser.getCurrentLevels();
+    return this.analyser.getCurrentLevels();
   }
 
   getPeaks() {
-    return this.#analyser.getPeaks();
+    return this.analyser.getPeaks();
   }
 
   getCounters() {
-    return this.#analyser.getCounters();
+    return this.analyser.getCounters();
   }
 }
 

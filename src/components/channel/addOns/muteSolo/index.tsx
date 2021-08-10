@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { Channel } from "../../../../models/channels";
 import * as S from "./styles";
 
@@ -5,7 +6,7 @@ interface MuteSoloComponentProps {
   channel: Channel;
 }
 
-const MuteSoloComponent: React.FC<MuteSoloComponentProps> = (props) => {
+const MuteSoloComponent: React.FC<MuteSoloComponentProps> = observer((props) => {
   const channel = props.channel;
 
   return (
@@ -18,6 +19,6 @@ const MuteSoloComponent: React.FC<MuteSoloComponentProps> = (props) => {
       </S.SoloButton>
     </S.ChannelMuteSoloSection>
   );
-};
+});
 
 export default MuteSoloComponent;

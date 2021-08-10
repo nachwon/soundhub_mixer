@@ -6,6 +6,7 @@ import Mixer from "../../models/mixer";
 import ChannelsContainer from "../channel";
 import MasterChannelComponent from "../masterChannel";
 import ProgressController from "../progressController";
+import { observer } from "mobx-react";
 
 import * as S from "./styles";
 
@@ -13,18 +14,17 @@ interface SoundHubMixerProps {
   mixer: Mixer;
 }
 
-const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
+const SoundHubMixer: React.FC<SoundHubMixerProps> = observer((props) => {
   const mixer = useRef(props.mixer);
   const [channels, setChannels] = useState<Array<Channel>>([]);
-  const [_, setCurrentTime] = useState<number>(0);
   const [pressedKey, setPressedKey] = useState<string>("default");
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentTime(mixer.current.currentTime);
-    }, 10);
-    return () => clearInterval(intervalId);
-  }, []);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setCurrentTime(mixer.current.currentTime);
+  //   }, 10);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     setPressedKey(e.code);
@@ -69,6 +69,6 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = (props) => {
       <ProgressController mixer={mixer.current} />
     </S.MixerContainer>
   );
-};
+});
 
 export default SoundHubMixer;

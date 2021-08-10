@@ -81,32 +81,6 @@ class RunningMixerController extends BaseMixerController implements MixerControl
   }
 }
 
-class SuspendedMixerController extends BaseMixerController implements MixerController {
-  play(when: number = 0, offset: number = 0) {
-    this.resumeChannels();
-    return true;
-  }
-
-  stop() {
-    this.stopChannels();
-    this.resumeChannels();
-    return true;
-  }
-
-  pause() {
-    return false;
-  }
-
-  seek(when: number, offset: number) {
-    if (this.seekChannels(when, offset)) {
-      // this.resumeChannels()
-      return true;
-    } else {
-      return false;
-    }
-  }
-}
-
 class StoppedMixerController extends BaseMixerController implements MixerController {
   play(when: number = 0, offset: number = 0) {
     if (!this.mixer.channelsLoaded) {
@@ -131,7 +105,7 @@ class StoppedMixerController extends BaseMixerController implements MixerControl
 
 export const ControllerMap = {
   running: RunningMixerController,
-  suspended: SuspendedMixerController,
+  suspended: StoppedMixerController,
   closed: DefaultMixerController,
   stopped: StoppedMixerController,
 };

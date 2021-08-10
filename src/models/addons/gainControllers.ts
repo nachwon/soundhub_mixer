@@ -1,96 +1,85 @@
+import { makeAutoObservable } from "mobx";
+
 export class ChannelGainController {
-  #index: number;
-  get index() {
-    return this.#index;
-  }
+  index: number;
 
   // Nodes
-  #gainNode: GainNode;
-  #muteGainNode: GainNode;
-  #soloGainNode: GainNode;
-  get soloGainNode() {
-    return this.#soloGainNode;
-  }
+  gainNode: GainNode;
+  muteGainNode: GainNode;
+  soloGainNode: GainNode;
 
   // SoloGainBroadcaster
-  #broadcaster?: SoloGainBroadcaster;
+  broadcaster?: SoloGainBroadcaster;
 
   // States
-  #currentGain: number = 0;
-  #isMuted: boolean = false;
-  #isSoloed: boolean = false;
-  get currentGain() {
-    return this.#currentGain;
-  }
+  currentGain: number = 0;
+  isMuted: boolean = false;
+  isSoloed: boolean = false;
+
   get maxGain() {
     return 3;
   }
-  get isMuted() {
-    return this.#isMuted;
-  }
-  get isSoloed() {
-    return this.#isSoloed;
-  }
 
   constructor(index: number, audioCtx: AudioContext) {
-    this.#index = index;
-    this.#gainNode = audioCtx.createGain();
-    this.#currentGain = this.#gainNode.gain.defaultValue;
-    this.#muteGainNode = audioCtx.createGain();
-    this.#soloGainNode = audioCtx.createGain();
+    makeAutoObservable(this);
+    this.index = index;
+    this.gainNode = audioCtx.createGain();
+    this.currentGain = this.gainNode.gain.defaultValue;
+    this.muteGainNode = audioCtx.createGain();
+    this.soloGainNode = audioCtx.createGain();
   }
 
   connect(source: AudioNode) {
-    source?.connect(this.#gainNode);
-    this.#gainNode.connect(this.#muteGainNode);
-    this.#muteGainNode.connect(this.#soloGainNode);
-    return this.#soloGainNode;
+    source?.connect(this.gainNode);
+    this.gainNode.connect(this.muteGainNode);
+    this.muteGainNode.connect(this.soloGainNode);
+    return this.soloGainNode;
   }
 
   setGain(value: number, when: number = 0) {
-    const boundedValue = Math.max(this.#gainNode.gain.minValue, Math.min(this.#gainNode.gain.maxValue, value));
-    this.#gainNode.gain.setValueAtTime(boundedValue, when);
-    this.#currentGain = boundedValue;
+    const boundedValue = Math.max(this.gainNode.gain.minValue, Math.min(this.gainNode.gain.maxValue, value));
+    this.gainNode.gain.setValueAtTime(boundedValue, when);
+    this.currentGain = boundedValue;
   }
 
   setBroadcaster(broadcaster: SoloGainBroadcaster) {
-    this.#broadcaster = broadcaster;
+    this.broadcaster = broadcaster;
   }
 
   mute(when: number = 0) {
-    this.#isMuted = true;
-    this.#muteGainNode.gain.setValueAtTime(0, when);
+    this.isMuted = true;
+    this.muteGainNode.gain.setValueAtTime(0, when);
   }
 
   unMute(when: number = 0) {
-    this.#isMuted = false;
-    this.#muteGainNode.gain.setValueAtTime(1, when);
+    this.isMuted = false;
+    this.muteGainNode.gain.setValueAtTime(1, when);
   }
 
   toggleMute(when: number = 0) {
-    this.#isMuted ? this.unMute(when) : this.mute(when);
+    this.isMuted ? this.unMute(when) : this.mute(when);
   }
 
   solo(when: number = 0) {
-    this.#isSoloed = true;
-    this.#broadcaster?.broadcast();
+    this.isSoloed = true;
+    this.broadcaster?.broadcast();
   }
 
   unSolo(when: number = 0) {
-    this.#isSoloed = false;
-    this.#broadcaster?.broadcast();
+    this.isSoloed = false;
+    this.broadcaster?.broadcast();
   }
 
   toggleSolo(when: number = 0) {
-    this.#isSoloed ? this.unSolo(when) : this.solo(when);
+    this.isSoloed ? this.unSolo(when) : this.solo(when);
   }
 
   turnOnSoloGain(when: number = 0) {
-    this.#soloGainNode.gain.setValueAtTime(1, when);
+    this.soloGainNode.gain.setValueAtTime(1, when);
   }
 
   turnOffSoloGain(when: number = 0) {
-    this.#soloGainNode.gain.setValueAtTime(0, when);
+    this.soloGainNode.gain.setValueAtTime(0, when);
   }
 }
 
@@ -127,29 +116,27 @@ export class SoloGainBroadcaster {
 }
 
 export class MasterGainController {
-  #masterGainNode: GainNode;
-  get masterGainNode() {
-    return this.#masterGainNode;
-  }
+  masterGainNode: GainNode;
 
   constructor(audioCtx: AudioContext) {
-    this.#masterGainNode = audioCtx.createGain();
+    makeAutoObservable(this);
+    this.masterGainNode = audioCtx.createGain();
     this.connectToDestination(audioCtx.destination);
   }
 
   get currentGain() {
-    return this.#masterGainNode.gain.value;
+    return this.masterGainNode.gain.value;
   }
 
   private connectToDestination(destination: AudioDestinationNode) {
-    this.#masterGainNode.connect(destination);
+    this.masterGainNode.connect(destination);
   }
 
   setGain(value: number, when: number) {
     const boundedValue = Math.max(
-      this.#masterGainNode.gain.minValue,
-      Math.min(this.#masterGainNode.gain.maxValue, value)
+      this.masterGainNode.gain.minValue,
+      Math.min(this.masterGainNode.gain.maxValue, value)
     );
-    this.#masterGainNode.gain.setValueAtTime(boundedValue, when);
+    this.masterGainNode.gain.setValueAtTime(boundedValue, when);
   }
 }

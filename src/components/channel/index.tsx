@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -63,7 +64,7 @@ interface ChannelComponentProps {
   pressedKey?: string;
 }
 
-const ChannelComponent: React.FC<ChannelComponentProps> = ({ channel, pressedKey = "default" }) => {
+const ChannelComponent: React.FC<ChannelComponentProps> = observer(({ channel, pressedKey = "default" }) => {
   return (
     <S.Channel>
       <S.ChannelInnerWrapper>
@@ -78,14 +79,14 @@ const ChannelComponent: React.FC<ChannelComponentProps> = ({ channel, pressedKey
       </S.ChannelInnerWrapper>
     </S.Channel>
   );
-};
+});
 
 interface ChannelsContainerProps {
   channels: Array<Channel>;
   pressedKey?: string;
 }
 
-const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
+const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => {
   const channels = props.channels.concat(Array(MaxChannelCount - props.channels.length));
   const [showingIndex, setShowingIndex] = useState<number | undefined>();
 
@@ -113,6 +114,6 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = (props) => {
   };
 
   return <S.ChannelsContainer>{renderChannels()}</S.ChannelsContainer>;
-};
+});
 
 export default ChannelsContainer;
