@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MasterChannel } from "../../models/channels";
 import * as S from "./styles";
 import { MIXER_SETTINGS } from "../../constants";
 import VolumeMeterCanvas from "../volumeMeter";
-
 import { useChannelFader } from "../channel/addOns/channelFader/hooks";
+import { observer } from "mobx-react";
 
 interface MasterChannelVolumeMetersProps {
   channel: MasterChannel;
 }
 
-const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (props) => {
+const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = observer((props) => {
   const masterChannel = props.channel;
+  const anmiationRef = useRef(0);
   const [leftMeterProps, setLeftMeterProps] = useState({
     dBFS: -Infinity,
     peak: -Infinity,
@@ -24,20 +25,27 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
   });
 
   useEffect(() => {
-    const [dBFSL, dBFSR] = masterChannel.getCurrentLevels();
-    const [peakL, peakR] = masterChannel.getPeaks();
-    const [counterL, counterR] = masterChannel.getCounters();
-    setLeftMeterProps({
-      dBFS: dBFSL,
-      peak: peakL,
-      counter: counterL,
-    });
-    setRightMeterProps({
-      dBFS: dBFSR,
-      peak: peakR,
-      counter: counterR,
-    });
-  }, [masterChannel, masterChannel.audioCtx.currentTime]);
+    const updateMeters = () => {
+      const [dBFSL, dBFSR] = masterChannel.getCurrentLevels();
+      const [peakL, peakR] = masterChannel.getPeaks();
+      const [counterL, counterR] = masterChannel.getCounters();
+      setLeftMeterProps({
+        dBFS: dBFSL,
+        peak: peakL,
+        counter: counterL,
+      });
+      setRightMeterProps({
+        dBFS: dBFSR,
+        peak: peakR,
+        counter: counterR,
+      });
+      anmiationRef.current = requestAnimationFrame(updateMeters);
+    };
+
+    anmiationRef.current = requestAnimationFrame(updateMeters);
+
+    return () => cancelAnimationFrame(anmiationRef.current);
+  }, [masterChannel]);
 
   const renderMasterTicks = () => {
     const ticksArray = [];
@@ -68,14 +76,14 @@ const MasterChannelVolumeMeters: React.FC<MasterChannelVolumeMetersProps> = (pro
       </S.MeterRail>
     </S.MasterChannelMeter>
   );
-};
+});
 
 interface MasterChannelProps {
   masterChannel: MasterChannel;
   pressedKey?: string;
 }
 
-const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
+const MasterChannelComponent: React.FC<MasterChannelProps> = observer((props) => {
   const masterChannel: MasterChannel = props.masterChannel;
   const { handleFaderMouseDown, faderPosition, faderRail, NumberOfTicks } = useChannelFader({
     channel: masterChannel,
@@ -108,6 +116,6 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = (props) => {
       </S.MasterChannelWrapper>
     </S.MasterVolumeControlContainer>
   );
-};
+});
 
 export default MasterChannelComponent;

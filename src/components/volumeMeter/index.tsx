@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { MIXER_SETTINGS } from "../../constants";
 import { dBFSToMeterHeight } from "../../utils";
@@ -11,7 +12,7 @@ interface VolumeMeterCanvasProps {
   position?: "L" | "R";
 }
 
-const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = (props) => {
+const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = observer((props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const peakRef = useRef<HTMLCanvasElement>(null);
   const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D>();
@@ -102,6 +103,6 @@ const VolumeMeterCanvas: React.FC<VolumeMeterCanvasProps> = (props) => {
       />
     </>
   );
-};
+});
 
 export default VolumeMeterCanvas;
