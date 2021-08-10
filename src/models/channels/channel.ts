@@ -28,6 +28,14 @@ class Channel implements FaderInterface {
     return this.gainController.maxGain;
   }
 
+  setLoaded(loaded: boolean) {
+    this.loaded = loaded;
+  }
+
+  setDuration(duration: number) {
+    this.duration = duration;
+  }
+
   constructor(buffer: ArrayBuffer, audioCtx: AudioContext, destinationNode: AudioNode, meta: ChannelMeta) {
     makeAutoObservable(this);
     this.index = meta.index;
@@ -46,10 +54,10 @@ class Channel implements FaderInterface {
   private setupAudioBuffer(buffer: ArrayBuffer) {
     this.audioCtx.decodeAudioData(buffer, (buffer) => {
       this.buffer = buffer;
-      this.duration = buffer.duration;
+      this.setDuration(buffer.duration);
       this.createBufferSourceNode(buffer);
       this.connectNodes();
-      this.loaded = true;
+      this.setLoaded(true);
     });
   }
 

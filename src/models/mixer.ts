@@ -13,7 +13,7 @@ class Mixer {
   // Channels
   maxChannelCount: number = MaxChannelCount;
   masterChannel: MasterChannel;
-  channels: Array<Channel> = [];
+  channels: Array<Channel | undefined> = new Array(8);
 
   // Time
   startTime: number = 0;
@@ -34,6 +34,10 @@ class Mixer {
 
   constructor() {
     makeAutoObservable(this);
+    this.channels = [];
+    for (let i = 0; i < this.maxChannelCount; i++) {
+      this.channels.push(undefined);
+    }
     this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 
@@ -51,15 +55,18 @@ class Mixer {
     }
   }
 
-  get channelsCount() {
-    return this.channels.length;
-  }
-
   get channelsLoaded() {
     if (this.channels.length === 0) {
       return false;
     }
-    return this.channels.every((channel) => channel.loaded);
+
+    const loaded = [];
+    for (let channel of this.channels) {
+      if (channel) {
+        loaded.push(channel.loaded);
+      }
+    }
+    return loaded.every((value) => value);
   }
 
   getCurrentDuration(): number {
@@ -74,14 +81,16 @@ class Mixer {
   }
 
   get duration(): number {
-    const maxChannel = this.channels.reduce(
-      (prevChannel, currentChannel) => (prevChannel.duration < currentChannel.duration ? currentChannel : prevChannel),
-      { duration: 0 }
-    );
-    return maxChannel.duration;
+    let maxDuration = 0;
+    for (let channel of this.channels) {
+      if (channel) {
+        maxDuration = Math.max(maxDuration, channel.duration);
+      }
+    }
+    return maxDuration;
   }
 
-  async addChannel(dto: ChannelDto) {
+  async addChannel(index: number, dto: ChannelDto) {
     if (this.state === "running") {
       return;
     }
@@ -93,17 +102,17 @@ class Mixer {
     }
 
     const channel = new Channel(buffer, this.audioCtx, this.masterChannel.node, {
-      index: this.channelsCount,
+      index: index,
       src: dto.src,
       title: dto.title,
     });
 
-    this.appendChannel(channel);
+    this.insertChannel(index, channel);
     this.soloGainBroadcaster.add(channel.gainController);
   }
 
-  private appendChannel(channel: Channel) {
-    this.channels.push(channel);
+  private insertChannel(index: number, channel: Channel) {
+    this.channels.splice(index, 1, channel);
   }
 
   play(offset: number = 0) {

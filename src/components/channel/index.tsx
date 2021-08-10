@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
-import React from "react";
+import React, { ChangeEvent, useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { FileInputId, MaxChannelCount } from "../../constants";
+import { FileInputId } from "../../constants";
 import { Channel } from "../../models/channels";
+import Mixer from "../../models/mixer";
+import { ChannelDto } from "../../types";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
 import MuteSoloComponent from "./addOns/muteSolo";
@@ -22,18 +24,36 @@ interface EmptyChannelProps {
   index: number;
   showingIndex?: number;
   onClick: Function;
+  onFileSelect: (index: number, dto: ChannelDto) => void;
 }
 
 const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
   const setShowingIndex = props.onClick;
   const [show, setShow] = useState(false);
+  const fileInputId = `${FileInputId}-${props.index}`;
 
   useEffect(() => {
     setShow(props.index === props.showingIndex);
   }, [props]);
 
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (files) {
+      props.onFileSelect(props.index, {
+        title: files[0]?.name,
+        src: files[0],
+      });
+
+      e.target.value = "";
+    } else {
+      return;
+    }
+  };
+
   return (
     <S.Channel>
+      <input type="file" id={fileInputId} onChange={handleFileSelect} />
       <S.EmptyChannel
         onClick={(e) => {
           e.stopPropagation();
@@ -47,9 +67,9 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
               setShowingIndex(undefined);
             }}
           >
-            <S.AddFileButton htmlFor={FileInputId} />
+            <S.AddFileButton htmlFor={fileInputId} />
             <S.ButtonsDivider />
-            <S.LinkFileButton htmlFor={FileInputId} />
+            <S.LinkFileButton htmlFor={fileInputId} />
           </S.AddChannelButtonsContainer>
         ) : null}
 
@@ -82,12 +102,14 @@ const ChannelComponent: React.FC<ChannelComponentProps> = observer(({ channel, p
 });
 
 interface ChannelsContainerProps {
-  channels: Array<Channel>;
+  mixer: Mixer;
   pressedKey?: string;
 }
 
 const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => {
-  const channels = props.channels.concat(Array(MaxChannelCount - props.channels.length));
+  const mixer = props.mixer;
+  const channelsRef = useRef(mixer.channels);
+  const channels = channelsRef.current;
   const [showingIndex, setShowingIndex] = useState<number | undefined>();
 
   useEffect(() => {
@@ -100,17 +122,21 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
   }, []);
 
   const renderChannels = () => {
-    const children = [];
-    for (let i = 0; i < channels.length; i++) {
-      children.push(
-        channels[i] ? (
-          <ChannelComponent key={i} channel={channels[i]} pressedKey={props.pressedKey} />
-        ) : (
-          <EmptyChannel key={i} index={i} showingIndex={showingIndex} onClick={setShowingIndex} />
-        )
-      );
-    }
-    return children;
+    return channels.map((value, index) => {
+      if (value) {
+        return <ChannelComponent key={index} channel={value} />;
+      } else {
+        return (
+          <EmptyChannel
+            key={index}
+            index={index}
+            showingIndex={showingIndex}
+            onClick={setShowingIndex}
+            onFileSelect={mixer.addChannel.bind(mixer)}
+          />
+        );
+      }
+    });
   };
 
   return <S.ChannelsContainer>{renderChannels()}</S.ChannelsContainer>;
