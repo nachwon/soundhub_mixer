@@ -19,13 +19,6 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = observer((props) => {
   const [channels, setChannels] = useState<Array<Channel>>([]);
   const [pressedKey, setPressedKey] = useState<string>("default");
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     setCurrentTime(mixer.current.currentTime);
-  //   }, 10);
-  //   return () => clearInterval(intervalId);
-  // }, []);
-
   const handleKeyDown = (e: KeyboardEvent) => {
     setPressedKey(e.code);
   };
