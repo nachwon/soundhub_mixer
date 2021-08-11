@@ -53,15 +53,16 @@ export class MixerExporter {
   }
 
   interleave(input: AudioBuffer) {
-    let buffer = input.getChannelData(0),
-      length = buffer.length * 2,
-      result = new Float32Array(length),
-      index = 0,
-      inputIndex = 0;
+    const bufferLeft = input.getChannelData(0);
+    const bufferRight = input.getChannelData(1);
+    const length = input.length * 2;
+    const result = new Float32Array(length);
+    let index = 0;
+    let inputIndex = 0;
 
     while (index < length) {
-      result[index++] = buffer[inputIndex];
-      result[index++] = buffer[inputIndex];
+      result[index++] = bufferLeft[inputIndex];
+      result[index++] = bufferRight[inputIndex];
       inputIndex++;
     }
     return result;
@@ -71,8 +72,8 @@ export class MixerExporter {
     return (window.URL || window.webkitURL).createObjectURL(blob);
   }
 
-  exportToBlob(buffer: AudioBuffer) {
-    const type = "audio/mp3";
+  exportToWav(buffer: AudioBuffer) {
+    const type = "audio/wav";
     const recorded = this.interleave(buffer);
     const dataview = this.writeHeaders(recorded);
     const audioBlob = new Blob([dataview], { type: type });
@@ -90,7 +91,7 @@ export class MixerExporter {
 
     gainNode.gain.value = settings.gain;
     pannerNode.pan.value = settings.pan;
-    source.start();
+    source.start(0);
     return pannerNode;
   }
 
@@ -120,8 +121,8 @@ export class MixerExporter {
     this.setupMasterContext(this.settings);
 
     this.audioCtx.startRendering().then((audioBuffer) => {
-      const output = this.exportToBlob(audioBuffer);
-      this.download(output);
+      const wavBlob = this.exportToWav(audioBuffer);
+      this.download(wavBlob);
     });
   }
 }
