@@ -9,6 +9,7 @@ export class MixerExporter {
   settings: MixerSettings;
 
   constructor(settings: MixerSettings) {
+    console.log(settings);
     this.settings = settings;
     this.audioCtx = new OfflineAudioContext(
       this.numberOfChannels,

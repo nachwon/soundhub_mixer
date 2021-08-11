@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import soundhubLogo from "../../assets/soundhub-logo.png";
-import soundhubIcon from "../../assets/soundhub-icon.png";
 import { MIXER_SETTINGS } from "../../constants";
 
 export const MixerContainer = styled.div`
@@ -52,14 +51,4 @@ export const SoundHubLogo = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-`;
-
-export const SoundHubIcon = styled.div`
-  width: 160px;
-  height: 150px;
-  border-bottom: 1px solid #3d3d3d;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  background-image: url(${soundhubIcon});
 `;

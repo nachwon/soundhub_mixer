@@ -56,7 +56,7 @@ class Mixer {
   }
 
   get channelsLoaded() {
-    if (this.channels.length === 0) {
+    if (this.channels.every((value) => value === undefined)) {
       return false;
     }
 
@@ -165,7 +165,10 @@ class Mixer {
     this.masterChannel.setGain(value, when);
   }
 
-  exportSettings(): MixerSettings {
+  exportSettings(): MixerSettings | undefined {
+    if (!this.channelsLoaded) {
+      return;
+    }
     return {
       duration: this.duration,
       master: { gain: this.masterChannel.currentGain },

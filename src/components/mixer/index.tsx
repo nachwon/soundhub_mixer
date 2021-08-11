@@ -7,7 +7,7 @@ import ProgressController from "../progressController";
 import { observer } from "mobx-react";
 
 import * as S from "./styles";
-import { MixerExporter } from "../../models/mixerExporter";
+import MixerActionsContainer from "../mixerActions";
 
 interface SoundHubMixerProps {
   mixer: Mixer;
@@ -32,23 +32,15 @@ const SoundHubMixer: React.FC<SoundHubMixerProps> = observer((props) => {
 
   return (
     <S.MixerContainer>
-      <button
-        onClick={() => {
-          const mixerSettings = mixer.current.exportSettings();
-          const exporter = new MixerExporter(mixerSettings);
-          exporter.export();
-        }}
-      >
-        Export
-      </button>
+      <MixerActionsContainer mixer={mixer.current} />
       <S.MixerInnerWrapper>
         <ChannelsContainer mixer={mixer.current} pressedKey={pressedKey} />
         <S.MasterChannelContainer>
-          {/* <S.SoundHubIcon /> */}
           <S.SoundHubLogo />
           <MasterChannelComponent masterChannel={mixer.current.masterChannel} pressedKey={pressedKey} />
         </S.MasterChannelContainer>
       </S.MixerInnerWrapper>
+
       <ProgressController mixer={mixer.current} />
     </S.MixerContainer>
   );
