@@ -1,4 +1,4 @@
-import { ChannelDto, MixerController } from "../types";
+import { ChannelDto, MixerController, MixerSettings } from "../types";
 import { BufferExtractor } from "../utils";
 import { SoloGainBroadcaster } from "./addons";
 import { ControllerMap, DefaultMixerController } from "./mixerControllers";
@@ -163,6 +163,14 @@ class Mixer {
 
   setMasterGain(value: number, when: number = 0) {
     this.masterChannel.setGain(value, when);
+  }
+
+  exportSettings(): MixerSettings {
+    return {
+      duration: this.duration,
+      master: { gain: this.masterChannel.currentGain },
+      channels: this.channels.map((channel) => channel?.exportSettings()),
+    };
   }
 }
 

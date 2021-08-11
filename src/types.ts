@@ -28,3 +28,17 @@ export interface FaderInterface {
   getPeaks: () => Array<number>;
   getCounters: () => Array<number>;
 }
+
+export type ChannelSettings = {
+  buffer: AudioBuffer;
+  gain: number;
+  pan: number;
+};
+
+export type MixerSettings = {
+  duration: number;
+  master: {
+    gain: number;
+  };
+  channels: Array<ChannelSettings | undefined>;
+};

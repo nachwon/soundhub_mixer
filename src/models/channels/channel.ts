@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { ChannelMeta, FaderInterface } from "../../types";
+import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
 class Channel implements FaderInterface {
@@ -145,6 +145,18 @@ class Channel implements FaderInterface {
 
   getCounters() {
     return this.audioAnalyser.getCounters();
+  }
+
+  exportSettings(): ChannelSettings | undefined {
+    if (!this.buffer) {
+      return;
+    }
+
+    return {
+      buffer: this.buffer,
+      gain: this.gainController.currentGain,
+      pan: this.panController.currentPan,
+    };
   }
 }
 

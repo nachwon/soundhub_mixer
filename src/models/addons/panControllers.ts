@@ -11,6 +11,10 @@ export class PanController {
     this.pannerNode = this.audioCtx.createStereoPanner();
   }
 
+  get currentPan() {
+    return this.pannerNode.pan.value;
+  }
+
   connect(source: AudioNode) {
     source.connect(this.pannerNode);
     return this.pannerNode;
