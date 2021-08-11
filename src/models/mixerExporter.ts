@@ -118,12 +118,16 @@ export class MixerExporter {
     return a;
   }
 
-  export() {
+  export(onPrepared?: Function) {
     this.setupMasterContext(this.settings);
 
     this.audioCtx.startRendering().then((audioBuffer) => {
       const wavBlob = this.exportToWav(audioBuffer);
       this.download(wavBlob);
+
+      if (onPrepared) {
+        onPrepared();
+      }
     });
   }
 }

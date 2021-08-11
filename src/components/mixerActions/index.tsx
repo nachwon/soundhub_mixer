@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import React from "react";
+import React, { useState } from "react";
 import Mixer from "../../models/mixer";
 import { MixerExporter } from "../../models/mixerExporter";
 import * as S from "./styles";
@@ -9,6 +9,7 @@ interface MixerActionsContainerProps {
 }
 
 const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((props) => {
+  const [isPreparing, setIsPreparing] = useState(false);
   const mixer = props.mixer;
 
   const handleExport = () => {
@@ -16,8 +17,11 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
     if (!mixerSettings) {
       return;
     }
+
+    setIsPreparing(true);
+
     const exporter = new MixerExporter(mixerSettings);
-    exporter.export();
+    exporter.export(() => setIsPreparing(false));
   };
 
   return (
@@ -28,9 +32,10 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
         <S.MixerTitle>mixer</S.MixerTitle>
       </S.MixerTitleContainer>
       <S.ButtonsWrapper>
+        <S.EditButton isLoaded={mixer.channelsLoaded} />
         <S.ResetButton onClick={() => mixer.resetSettings()} isLoaded={mixer.channelsLoaded} />
         <S.ButtonDivider />
-        <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} />
+        <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} isPreparing={isPreparing} />
       </S.ButtonsWrapper>
     </S.MixerActionButtonsContainer>
   );
