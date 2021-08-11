@@ -9,7 +9,6 @@ export class MixerExporter {
   settings: MixerSettings;
 
   constructor(settings: MixerSettings) {
-    console.log(settings);
     this.settings = settings;
     this.audioCtx = new OfflineAudioContext(
       this.numberOfChannels,
@@ -110,10 +109,13 @@ export class MixerExporter {
   }
 
   download(blob: Blob) {
-    const name = "mixed";
     const a = document.createElement("a");
-    a.href = this.renderURL(blob);
+    const href = this.renderURL(blob);
+    const hrefSplit = href.split("/");
+    const name = "mixed-" + href.split("/")[hrefSplit.length - 1];
+    a.href = href;
     a.download = `${name}.${blob.type.split("/")[1]}`;
+    console.log(a.href, a.download);
     a.click();
     return a;
   }

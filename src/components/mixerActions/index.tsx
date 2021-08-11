@@ -14,6 +14,7 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
 
   const handleExport = () => {
     const mixerSettings = mixer.exportSettings();
+    console.log(mixerSettings);
     if (!mixerSettings) {
       return;
     }

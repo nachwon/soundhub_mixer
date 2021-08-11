@@ -37,6 +37,10 @@ class Channel implements FaderInterface {
     return this.gainController.maxGain;
   }
 
+  get currentPan() {
+    return this.panController.currentPan;
+  }
+
   setLoaded(loaded: boolean) {
     this.loaded = loaded;
   }
@@ -178,10 +182,12 @@ class Channel implements FaderInterface {
       return;
     }
 
+    console.log(this.currentGain, this.currentPan);
+
     return {
       buffer: this.buffer,
-      gain: this.gainController.currentGain,
-      pan: this.panController.currentPan,
+      gain: this.currentGain,
+      pan: this.currentPan,
     };
   }
 }
