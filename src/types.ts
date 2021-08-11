@@ -25,6 +25,7 @@ export interface FaderInterface {
   currentGain: number;
   maxGain: number;
   setGain: (value: number, when?: number) => void;
+  setFaderPosition: (value: number) => void;
   getCurrentLevels: () => Array<number>;
   getPeaks: () => Array<number>;
   getCounters: () => Array<number>;

@@ -85,10 +85,11 @@ interface MasterChannelProps {
 
 const MasterChannelComponent: React.FC<MasterChannelProps> = observer((props) => {
   const masterChannel: MasterChannel = props.masterChannel;
-  const { handleFaderMouseDown, faderPosition, faderRail, NumberOfTicks } = useChannelFader({
+  const { handleFaderMouseDown, faderRail, NumberOfTicks } = useChannelFader({
     channel: masterChannel,
     pressedKey: props.pressedKey,
   });
+  const [faderPosition, setFaderPosition] = useState(0);
 
   const renderTicks = () => {
     const ticksArray = [];
@@ -97,6 +98,10 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = observer((props) =>
     }
     return ticksArray;
   };
+
+  useEffect(() => {
+    setFaderPosition(masterChannel.faderPosition);
+  }, [masterChannel.faderPosition]);
 
   return (
     <S.MasterVolumeControlContainer>

@@ -25,3 +25,5 @@ export const MIXER_SETTINGS = {
   faderMaxPercent: 1.4,
   faderIdlePercent: 1,
 };
+
+export const InitialFaderPosition = (1 - MIXER_SETTINGS.faderIdlePercent / MIXER_SETTINGS.faderMaxPercent) * 100;

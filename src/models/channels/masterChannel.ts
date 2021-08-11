@@ -1,3 +1,5 @@
+import { makeAutoObservable } from "mobx";
+import { InitialFaderPosition } from "../../constants";
 import { FaderInterface } from "../../types";
 import { AudioAnalyser, MasterGainController } from "../addons";
 import Mixer from "../mixer";
@@ -8,9 +10,10 @@ class MasterChannel implements FaderInterface {
   masterGainController: MasterGainController;
   analyser: AudioAnalyser;
   maxGain: number = 3;
-  faderPosition: number = 0;
+  faderPosition: number = InitialFaderPosition;
 
   constructor(audioCtx: AudioContext, mixer: Mixer) {
+    makeAutoObservable(this);
     this.mixer = mixer;
     this.audioCtx = audioCtx;
     this.masterGainController = new MasterGainController(audioCtx);
@@ -51,6 +54,11 @@ class MasterChannel implements FaderInterface {
 
   getCounters() {
     return this.analyser.getCounters();
+  }
+
+  resetSettings() {
+    this.setGain(1, 0);
+    this.setFaderPosition(InitialFaderPosition);
   }
 }
 

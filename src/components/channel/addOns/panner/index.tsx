@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React, { useState, useRef } from "react";
 import { useEffect } from "react";
 import { Channel } from "../../../../models/channels";
@@ -31,10 +32,14 @@ const PannerDegCalculatorMap: { [k: string]: (deg: number) => number } = {
   MetaLeft: doubleUnitDegCalculator,
 };
 
-const Panner: React.FC<PannerProps> = ({ channel, pressedKey = "default" }) => {
+const Panner: React.FC<PannerProps> = observer(({ channel, pressedKey = "default" }) => {
   const pannerRef = useRef<HTMLDivElement>(null);
   const [pannerDeg, setPannerDeg] = useState<number>(0);
   const pannerDegCalculator = useRef<(deg: number) => number>(unitDegCalculator);
+
+  useEffect(() => {
+    setPannerDeg(channel.pannerDeg);
+  }, [channel.pannerDeg]);
 
   useEffect(() => {
     const calcFunc = PannerDegCalculatorMap[pressedKey];
@@ -72,8 +77,9 @@ const Panner: React.FC<PannerProps> = ({ channel, pressedKey = "default" }) => {
     const lenY = pannerCenterY - e.clientY;
     const deg = Math.max(Math.min(Math.round(Math.atan2(lenX, lenY) * (180 / Math.PI)), MaxPanAngle), -MaxPanAngle);
     const calculatedDeg = pannerDegCalculator.current(deg);
-    setPannerDeg(calculatedDeg);
+
     channel.setPan(calculatedDeg / MaxPanAngle);
+    channel.setPannerDeg(calculatedDeg);
   };
 
   const processPannerDisplayValue = (boundedDeg: number) => {
@@ -117,6 +123,6 @@ const Panner: React.FC<PannerProps> = ({ channel, pressedKey = "default" }) => {
       <S.PannerValueDisplay>{processPannerDisplayValue(pannerDeg)}</S.PannerValueDisplay>
     </S.PannerSection>
   );
-};
+});
 
 export default Panner;

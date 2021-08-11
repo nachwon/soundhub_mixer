@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { InitialFaderPosition } from "../../constants";
 import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
@@ -23,6 +24,10 @@ class Channel implements FaderInterface {
   gainController: ChannelGainController;
   panController: PanController;
   audioAnalyser: AudioAnalyser;
+
+  // Fader & Panner
+  faderPosition: number = InitialFaderPosition;
+  pannerDeg: number = 0;
 
   get currentGain() {
     return this.gainController.currentGain;
@@ -135,8 +140,16 @@ class Channel implements FaderInterface {
     this.gainController.setGain(value, when);
   }
 
+  setFaderPosition(value: number) {
+    this.faderPosition = value;
+  }
+
   setPan(value: number, when: number = 0) {
     this.panController.setPan(value, when);
+  }
+
+  setPannerDeg(value: number) {
+    this.pannerDeg = value;
   }
 
   getCurrentLevels() {
@@ -153,7 +166,9 @@ class Channel implements FaderInterface {
 
   resetSettings() {
     this.setGain(1, 0);
+    this.setFaderPosition(InitialFaderPosition);
     this.setPan(0, 0);
+    this.setPannerDeg(0);
     this.gainController.unMute();
     this.gainController.unSolo();
   }

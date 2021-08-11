@@ -166,6 +166,7 @@ class Mixer {
   }
 
   resetSettings() {
+    this.masterChannel.resetSettings();
     for (let channel of this.channels) {
       channel?.resetSettings();
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";
@@ -35,7 +35,6 @@ const FaderPositionCalculator: { [k: string]: (percent: number) => number } = {
 
 export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
-  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(channel.currentGain));
   const faderRail = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,7 +63,7 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     const calculatedFaderGainValue = FaderMaxPercent - FaderMaxPercent * (calculatedFaderPosition / 100);
 
     channel.setGain(getScaledGainValue(calculatedFaderGainValue, channel.maxGain));
-    setFaderPosition(calculatedFaderPosition);
+    channel.setFaderPosition(calculatedFaderPosition);
   };
 
   const removeGlobalFaderEvents = (e: MouseEvent) => {
@@ -78,7 +77,6 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
 
   return {
     handleFaderMouseDown,
-    faderPosition,
     faderRail,
     NumberOfTicks,
   };
