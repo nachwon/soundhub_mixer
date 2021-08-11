@@ -77,10 +77,7 @@ export class MixerExporter {
     const dataview = this.writeHeaders(recorded);
     const audioBlob = new Blob([dataview], { type: type });
 
-    return {
-      blob: audioBlob,
-      url: this.renderURL(audioBlob),
-    };
+    return audioBlob;
   }
 
   setupChannelContext(settings: ChannelSettings) {
@@ -110,21 +107,21 @@ export class MixerExporter {
     masterGainNode.connect(this.audioCtx.destination);
   }
 
+  download(blob: Blob) {
+    const name = "mixed";
+    const a = document.createElement("a");
+    a.href = this.renderURL(blob);
+    a.download = `${name}.${blob.type.split("/")[1]}`;
+    a.click();
+    return a;
+  }
+
   export() {
     this.setupMasterContext(this.settings);
 
     this.audioCtx.startRendering().then((audioBuffer) => {
-      console.log("Rendered!", audioBuffer);
-      const ctx = new AudioContext();
-      const song = ctx.createBufferSource();
-      song.buffer = audioBuffer;
-
       const output = this.exportToBlob(audioBuffer);
-      console.log(output);
-
-      song.connect(ctx.destination);
-
-      song.start();
+      this.download(output);
     });
   }
 }
