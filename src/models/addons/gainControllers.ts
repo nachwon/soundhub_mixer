@@ -88,6 +88,7 @@ export class SoloGainBroadcaster {
   soloedControllers: Array<ChannelGainController>;
 
   constructor() {
+    makeAutoObservable(this);
     this.channelGainControllers = [];
     this.soloedControllers = [];
   }

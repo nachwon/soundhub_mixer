@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useEffect, useRef, useState } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { Channel } from "../../../../models/channels";
@@ -62,7 +63,7 @@ interface ChannelFaderProps {
   pressedKey?: string;
 }
 
-const ChannelFader: React.FC<ChannelFaderProps> = ({ channel, pressedKey = "default" }) => {
+const ChannelFader: React.FC<ChannelFaderProps> = observer(({ channel, pressedKey = "default" }) => {
   const { handleFaderMouseDown, faderPosition, faderRail, NumberOfTicks } = useChannelFader({ channel, pressedKey });
   const renderTicks = () => {
     const ticksArray = [];
@@ -81,6 +82,6 @@ const ChannelFader: React.FC<ChannelFaderProps> = ({ channel, pressedKey = "defa
       </S.FaderRail>
     </S.FaderSection>
   );
-};
+});
 
 export default ChannelFader;

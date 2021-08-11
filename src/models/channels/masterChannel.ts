@@ -8,6 +8,7 @@ class MasterChannel implements FaderInterface {
   masterGainController: MasterGainController;
   analyser: AudioAnalyser;
   maxGain: number = 3;
+  faderPosition: number = 0;
 
   constructor(audioCtx: AudioContext, mixer: Mixer) {
     this.mixer = mixer;
@@ -34,6 +35,10 @@ class MasterChannel implements FaderInterface {
 
   setGain(value: number, when: number = 0) {
     this.masterGainController.setGain(value, when);
+  }
+
+  setFaderPosition(value: number) {
+    this.faderPosition = value;
   }
 
   getCurrentLevels() {

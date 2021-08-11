@@ -165,6 +165,12 @@ class Mixer {
     this.masterChannel.setGain(value, when);
   }
 
+  resetSettings() {
+    for (let channel of this.channels) {
+      channel?.resetSettings();
+    }
+  }
+
   exportSettings(): MixerSettings | undefined {
     if (!this.channelsLoaded) {
       return;

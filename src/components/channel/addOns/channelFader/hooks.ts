@@ -9,26 +9,25 @@ interface useChannelFaderProps {
 }
 
 const FaderMaxPercent = MIXER_SETTINGS.faderMaxPercent;
-const FaderIdlePercent = MIXER_SETTINGS.faderIdlePercent;
 const NumberOfTicks = 15;
 
-const defaultCalculator = (gain: number) => {
-  const faderPosition = (1 - gain / FaderMaxPercent) * 100;
+const defaultCalculator = (percent: number) => {
+  const faderPosition = (1 - percent / FaderMaxPercent) * 100;
   const tickUnitHeightPercent = 100 / ((NumberOfTicks - 1) * 2);
   return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
 };
 
-const fineTuningCalculator = (gain: number) => {
-  return (1 - gain / FaderMaxPercent) * 100;
+const fineTuningCalculator = (percent: number) => {
+  return (1 - percent / FaderMaxPercent) * 100;
 };
 
-const snappingClaculator = (gain: number) => {
-  const faderPosition = (1 - gain / FaderMaxPercent) * 100;
+const snappingClaculator = (percent: number) => {
+  const faderPosition = (1 - percent / FaderMaxPercent) * 100;
   const tickUnitHeightPercent = 100 / (NumberOfTicks - 1);
   return Math.round(faderPosition / tickUnitHeightPercent) * tickUnitHeightPercent;
 };
 
-const FaderPositionCalculator: { [k: string]: (gain: number) => number } = {
+const FaderPositionCalculator: { [k: string]: (percent: number) => number } = {
   default: defaultCalculator,
   ShiftLeft: fineTuningCalculator,
   MetaLeft: snappingClaculator,
@@ -36,7 +35,7 @@ const FaderPositionCalculator: { [k: string]: (gain: number) => number } = {
 
 export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
-  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(FaderIdlePercent));
+  const [faderPosition, setFaderPosition] = useState(faderPositionCalculator.current(channel.currentGain));
   const faderRail = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,17 +59,21 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     const rect = faderRail.current.getBoundingClientRect();
     const faderRailTop = rect.top;
     const faderPositionPx = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
-    const faderGainValue = FaderMaxPercent - (faderPositionPx * FaderMaxPercent) / faderRail.current.offsetHeight;
-    const calculatedFaderPosition = faderPositionCalculator.current(faderGainValue);
+    const faderPositionPercent = FaderMaxPercent - (faderPositionPx * FaderMaxPercent) / faderRail.current.offsetHeight;
+    const calculatedFaderPosition = calculateFaderPositionFromPercent(faderPositionPercent);
     const calculatedFaderGainValue = FaderMaxPercent - FaderMaxPercent * (calculatedFaderPosition / 100);
 
     channel.setGain(getScaledGainValue(calculatedFaderGainValue, channel.maxGain));
-    setFaderPosition(faderPositionCalculator.current(faderGainValue));
+    setFaderPosition(calculatedFaderPosition);
   };
 
   const removeGlobalFaderEvents = (e: MouseEvent) => {
     window.removeEventListener("mousemove", handleFaderMouseMove);
     window.removeEventListener("mouseup", removeGlobalFaderEvents);
+  };
+
+  const calculateFaderPositionFromPercent = (gain: number) => {
+    return faderPositionCalculator.current(gain);
   };
 
   return {

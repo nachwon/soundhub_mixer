@@ -1,3 +1,5 @@
+import { makeAutoObservable } from "mobx";
+
 export class PanController {
   index: number;
 
@@ -6,6 +8,7 @@ export class PanController {
   pannerNode: StereoPannerNode;
 
   constructor(index: number, audioCtx: AudioContext) {
+    makeAutoObservable(this);
     this.index = index;
     this.audioCtx = audioCtx;
     this.pannerNode = this.audioCtx.createStereoPanner();

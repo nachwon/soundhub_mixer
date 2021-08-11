@@ -27,7 +27,11 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
         <S.MixerTitle>SoundHub</S.MixerTitle>
         <S.MixerTitle>mixer</S.MixerTitle>
       </S.MixerTitleContainer>
-      <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} />
+      <S.ButtonsWrapper>
+        <S.ResetButton onClick={() => mixer.resetSettings()} isLoaded={mixer.channelsLoaded} />
+        <S.ButtonDivider />
+        <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} />
+      </S.ButtonsWrapper>
     </S.MixerActionButtonsContainer>
   );
 });

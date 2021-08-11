@@ -24,6 +24,10 @@ class Channel implements FaderInterface {
   panController: PanController;
   audioAnalyser: AudioAnalyser;
 
+  get currentGain() {
+    return this.gainController.currentGain;
+  }
+
   get maxGain() {
     return this.gainController.maxGain;
   }
@@ -145,6 +149,13 @@ class Channel implements FaderInterface {
 
   getCounters() {
     return this.audioAnalyser.getCounters();
+  }
+
+  resetSettings() {
+    this.setGain(1, 0);
+    this.setPan(0, 0);
+    this.gainController.unMute();
+    this.gainController.unSolo();
   }
 
   exportSettings(): ChannelSettings | undefined {

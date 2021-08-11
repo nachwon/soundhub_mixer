@@ -1,5 +1,6 @@
-import styled, { css, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Download from "../../assets/download.png";
+import Reset from "../../assets/reload.png";
 import soundhubIcon from "../../assets/soundhub-icon.png";
 import { THEME } from "../../constants";
 
@@ -63,6 +64,19 @@ const buttonEnabled = keyframes`
 }
 `;
 
+export const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ButtonDivider = styled.div`
+  margin: 0 5px;
+  width: 1px;
+  height: 15px;
+  border-right: 1px solid #4e4e4e;
+`;
+
 export const DownloadButton = styled.button`
   background-image: url(${Download});
   background-color: transparent;
@@ -70,18 +84,31 @@ export const DownloadButton = styled.button`
   background-size: 15px;
   height: 25px;
   width: 25px;
-  border: 1px solid ${THEME.MAIN_COLOR_BLUE};
+  border: 1px solid ${(props: { isLoaded: boolean }) => (props.isLoaded ? THEME.MAIN_COLOR_BLUE : "#6f6f6f")};
   border-radius: 4px;
   background-repeat: no-repeat;
   box-shadow: 1px 1px 2px 0px;
   filter: ${(props: { isLoaded: boolean }) => (props.isLoaded ? "grayscale(0)" : "grayscale(1)")};
-  animation: ${(props: { isLoaded: boolean }) =>
-    props.isLoaded
-      ? css`
-          ${buttonEnabled} linear 1s
-        `
-      : ""};
+  animation: ${(props: { isLoaded: boolean }) => (props.isLoaded ? buttonEnabled : "")} linear 1s;
 
+  :active {
+    box-shadow: 1px 1px 0px 0px;
+    transform: translateY(1px);
+  }
+`;
+
+export const ResetButton = styled.button`
+  background-image: url(${Reset});
+  background-color: transparent;
+  background-position: center;
+  background-size: 15px;
+  height: 25px;
+  width: 25px;
+  border: 1px solid ${(props: { isLoaded: boolean }) => (props.isLoaded ? "#f44335" : "#6f6f6f")};
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  box-shadow: 1px 1px 2px 0px;
+  filter: ${(props: { isLoaded: boolean }) => (props.isLoaded ? "grayscale(0)" : "grayscale(1)")};
   :active {
     box-shadow: 1px 1px 0px 0px;
     transform: translateY(1px);
