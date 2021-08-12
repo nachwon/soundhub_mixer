@@ -74,7 +74,7 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
           </S.AddChannelButtonsContainer>
         ) : null}
 
-        <S.EmptyChannelInner>SOUNDHUB</S.EmptyChannelInner>
+        <S.EmptyChannelInner>CHANNEL {props.index + 1}</S.EmptyChannelInner>
       </S.EmptyChannel>
     </S.Channel>
   );
