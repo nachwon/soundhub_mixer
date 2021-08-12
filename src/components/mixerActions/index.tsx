@@ -27,10 +27,6 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
     exporter.export(() => setIsPreparing(false));
   };
 
-  useEffect(() => {
-    console.log(store.isEditing);
-  }, [store.isEditing]);
-
   return (
     <S.MixerActionButtonsContainer>
       <S.MixerTitleContainer>

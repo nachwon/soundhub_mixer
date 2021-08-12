@@ -90,10 +90,6 @@ const ChannelComponent: React.FC<ChannelComponentProps> = observer(
   ({ channel, pressedKey = "default", onDeleteChannel }) => {
     const store = editModeStore;
 
-    useEffect(() => {
-      console.log("channel", store.isEditing);
-    }, [store.isEditing]);
-
     return (
       <S.Channel>
         <S.ChannelInnerWrapper>

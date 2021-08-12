@@ -115,7 +115,6 @@ export class MixerExporter {
     const name = "mixed-" + href.split("/")[hrefSplit.length - 1];
     a.href = href;
     a.download = `${name}.${blob.type.split("/")[1]}`;
-    console.log(a.href, a.download);
     a.click();
     return a;
   }
