@@ -124,7 +124,7 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
   const renderChannels = () => {
     return channels.map((value, index) => {
       if (value) {
-        return <ChannelComponent key={index} channel={value} />;
+        return <ChannelComponent key={index} channel={value} pressedKey={props.pressedKey} />;
       } else {
         return (
           <EmptyChannel
