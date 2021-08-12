@@ -12,10 +12,10 @@ code {
 
 @font-face {
   font-family: "Wallpoet";
-  src: url("/src/fonts/Wallpoet-Regular.ttf") format("truetype");
+  src: url("/src/assets/fonts/Wallpoet-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Monoton";
-  src: url("/src/fonts/Monoton-Regular.ttf") format("truetype");
+  src: url("/src/assets/fonts/Monoton-Regular.ttf") format("truetype");
 }

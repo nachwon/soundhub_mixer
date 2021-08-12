@@ -6,6 +6,7 @@ import { FileInputId } from "../../constants";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
 import { ChannelDto } from "../../types";
+import editModeStore from "../mixerActions/store";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
 import MuteSoloComponent from "./addOns/muteSolo";
@@ -85,12 +86,19 @@ interface ChannelComponentProps {
 }
 
 const ChannelComponent: React.FC<ChannelComponentProps> = observer(({ channel, pressedKey = "default" }) => {
+  const store = editModeStore;
+
+  useEffect(() => {
+    console.log("channel", store.isEditing);
+  }, [store.isEditing]);
+
   return (
     <S.Channel>
       <S.ChannelInnerWrapper>
         {channel.loaded ? null : <S.LoadingMask />}
         <S.ChannelUserInfoSection>
           {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
+          {store.isEditing ? <S.DeleteChannelButton /> : null}
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
         <Panner channel={channel} pressedKey={pressedKey} />
