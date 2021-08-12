@@ -98,7 +98,7 @@ const popUp = keyframes`
 }
 `;
 
-export const DeleteChannelButton = styled.div`
+export const DeleteChannelButton = styled.button`
   position: absolute;
   right: 6px;
   bottom: 0px;
@@ -112,6 +112,10 @@ export const DeleteChannelButton = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   animation: ${popUp} linear 0.2s;
+  :active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 1px -1px black;
+  }
 `;
 
 export const ChannelUserInfoSection = styled.div`
