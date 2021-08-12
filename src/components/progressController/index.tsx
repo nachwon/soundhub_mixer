@@ -19,10 +19,18 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
   const [pointerPosition, setPointerPosition] = useState<number>(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
+  const resetProgress = () => {
+    setProgress(0);
+    setCurrentTime(0);
+  };
+
+  useEffect(() => {
+    mixer.onEnded = resetProgress;
+  }, [mixer]);
+
   useEffect(() => {
     if (!mixer.channelsLoaded) {
-      setProgress(0);
-      setCurrentTime(0);
+      resetProgress();
     }
   }, [mixer.channelsLoaded]);
 

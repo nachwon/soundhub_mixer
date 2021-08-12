@@ -28,6 +28,9 @@ class Mixer {
   // Controllers
   soloGainBroadcaster: SoloGainBroadcaster;
 
+  // EventHandlers
+  onEnded?: Function;
+
   get currentTime() {
     return this.audioCtx.currentTime;
   }
@@ -73,7 +76,16 @@ class Mixer {
     if (this.state === "stopped" || this.duration === 0) {
       return 0;
     }
-    return Math.min(this.offsetTime + this.timeElapsed, this.duration);
+    const currentDuration = Math.min(this.offsetTime + this.timeElapsed, this.duration);
+    if (currentDuration >= this.duration) {
+      this.stop();
+      if (this.onEnded) {
+        this.onEnded();
+      }
+      return 0;
+    } else {
+      return currentDuration;
+    }
   }
 
   get timeElapsed(): number {

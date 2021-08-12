@@ -110,7 +110,7 @@ export const DownloadButton = styled.button<DownloadButtonProps>`
     animation: ${(props) => (props.isPreparing ? spin : "")} steps(12) 0.5s infinite;
   }
   position: relative;
-  background-color: transparent;
+  background-color: #242526;
   height: 25px;
   width: 25px;
   border: 1px solid ${(props) => (props.isLoaded ? THEME.MAIN_COLOR_BLUE : "#6f6f6f")};
