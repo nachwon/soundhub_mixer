@@ -98,7 +98,7 @@ const ChannelComponent: React.FC<ChannelComponentProps> = observer(({ channel, p
         {channel.loaded ? null : <S.LoadingMask />}
         <S.ChannelUserInfoSection>
           {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
-          {store.isEditing ? <S.DeleteChannelButton /> : null}
+          {channel.loaded && store.isEditing ? <S.DeleteChannelButton /> : null}
         </S.ChannelUserInfoSection>
         <MuteSoloComponent channel={channel} />
         <Panner channel={channel} pressedKey={pressedKey} />

@@ -42,7 +42,7 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
         <S.EditButton
           isLoaded={mixer.channelsLoaded}
           isEditing={store.isEditing}
-          onClick={() => store.toggleEditMode()}
+          onClick={() => (mixer.channelsLoaded ? store.toggleEditMode() : null)}
         />
         <S.ResetButton onClick={() => mixer.resetSettings()} isLoaded={mixer.channelsLoaded} />
         <S.ButtonDivider />

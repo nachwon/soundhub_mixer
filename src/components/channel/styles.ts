@@ -111,7 +111,7 @@ export const DeleteChannelButton = styled.div`
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  animation: ${popUp} linear 0.3s;
+  animation: ${popUp} linear 0.2s;
 `;
 
 export const ChannelUserInfoSection = styled.div`
