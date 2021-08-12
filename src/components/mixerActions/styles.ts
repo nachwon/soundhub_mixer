@@ -46,7 +46,8 @@ export const ButtonDivider = styled.div`
   margin: 0 5px;
   width: 1px;
   height: 15px;
-  border-right: 1px solid #4e4e4e;
+  box-shadow: 1px 1px 1px 0px black;
+  border-right: 1px solid #afafaf;
 `;
 
 const buttonEnabled = keyframes`

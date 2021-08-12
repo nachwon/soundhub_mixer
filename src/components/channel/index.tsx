@@ -53,7 +53,7 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
 
   return (
     <S.Channel>
-      <input type="file" id={fileInputId} onChange={handleFileSelect} />
+      <input type="file" accept=".mp3,.wav" id={fileInputId} onChange={handleFileSelect} />
       <S.EmptyChannel
         onClick={(e) => {
           e.stopPropagation();
