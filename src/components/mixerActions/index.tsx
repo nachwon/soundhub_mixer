@@ -39,7 +39,11 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
         <S.MixerTitle>mixer</S.MixerTitle>
       </S.MixerTitleContainer>
       <S.ButtonsWrapper>
-        <S.EditButton isLoaded={mixer.channelsLoaded} onClick={() => store.toggleEditMode()} />
+        <S.EditButton
+          isLoaded={mixer.channelsLoaded}
+          isEditing={store.isEditing}
+          onClick={() => store.toggleEditMode()}
+        />
         <S.ResetButton onClick={() => mixer.resetSettings()} isLoaded={mixer.channelsLoaded} />
         <S.ButtonDivider />
         <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} isPreparing={isPreparing} />

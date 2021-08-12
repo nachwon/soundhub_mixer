@@ -125,12 +125,29 @@ export const DownloadButton = styled.button<DownloadButtonProps>`
   }
 `;
 
-export const EditButton = styled.button`
+interface EditButtonProps {
+  isLoaded: boolean;
+  isEditing: boolean;
+}
+
+export const EditButton = styled.button<EditButtonProps>`
+  ::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url(${Edit});
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 21px;
+    animation: ${(props) => (props.isEditing ? spin : "")} linear 1s infinite;
+  }
   margin-right: 5px;
-  background-image: url(${Edit});
   background-color: transparent;
   background-position: center;
-  background-size: 21px;
   height: 25px;
   width: 25px;
   border: 1px solid ${(props: { isLoaded: boolean }) => (props.isLoaded ? "#ffb400" : "#6f6f6f")};
