@@ -39,6 +39,12 @@ export class AudioAnalyser {
     return source;
   }
 
+  disconnect() {
+    this.leftAnalyserNode.disconnect();
+    this.rightAnalyserNode.disconnect();
+    this.spliterNode.disconnect();
+  }
+
   getCurrentLevels(): Array<number> {
     this.leftCounter++;
     this.rightCounter++;

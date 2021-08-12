@@ -111,6 +111,15 @@ class Mixer {
     this.soloGainBroadcaster.add(channel.gainController);
   }
 
+  removeChannel(index: number) {
+    this.channels[index]?.disconnect();
+    this.channels[index] = undefined;
+
+    if (!this.channelsLoaded) {
+      this.stop();
+    }
+  }
+
   private insertChannel(index: number, channel: Channel) {
     this.channels.splice(index, 1, channel);
   }

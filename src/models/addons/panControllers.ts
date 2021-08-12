@@ -23,6 +23,10 @@ export class PanController {
     return this.pannerNode;
   }
 
+  disconnect() {
+    this.pannerNode.disconnect();
+  }
+
   setPan(value: number, when: number = 0) {
     this.pannerNode.pan.setValueAtTime(value, when);
   }

@@ -20,6 +20,13 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!mixer.channelsLoaded) {
+      setProgress(0);
+      setCurrentTime(0);
+    }
+  }, [mixer.channelsLoaded]);
+
+  useEffect(() => {
     const updateProgress = () => {
       if (!mixer.isPlaying) {
         cancelAnimationFrame(animationRef.current);
