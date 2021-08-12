@@ -130,6 +130,12 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
     return () => window.removeEventListener("click", eventHandler);
   }, []);
 
+  useEffect(() => {
+    if (props.pressedKey === "Escape") {
+      editModeStore.turnOffEditMode();
+    }
+  }, [props.pressedKey]);
+
   const handleChannelDelete = (channel: Channel) => {
     mixer.removeChannel(channel.index);
     if (!mixer.channelsLoaded) {
