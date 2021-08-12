@@ -34,6 +34,10 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
+  button:focus-visible {
+    outline: none;
+  }
+
   a {
     color: ${THEME.MAIN_COLOR_BLUE};
     text-decoration: none;

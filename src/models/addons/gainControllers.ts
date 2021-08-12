@@ -36,6 +36,12 @@ export class ChannelGainController {
     return this.soloGainNode;
   }
 
+  disconnect() {
+    this.gainNode.disconnect();
+    this.muteGainNode.disconnect();
+    this.soloGainNode.disconnect();
+  }
+
   setGain(value: number, when: number = 0) {
     const boundedValue = Math.max(this.gainNode.gain.minValue, Math.min(this.gainNode.gain.maxValue, value));
     this.gainNode.gain.setValueAtTime(boundedValue, when);

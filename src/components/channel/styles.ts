@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
 import musicFile from "../../assets/music-file.png";
 import linkFile from "../../assets/link.png";
+import deleteButton from "../../assets/x-button.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
@@ -35,6 +36,7 @@ export const ChannelInnerWrapper = styled.div`
 export const ChannelUserProfileImg = styled.div`
   height: 50px;
   width: 50px;
+  box-shadow: inset 0px 0px 7px 1px;
   background: #3c3c3c;
   border-radius: 50%;
   background-image: url(${(props: { src?: string }) => (props.src ? props.src : defaultProfileImg)});
@@ -82,7 +84,42 @@ export const LoadingMask = styled.div`
   border-radius: 5px;
 `;
 
+const popUp = keyframes`
+0% {
+  transform: scale(0)
+}
+
+80% {
+  transform: scale(1.3)
+}
+
+100% {
+  transform: scale(1)
+}
+`;
+
+export const DeleteChannelButton = styled.button`
+  position: absolute;
+  right: 6px;
+  bottom: 0px;
+  border: 1px solid #791111;
+  border-radius: 50%;
+  box-shadow: 2px 2px 3px -1px black;
+  width: 25px;
+  height: 25px;
+  background-image: url(${deleteButton});
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: ${popUp} linear 0.2s;
+  :active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 1px -1px black;
+  }
+`;
+
 export const ChannelUserInfoSection = styled.div`
+  position: relative;
   height: 50px;
   width: 100%;
   display: flex;

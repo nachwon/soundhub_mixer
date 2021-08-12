@@ -106,6 +106,14 @@ class Channel implements FaderInterface {
     }
   }
 
+  disconnect() {
+    this.gainController.disconnect();
+    this.panController.disconnect();
+    this.audioAnalyser.disconnect();
+    this.sourceNode?.disconnect();
+    this.buffer = undefined;
+  }
+
   play(when: number, offset: number = 0) {
     this.reloadChannel();
     this.sourceNode?.start(when, offset);
@@ -181,8 +189,6 @@ class Channel implements FaderInterface {
     if (!this.buffer) {
       return;
     }
-
-    console.log(this.currentGain, this.currentPan);
 
     return {
       buffer: this.buffer,

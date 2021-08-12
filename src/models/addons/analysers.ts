@@ -39,6 +39,12 @@ export class AudioAnalyser {
     return source;
   }
 
+  disconnect() {
+    this.leftAnalyserNode.disconnect();
+    this.rightAnalyserNode.disconnect();
+    this.spliterNode.disconnect();
+  }
+
   getCurrentLevels(): Array<number> {
     this.leftCounter++;
     this.rightCounter++;
@@ -90,8 +96,17 @@ export class AudioAnalyser {
   }
 
   private decayLevels(): Array<number> {
-    this.levelLeft -= 0.5;
-    this.levelRight -= 0.5;
+    if (this.levelLeft < -48) {
+      this.levelLeft = -Infinity;
+    } else {
+      this.levelLeft -= 0.2;
+    }
+
+    if (this.levelRight < -48) {
+      this.levelRight = -Infinity;
+    } else {
+      this.levelRight -= 0.2;
+    }
     this.resetMaxLevels();
     return [this.levelLeft, this.levelRight];
   }

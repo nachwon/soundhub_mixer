@@ -46,7 +46,8 @@ export const ButtonDivider = styled.div`
   margin: 0 5px;
   width: 1px;
   height: 15px;
-  border-right: 1px solid #4e4e4e;
+  box-shadow: 1px 1px 1px 0px black;
+  border-right: 1px solid #afafaf;
 `;
 
 const buttonEnabled = keyframes`
@@ -109,7 +110,7 @@ export const DownloadButton = styled.button<DownloadButtonProps>`
     animation: ${(props) => (props.isPreparing ? spin : "")} steps(12) 0.5s infinite;
   }
   position: relative;
-  background-color: transparent;
+  background-color: #242526;
   height: 25px;
   width: 25px;
   border: 1px solid ${(props) => (props.isLoaded ? THEME.MAIN_COLOR_BLUE : "#6f6f6f")};
@@ -124,12 +125,29 @@ export const DownloadButton = styled.button<DownloadButtonProps>`
   }
 `;
 
-export const EditButton = styled.button`
+interface EditButtonProps {
+  isLoaded: boolean;
+  isEditing: boolean;
+}
+
+export const EditButton = styled.button<EditButtonProps>`
+  ::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url(${Edit});
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 21px;
+    animation: ${(props) => (props.isEditing ? spin : "")} linear 1s infinite;
+  }
   margin-right: 5px;
-  background-image: url(${Edit});
   background-color: transparent;
   background-position: center;
-  background-size: 21px;
   height: 25px;
   width: 25px;
   border: 1px solid ${(props: { isLoaded: boolean }) => (props.isLoaded ? "#ffb400" : "#6f6f6f")};
