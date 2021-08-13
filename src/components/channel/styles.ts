@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
 import deleteButton from "../../assets/x-button.png";
+import linkFile from "../../assets/link.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
@@ -14,9 +15,13 @@ export const ChannelsContainer = styled.div`
   height: ${MIXER_SETTINGS.channelHeight}px;
   width: ${MIXER_SETTINGS.channelWidth * MIXER_SETTINGS.numberOfChannels}px;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: inset 0px 0px 4px 0 black;
   border-radius: 4px;
   background-color: #292929;
+  position: relative;
+  overflow: hidden;
 `;
 
 export const ChannelInnerWrapper = styled.div`
@@ -125,4 +130,138 @@ export const ChannelUserInfoSection = styled.div`
   justify-content: center;
   margin-bottom: 5px;
   flex-shrink: 0;
+`;
+
+export const AddChannelWithLinkModal = styled.div`
+  position: absolute;
+  width: 65%;
+  height: 100px;
+  background: #242526;
+  z-index: 100;
+  border-radius: 5px;
+  box-shadow: 1px 1px 6px 1px black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+`;
+
+export const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const LinkIcon = styled.div`
+  background-color: transparent;
+  border-bottom: 1px solid #393939;
+  width: 30px;
+  height: 30px;
+  background-size: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url(${linkFile});
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+`;
+
+const spreadOut = keyframes`
+  0% {
+    width: 0px;
+    height: 0px;
+  }
+
+  100% {
+    width: 100px;
+    height: 100px;
+  }
+`;
+
+export const ButtonCover = styled.div`
+  display: none;
+  position: absolute;
+  background: ${(props) => props.color};
+  position: absolute;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: ${spreadOut} linear 0.2s;
+`;
+
+export const AddButton = styled.button`
+  :active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 1px black;
+  }
+  :hover {
+    color: ${THEME.BACKGROUND_COLOR};
+    box-shadow: 1px 1px 3px black;
+    ${ButtonCover} {
+      display: inline-block;
+    }
+  }
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.2s;
+  color: ${THEME.MAIN_COLOR_GREEN};
+  width: 80px;
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const CancelButton = styled.button`
+  :active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 1px black;
+  }
+  :hover {
+    box-shadow: 1px 1px 3px black;
+    color: ${THEME.BACKGROUND_COLOR};
+    ${ButtonCover} {
+      display: inline-block;
+    }
+  }
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.2s;
+  color: ${THEME.ERROR};
+  width: 80px;
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const AddLinkInput = styled.input`
+  color: white;
+  width: 85%;
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #393939;
+`;
+
+export const ModalMask = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: absolute;
+  background-color: #0000006e;
+  z-index: 1;
 `;

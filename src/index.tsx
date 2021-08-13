@@ -14,6 +14,9 @@ const GlobalStyle = createGlobalStyle`
     box-sizing : border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    :focus-visible {
+      outline: none;
+    }
   }
   html {
     font-size : 10px;

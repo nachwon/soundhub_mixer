@@ -2,9 +2,10 @@ import { observer } from "mobx-react";
 import React, { useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { THEME } from "../../constants";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
-import { EditModeStore } from "../../stores";
+import { AddFileLinkModalStore, EditModeStore } from "../../stores";
 import EmptyChannel from "../emptyChannel";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
@@ -85,20 +86,14 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
     return channels.map((channel, index) => {
       if (channel) {
         return (
-          <S.Channel>
-            <ChannelComponent
-              key={index}
-              channel={channel}
-              pressedKey={props.pressedKey}
-              onDeleteChannel={handleChannelDelete}
-            />
+          <S.Channel key={index}>
+            <ChannelComponent channel={channel} pressedKey={props.pressedKey} onDeleteChannel={handleChannelDelete} />
           </S.Channel>
         );
       } else {
         return (
-          <S.Channel>
+          <S.Channel key={index}>
             <EmptyChannel
-              key={index}
               index={index}
               selectedIndex={selectedIndex}
               onClick={setSelectedIndex}
@@ -110,7 +105,35 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
     });
   };
 
-  return <S.ChannelsContainer>{renderChannels()}</S.ChannelsContainer>;
+  return (
+    <S.ChannelsContainer>
+      {AddFileLinkModalStore.isOpen ? (
+        <S.ModalMask>
+          <S.AddChannelWithLinkModal>
+            <S.InputContainer>
+              <S.LinkIcon />
+              <S.AddLinkInput />
+            </S.InputContainer>
+            <S.ButtonsContainer>
+              <S.AddButton>
+                <span style={{ zIndex: 1 }} className="material-icons">
+                  done
+                </span>
+                <S.ButtonCover color={THEME.MAIN_COLOR_GREEN} />
+              </S.AddButton>
+              <S.CancelButton onClick={() => AddFileLinkModalStore.closeModal()}>
+                <span style={{ zIndex: 1 }} className="material-icons">
+                  close
+                </span>
+                <S.ButtonCover color={THEME.ERROR} />
+              </S.CancelButton>
+            </S.ButtonsContainer>
+          </S.AddChannelWithLinkModal>
+        </S.ModalMask>
+      ) : null}
+      {renderChannels()}
+    </S.ChannelsContainer>
+  );
 });
 
 export default ChannelsContainer;

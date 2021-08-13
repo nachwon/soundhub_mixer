@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { FileInputId } from "../../constants";
+import { AddFileLinkModalStore } from "../../stores";
 import { ChannelDto } from "../../types";
 import * as S from "./styles";
 
@@ -11,6 +12,7 @@ interface EmptyChannelProps {
 }
 
 const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
+  const linkModelStore = AddFileLinkModalStore;
   const setShowingIndex = props.onClick;
   const [show, setShow] = useState(false);
   const fileInputId = `${FileInputId}-${props.index}`;
@@ -51,7 +53,7 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
         >
           <S.AddFileButton htmlFor={fileInputId} />
           <S.ButtonsDivider />
-          <S.LinkFileButton />
+          <S.LinkFileButton onClick={() => linkModelStore.openModal()} />
         </S.AddChannelButtonsContainer>
       ) : null}
       <S.EmptyChannelInner>
