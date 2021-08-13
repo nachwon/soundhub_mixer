@@ -1,4 +1,4 @@
-import AddFileLinkModalStore from "./AddFileLinkModalStore";
-import EditModeStore from "./EditModeStore";
+import AddFileLinkModalStore from "./addFileLinkModal";
+import EditModeStore from "./editMode";
 
 export { EditModeStore, AddFileLinkModalStore };

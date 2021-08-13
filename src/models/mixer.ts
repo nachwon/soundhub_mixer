@@ -102,15 +102,15 @@ class Mixer {
     return maxDuration;
   }
 
-  async addChannel(index: number, dto: ChannelDto) {
+  async addChannel(index: number, dto: ChannelDto): Promise<boolean> {
     if (this.state === "running") {
-      return;
+      return false;
     }
 
     const channelConstructor = new BufferExtractor();
     const buffer = await channelConstructor.extract(dto.src);
     if (!buffer) {
-      return;
+      return false;
     }
 
     const channel = new Channel(buffer, this.audioCtx, this.masterChannel.node, {
@@ -121,6 +121,7 @@ class Mixer {
 
     this.insertChannel(index, channel);
     this.soloGainBroadcaster.add(channel.gainController);
+    return true;
   }
 
   removeChannel(index: number) {

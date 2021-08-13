@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React, { useRef } from "react";
+import { MouseEventHandler } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { THEME } from "../../constants";
@@ -49,6 +50,23 @@ const ChannelComponent: React.FC<ChannelComponentProps> = observer(
   }
 );
 
+interface ModalButtonProps {
+  color: string;
+  icon: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}
+
+const ModalButton: React.FC<ModalButtonProps> = (props) => {
+  return (
+    <S.ModalButton color={props.color} onClick={props.onClick}>
+      <span style={{ zIndex: 1 }} className="material-icons">
+        {props.icon}
+      </span>
+      <S.ButtonCover color={props.color} />
+    </S.ModalButton>
+  );
+};
+
 interface ChannelsContainerProps {
   mixer: Mixer;
   pressedKey?: string;
@@ -59,11 +77,14 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
   const channelsRef = useRef(mixer.channels);
   const channels = channelsRef.current;
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>();
+  const [fileLink, setFileLink] = useState("");
 
   useEffect(() => {
     const eventHandler = (e: MouseEvent) => {
       e.stopPropagation();
-      setSelectedIndex(undefined);
+      if (!AddFileLinkModalStore.isOpen) {
+        setSelectedIndex(undefined);
+      }
     };
     window.addEventListener("click", eventHandler);
     return () => window.removeEventListener("click", eventHandler);
@@ -96,13 +117,25 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
             <EmptyChannel
               index={index}
               selectedIndex={selectedIndex}
-              onClick={setSelectedIndex}
+              onClick={() => setSelectedIndex(index)}
               onFileSelect={mixer.addChannel.bind(mixer)}
             />
           </S.Channel>
         );
       }
     });
+  };
+
+  const handleLinkAddConfirm = async () => {
+    const channelAdded = await AddFileLinkModalStore.addChannelWithLink(mixer, fileLink, selectedIndex);
+    if (channelAdded) {
+      setFileLink("");
+    }
+  };
+
+  const handleLinkAddCancel = () => {
+    AddFileLinkModalStore.closeModal();
+    setFileLink("");
   };
 
   return (
@@ -112,21 +145,11 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
           <S.AddChannelWithLinkModal>
             <S.InputContainer>
               <S.LinkIcon />
-              <S.AddLinkInput />
+              <S.AddLinkInput onChange={(e) => setFileLink(e.target.value)} value={fileLink} />
             </S.InputContainer>
             <S.ButtonsContainer>
-              <S.AddButton>
-                <span style={{ zIndex: 1 }} className="material-icons">
-                  done
-                </span>
-                <S.ButtonCover color={THEME.MAIN_COLOR_GREEN} />
-              </S.AddButton>
-              <S.CancelButton onClick={() => AddFileLinkModalStore.closeModal()}>
-                <span style={{ zIndex: 1 }} className="material-icons">
-                  close
-                </span>
-                <S.ButtonCover color={THEME.ERROR} />
-              </S.CancelButton>
+              <ModalButton color={THEME.MAIN_COLOR_GREEN} icon="done" onClick={() => handleLinkAddConfirm()} />
+              <ModalButton color={THEME.ERROR} icon="close" onClick={() => handleLinkAddCancel()} />
             </S.ButtonsContainer>
           </S.AddChannelWithLinkModal>
         </S.ModalMask>

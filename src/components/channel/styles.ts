@@ -195,32 +195,7 @@ export const ButtonCover = styled.div`
   animation: ${spreadOut} linear 0.2s;
 `;
 
-export const AddButton = styled.button`
-  :active {
-    transform: translateY(1px);
-    box-shadow: 1px 1px 1px black;
-  }
-  :hover {
-    color: ${THEME.BACKGROUND_COLOR};
-    box-shadow: 1px 1px 3px black;
-    ${ButtonCover} {
-      display: inline-block;
-    }
-  }
-  position: relative;
-  overflow: hidden;
-  transition-duration: 0.2s;
-  color: ${THEME.MAIN_COLOR_GREEN};
-  width: 80px;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const CancelButton = styled.button`
+export const ModalButton = styled.button`
   :active {
     transform: translateY(1px);
     box-shadow: 1px 1px 1px black;
@@ -235,7 +210,7 @@ export const CancelButton = styled.button`
   position: relative;
   overflow: hidden;
   transition-duration: 0.2s;
-  color: ${THEME.ERROR};
+  color: ${(props) => props.color};
   width: 80px;
   background-color: transparent;
   border: none;
@@ -263,5 +238,5 @@ export const ModalMask = styled.div`
   display: flex;
   position: absolute;
   background-color: #0000006e;
-  z-index: 1;
+  z-index: 100;
 `;
