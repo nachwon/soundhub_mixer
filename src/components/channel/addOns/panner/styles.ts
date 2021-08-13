@@ -114,6 +114,7 @@ export const PannerValueDisplay = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 11px;
+  z-index: 3;
 `;
 
 export const PannerRangeIndicator = styled.div`
