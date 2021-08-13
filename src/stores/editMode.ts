@@ -20,6 +20,4 @@ class EditModeStore {
   }
 }
 
-const editModeStore = new EditModeStore();
-
-export default editModeStore;
+export default new EditModeStore();

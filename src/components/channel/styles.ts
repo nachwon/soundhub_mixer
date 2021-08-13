@@ -1,8 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import defaultProfileImg from "../../assets/default-profile-picture.png";
-import musicFile from "../../assets/music-file.png";
-import linkFile from "../../assets/link.png";
 import deleteButton from "../../assets/x-button.png";
+import linkFile from "../../assets/link.png";
 import { MIXER_SETTINGS, THEME } from "../../constants";
 
 export const Channel = styled.div`
@@ -16,9 +15,13 @@ export const ChannelsContainer = styled.div`
   height: ${MIXER_SETTINGS.channelHeight}px;
   width: ${MIXER_SETTINGS.channelWidth * MIXER_SETTINGS.numberOfChannels}px;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: inset 0px 0px 4px 0 black;
   border-radius: 4px;
   background-color: #292929;
+  position: relative;
+  overflow: hidden;
 `;
 
 export const ChannelInnerWrapper = styled.div`
@@ -107,6 +110,7 @@ export const DeleteChannelButton = styled.button`
   box-shadow: 2px 2px 3px -1px black;
   width: 25px;
   height: 25px;
+  background-color: transparent;
   background-image: url(${deleteButton});
   background-size: contain;
   background-position: center;
@@ -128,125 +132,111 @@ export const ChannelUserInfoSection = styled.div`
   flex-shrink: 0;
 `;
 
-const slideIn = keyframes`
-  from {
-    height: 0px;
-  }
-  to {
-    height: 35px;
-  }
-`;
-
-export const AddFileButton = styled.label`
-  border-radius: 5px;
-  height: 35px;
-  width: 35px;
-  background-size: 25px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-image: url(${musicFile});
-  opacity: 1;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  cursor: pointer;
-  animation: ${slideIn} linear 0.2s;
-  transition-duration: 0.2s;
-`;
-
-export const LinkFileButton = styled.label`
-  border-radius: 5px;
-  height: 35px;
-  width: 35px;
-  background-size: 25px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-image: url(${linkFile});
-  opacity: 1;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  cursor: pointer;
-  animation: ${slideIn} linear 0.2s;
-  transition-duration: 0.2s;
-`;
-
-const expend = keyframes`
-  from {
-    width: 0%;
-  }
-  to {
-    width: 35%;
-  }
-`;
-
-export const ButtonsDivider = styled.div`
-  height: 1px;
-  width: 35%;
-  margin: 5px 0;
-  background-color: ${THEME.MAIN_COLOR_GREEN};
-  animation: ${expend} linear 0.2s;
-`;
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    border-color: #232626;
-    box-shadow: 0px 0px 0px 0px ${THEME.MAIN_COLOR_GREEN};
-  }
-  to {
-    opacity: 1;
-    border-color: ${THEME.MAIN_COLOR_GREEN};
-    box-shadow: 0px 0px 11px 0px #4cf7cf78;
-  }
-`;
-
-export const AddChannelButtonsContainer = styled.div`
+export const AddChannelWithLinkModal = styled.div`
   position: absolute;
-  height: 100%;
-  width: 100%;
+  width: 65%;
+  height: 100px;
+  background: #242526;
+  z-index: 100;
+  border-radius: 5px;
+  box-shadow: 1px 1px 6px 1px black;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
-  justify-content: center;
-  background: #00000070;
-  border-radius: 5px;
-  animation: ${fadeIn} linear 0.3s;
-  border: 2px solid ${THEME.MAIN_COLOR_GREEN};
-  box-shadow: 0px 0px 11px 0px #4cf7cf78;
-  cursor: auto;
+  padding: 10px;
 `;
 
-export const EmptyChannel = styled.div`
-  height: ${MIXER_SETTINGS.channelHeight - MIXER_SETTINGS.channelTopBottomPadding * 2}px;
-  width: ${MIXER_SETTINGS.channelWidth - 10}px;
-  background: linear-gradient(45deg, #222222 45%, #2a2a2a 100%);
-  display: inline-flex;
-  padding: 5px 0;
-  flex-direction: column;
-  border-radius: 5px;
-  box-shadow: 0 0 3px 0px black;
-  justify-content: center;
+export const InputContainer = styled.div`
+  display: flex;
   align-items: center;
-  position: relative;
-  cursor: pointer;
-  transition-duration: 0.2s;
-  :hover {
-    border: 1px solid #4cf7cf;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const LinkIcon = styled.div`
+  background-color: transparent;
+  border-bottom: 1px solid #393939;
+  width: 30px;
+  height: 30px;
+  background-size: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url(${linkFile});
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+`;
+
+const spreadOut = keyframes`
+  0% {
+    width: 0px;
+    height: 0px;
+  }
+
+  100% {
+    width: 100px;
+    height: 100px;
   }
 `;
 
-export const EmptyChannelInner = styled.div`
-  font-family: "Wallpoet";
+export const ButtonCover = styled.div`
+  display: none;
+  position: absolute;
+  background: ${(props) => props.color};
+  position: absolute;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: ${spreadOut} linear 0.2s;
+`;
+
+export const ModalButton = styled.button`
+  :active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 1px black;
+  }
+  :hover {
+    box-shadow: 1px 1px 3px black;
+    color: ${THEME.BACKGROUND_COLOR};
+    ${ButtonCover} {
+      display: inline-block;
+    }
+  }
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.2s;
+  color: ${(props) => props.color};
+  width: 80px;
+  background-color: transparent;
+  border: none;
   border-radius: 5px;
-  border: 1px dashed #404040;
-  width: 90%;
-  height: 100%;
-  display: inline-flex;
-  text-orientation: sideways-right;
-  writing-mode: vertical-rl;
-  font-size: 25px;
-  font-weight: 900;
+  display: flex;
   justify-content: center;
   align-items: center;
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1);
-  color: #1a1a1a;
+`;
+
+export const AddLinkInput = styled.input`
+  color: white;
+  width: 85%;
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #393939;
+`;
+
+export const ModalMask = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: absolute;
+  background-color: #0000006e;
+  z-index: 100;
 `;

@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
-import React, { ChangeEvent, useRef } from "react";
+import React, { useRef } from "react";
+import { MouseEventHandler } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { FileInputId } from "../../constants";
+import { THEME } from "../../constants";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
-import { ChannelDto } from "../../types";
-import editModeStore from "../mixerActions/store";
+import { AddFileLinkModalStore, EditModeStore } from "../../stores";
+import EmptyChannel from "../emptyChannel";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
 import MuteSoloComponent from "./addOns/muteSolo";
@@ -21,65 +22,6 @@ const LoadingSpinner: React.FC = () => {
   );
 };
 
-interface EmptyChannelProps {
-  index: number;
-  selectedIndex?: number;
-  onClick: Function;
-  onFileSelect: (index: number, dto: ChannelDto) => void;
-}
-
-const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
-  const setShowingIndex = props.onClick;
-  const [show, setShow] = useState(false);
-  const fileInputId = `${FileInputId}-${props.index}`;
-
-  useEffect(() => {
-    setShow(props.index === props.selectedIndex);
-  }, [props]);
-
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files) {
-      props.onFileSelect(props.index, {
-        title: files[0]?.name,
-        src: files[0],
-      });
-
-      e.target.value = "";
-    } else {
-      return;
-    }
-  };
-
-  return (
-    <S.Channel>
-      <input type="file" accept=".mp3,.wav" id={fileInputId} onChange={handleFileSelect} />
-      <S.EmptyChannel
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowingIndex(props.index);
-        }}
-      >
-        {show ? (
-          <S.AddChannelButtonsContainer
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowingIndex(undefined);
-            }}
-          >
-            <S.AddFileButton htmlFor={fileInputId} />
-            <S.ButtonsDivider />
-            <S.LinkFileButton htmlFor={fileInputId} />
-          </S.AddChannelButtonsContainer>
-        ) : null}
-
-        <S.EmptyChannelInner>CHANNEL {props.index + 1}</S.EmptyChannelInner>
-      </S.EmptyChannel>
-    </S.Channel>
-  );
-};
-
 interface ChannelComponentProps {
   channel: Channel;
   pressedKey?: string;
@@ -88,27 +30,42 @@ interface ChannelComponentProps {
 
 const ChannelComponent: React.FC<ChannelComponentProps> = observer(
   ({ channel, pressedKey = "default", onDeleteChannel }) => {
-    const store = editModeStore;
+    const store = EditModeStore;
 
     return (
-      <S.Channel>
-        <S.ChannelInnerWrapper>
-          {channel.loaded ? null : <S.LoadingMask />}
-          <S.ChannelUserInfoSection>
-            {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
-            {channel.loaded && store.isEditing ? (
-              <S.DeleteChannelButton onClick={() => onDeleteChannel(channel)} />
-            ) : null}
-          </S.ChannelUserInfoSection>
-          <MuteSoloComponent channel={channel} />
-          <Panner channel={channel} pressedKey={pressedKey} />
-          <ChannelFader channel={channel} pressedKey={pressedKey} />
-          <ChannelName channel={channel} />
-        </S.ChannelInnerWrapper>
-      </S.Channel>
+      <S.ChannelInnerWrapper>
+        {channel.loaded ? null : <S.LoadingMask />}
+        <S.ChannelUserInfoSection>
+          {channel.loaded ? <S.ChannelUserProfileImg /> : <LoadingSpinner />}
+          {channel.loaded && store.isEditing ? (
+            <S.DeleteChannelButton onClick={() => onDeleteChannel(channel)} />
+          ) : null}
+        </S.ChannelUserInfoSection>
+        <MuteSoloComponent channel={channel} />
+        <Panner channel={channel} pressedKey={pressedKey} />
+        <ChannelFader channel={channel} pressedKey={pressedKey} />
+        <ChannelName channel={channel} />
+      </S.ChannelInnerWrapper>
     );
   }
 );
+
+interface ModalButtonProps {
+  color: string;
+  icon: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}
+
+const ModalButton: React.FC<ModalButtonProps> = (props) => {
+  return (
+    <S.ModalButton color={props.color} onClick={props.onClick}>
+      <span style={{ zIndex: 1 }} className="material-icons">
+        {props.icon}
+      </span>
+      <S.ButtonCover color={props.color} />
+    </S.ModalButton>
+  );
+};
 
 interface ChannelsContainerProps {
   mixer: Mixer;
@@ -120,11 +77,14 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
   const channelsRef = useRef(mixer.channels);
   const channels = channelsRef.current;
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>();
+  const [fileLink, setFileLink] = useState("");
 
   useEffect(() => {
     const eventHandler = (e: MouseEvent) => {
       e.stopPropagation();
-      setSelectedIndex(undefined);
+      if (!AddFileLinkModalStore.isOpen) {
+        setSelectedIndex(undefined);
+      }
     };
     window.addEventListener("click", eventHandler);
     return () => window.removeEventListener("click", eventHandler);
@@ -132,14 +92,14 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
 
   useEffect(() => {
     if (props.pressedKey === "Escape") {
-      editModeStore.turnOffEditMode();
+      EditModeStore.turnOffEditMode();
     }
   }, [props.pressedKey]);
 
   const handleChannelDelete = (channel: Channel) => {
     mixer.removeChannel(channel.index);
     if (!mixer.channelsLoaded) {
-      editModeStore.turnOffEditMode();
+      EditModeStore.turnOffEditMode();
     }
   };
 
@@ -147,28 +107,56 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
     return channels.map((channel, index) => {
       if (channel) {
         return (
-          <ChannelComponent
-            key={index}
-            channel={channel}
-            pressedKey={props.pressedKey}
-            onDeleteChannel={handleChannelDelete}
-          />
+          <S.Channel key={index}>
+            <ChannelComponent channel={channel} pressedKey={props.pressedKey} onDeleteChannel={handleChannelDelete} />
+          </S.Channel>
         );
       } else {
         return (
-          <EmptyChannel
-            key={index}
-            index={index}
-            selectedIndex={selectedIndex}
-            onClick={setSelectedIndex}
-            onFileSelect={mixer.addChannel.bind(mixer)}
-          />
+          <S.Channel key={index}>
+            <EmptyChannel
+              index={index}
+              selectedIndex={selectedIndex}
+              onClick={() => setSelectedIndex(index)}
+              onFileSelect={mixer.addChannel.bind(mixer)}
+            />
+          </S.Channel>
         );
       }
     });
   };
 
-  return <S.ChannelsContainer>{renderChannels()}</S.ChannelsContainer>;
+  const handleLinkAddConfirm = async () => {
+    const channelAdded = await AddFileLinkModalStore.addChannelWithLink(mixer, fileLink, selectedIndex);
+    if (channelAdded) {
+      setFileLink("");
+    }
+  };
+
+  const handleLinkAddCancel = () => {
+    AddFileLinkModalStore.closeModal();
+    setFileLink("");
+  };
+
+  return (
+    <S.ChannelsContainer>
+      {AddFileLinkModalStore.isOpen ? (
+        <S.ModalMask>
+          <S.AddChannelWithLinkModal>
+            <S.InputContainer>
+              <S.LinkIcon />
+              <S.AddLinkInput onChange={(e) => setFileLink(e.target.value)} value={fileLink} />
+            </S.InputContainer>
+            <S.ButtonsContainer>
+              <ModalButton color={THEME.MAIN_COLOR_GREEN} icon="done" onClick={() => handleLinkAddConfirm()} />
+              <ModalButton color={THEME.ERROR} icon="close" onClick={() => handleLinkAddCancel()} />
+            </S.ButtonsContainer>
+          </S.AddChannelWithLinkModal>
+        </S.ModalMask>
+      ) : null}
+      {renderChannels()}
+    </S.ChannelsContainer>
+  );
 });
 
 export default ChannelsContainer;
