@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useState } from "react";
 import Mixer from "../../models/mixer";
 import { MixerExporter } from "../../models/mixerExporter";
-import editModeStore from "./store";
+import editModeStore from "../../stores/editModeStore";
 import * as S from "./styles";
 
 interface MixerActionsContainerProps {

@@ -41,6 +41,7 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
         setShowingIndex(props.index);
       }}
     >
+      <input type="file" accept=".mp3,.wav" id={fileInputId} onChange={handleFileSelect} />
       {show ? (
         <S.AddChannelButtonsContainer
           onClick={(e) => {
@@ -49,12 +50,10 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
           }}
         >
           <S.AddFileButton htmlFor={fileInputId} />
-          <input type="file" accept=".mp3,.wav" id={fileInputId} onChange={handleFileSelect} />
           <S.ButtonsDivider />
           <S.LinkFileButton />
         </S.AddChannelButtonsContainer>
       ) : null}
-
       <S.EmptyChannelInner>
         <S.EmptyChannelTextContainer>
           <S.EmptyChannelText>CHANNEL</S.EmptyChannelText>
