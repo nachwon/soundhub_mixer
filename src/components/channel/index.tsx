@@ -74,7 +74,12 @@ const EmptyChannel: React.FC<EmptyChannelProps> = (props) => {
           </S.AddChannelButtonsContainer>
         ) : null}
 
-        <S.EmptyChannelInner>CHANNEL {props.index + 1}</S.EmptyChannelInner>
+        <S.EmptyChannelInner>
+          <S.EmptyChannelTextContainer>
+            <S.EmptyChannelText>CHANNEL</S.EmptyChannelText>
+            <S.EmptyChannelNumberText>{props.index + 1}</S.EmptyChannelNumberText>
+          </S.EmptyChannelTextContainer>
+        </S.EmptyChannelInner>
       </S.EmptyChannel>
     </S.Channel>
   );

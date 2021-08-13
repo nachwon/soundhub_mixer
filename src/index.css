@@ -19,3 +19,8 @@ code {
   font-family: "Monoton";
   src: url("/src/assets/fonts/Monoton-Regular.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/src/assets/fonts/Montserrat-ExtraBold.ttf") format("truetype");
+}

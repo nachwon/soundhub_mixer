@@ -99,13 +99,13 @@ export class AudioAnalyser {
     if (this.levelLeft < -48) {
       this.levelLeft = -Infinity;
     } else {
-      this.levelLeft -= 0.2;
+      this.levelLeft -= 0.5;
     }
 
     if (this.levelRight < -48) {
       this.levelRight = -Infinity;
     } else {
-      this.levelRight -= 0.2;
+      this.levelRight -= 0.5;
     }
     this.resetMaxLevels();
     return [this.levelLeft, this.levelRight];

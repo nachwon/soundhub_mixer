@@ -107,6 +107,7 @@ export const DeleteChannelButton = styled.button`
   box-shadow: 2px 2px 3px -1px black;
   width: 25px;
   height: 25px;
+  background-color: transparent;
   background-image: url(${deleteButton});
   background-size: contain;
   background-position: center;
@@ -210,7 +211,7 @@ export const AddChannelButtonsContainer = styled.div`
   background: #00000070;
   border-radius: 5px;
   animation: ${fadeIn} linear 0.3s;
-  border: 2px solid ${THEME.MAIN_COLOR_GREEN};
+  border: 1px solid ${THEME.MAIN_COLOR_GREEN};
   box-shadow: 0px 0px 11px 0px #4cf7cf78;
   cursor: auto;
 `;
@@ -235,18 +236,36 @@ export const EmptyChannel = styled.div`
 `;
 
 export const EmptyChannelInner = styled.div`
-  font-family: "Wallpoet";
   border-radius: 5px;
   border: 1px dashed #404040;
   width: 90%;
   height: 100%;
   display: inline-flex;
-  text-orientation: sideways-right;
-  writing-mode: vertical-rl;
-  font-size: 25px;
-  font-weight: 900;
   justify-content: center;
   align-items: center;
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1);
   color: #1a1a1a;
+`;
+
+export const EmptyChannelTextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 42%;
+  width: 100%;
+`;
+
+export const EmptyChannelText = styled.div`
+  display: block;
+  font-family: "Montserrat";
+  font-size: 30px;
+  writing-mode: vertical-rl;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1);
+`;
+
+export const EmptyChannelNumberText = styled.div`
+  display: block;
+  font-family: "Montserrat";
+  font-size: 30px;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1);
 `;
