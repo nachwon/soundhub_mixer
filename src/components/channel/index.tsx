@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
-import editModeStore from "../../stores/editModeStore";
+import { EditModeStore } from "../../stores";
 import EmptyChannel from "../emptyChannel";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
@@ -28,7 +28,7 @@ interface ChannelComponentProps {
 
 const ChannelComponent: React.FC<ChannelComponentProps> = observer(
   ({ channel, pressedKey = "default", onDeleteChannel }) => {
-    const store = editModeStore;
+    const store = EditModeStore;
 
     return (
       <S.ChannelInnerWrapper>
@@ -70,14 +70,14 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
 
   useEffect(() => {
     if (props.pressedKey === "Escape") {
-      editModeStore.turnOffEditMode();
+      EditModeStore.turnOffEditMode();
     }
   }, [props.pressedKey]);
 
   const handleChannelDelete = (channel: Channel) => {
     mixer.removeChannel(channel.index);
     if (!mixer.channelsLoaded) {
-      editModeStore.turnOffEditMode();
+      EditModeStore.turnOffEditMode();
     }
   };
 

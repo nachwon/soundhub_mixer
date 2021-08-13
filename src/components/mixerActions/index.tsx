@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useState } from "react";
 import Mixer from "../../models/mixer";
 import { MixerExporter } from "../../models/mixerExporter";
-import editModeStore from "../../stores/editModeStore";
+import { EditModeStore } from "../../stores/";
 import * as S from "./styles";
 
 interface MixerActionsContainerProps {
@@ -10,7 +10,7 @@ interface MixerActionsContainerProps {
 }
 
 const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((props) => {
-  const store = editModeStore;
+  const store = EditModeStore;
   const [isPreparing, setIsPreparing] = useState(false);
   const mixer = props.mixer;
 
