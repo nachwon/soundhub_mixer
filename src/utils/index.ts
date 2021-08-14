@@ -21,7 +21,7 @@ export class BufferExtractor {
       const response = await axios.get(url, { responseType: "arraybuffer", onDownloadProgress: onProgressUpdate });
       return response.data;
     } catch (error) {
-      console.log(error);
+      window.alert(error);
     }
   }
 }
