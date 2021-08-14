@@ -16,16 +16,23 @@ class AddFileLinkModalStore {
     this.isOpen = false;
   }
 
-  async addChannelWithLink(mixer: Mixer, link: string, index?: number): Promise<boolean> {
+  async addChannelWithLink(
+    mixer: Mixer,
+    link: string,
+    index?: number,
+    onProgressUpdate?: (e: ProgressEvent) => void
+  ): Promise<boolean> {
     if (!link || index === undefined) {
       return false;
     }
 
     const title = link.split("/").pop();
-    const channelAdded = await mixer.addChannel(index, {
+    const channelDto = {
       title: title,
       src: link,
-    });
+    };
+
+    const channelAdded = await mixer.addChannel(index, channelDto, onProgressUpdate);
 
     if (channelAdded) {
       this.closeModal();

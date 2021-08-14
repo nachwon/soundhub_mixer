@@ -154,6 +154,21 @@ export const InputContainer = styled.div`
   width: 100%;
 `;
 
+export const DownloadProgress = styled.div`
+  :before {
+    content: "";
+    background: ${THEME.MAIN_COLOR_BLUE};
+    width: ${(props: { progress: number }) => props.progress}%;
+    height: 100%;
+    position: absolute;
+  }
+  overflow: hidden;
+  position: relative;
+  height: 5px;
+  width: 92%;
+  border-radius: 5px;
+`;
+
 export const LinkIcon = styled.div`
   background-color: transparent;
   border-bottom: 1px solid #393939;
@@ -225,6 +240,7 @@ export const AddLinkInput = styled.input`
   width: 85%;
   height: 30px;
   background: transparent;
+  border-radius: 0px;
   border: none;
   border-bottom: 1px solid #393939;
 `;

@@ -77,6 +77,8 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
   const channelsRef = useRef(mixer.channels);
   const channels = channelsRef.current;
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>();
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [fileLink, setFileLink] = useState("");
 
   useEffect(() => {
@@ -126,16 +128,30 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
     });
   };
 
+  const handleDownloadProgressUpdate = (e: ProgressEvent) => {
+    setDownloadProgress((e.loaded / e.total) * 100);
+  };
+
   const handleLinkAddConfirm = async () => {
-    const channelAdded = await AddFileLinkModalStore.addChannelWithLink(mixer, fileLink, selectedIndex);
+    setIsDownloading(true);
+    const channelAdded = await AddFileLinkModalStore.addChannelWithLink(
+      mixer,
+      fileLink,
+      selectedIndex,
+      handleDownloadProgressUpdate
+    );
     if (channelAdded) {
       setFileLink("");
     }
+    setDownloadProgress(0);
+    setIsDownloading(false);
   };
 
   const handleLinkAddCancel = () => {
     AddFileLinkModalStore.closeModal();
     setFileLink("");
+    setDownloadProgress(0);
+    setIsDownloading(false);
   };
 
   return (
@@ -147,9 +163,26 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = observer((props) => 
               <S.LinkIcon />
               <S.AddLinkInput onChange={(e) => setFileLink(e.target.value)} value={fileLink} />
             </S.InputContainer>
+            <S.DownloadProgress progress={downloadProgress} />
             <S.ButtonsContainer>
-              <ModalButton color={THEME.MAIN_COLOR_GREEN} icon="done" onClick={() => handleLinkAddConfirm()} />
-              <ModalButton color={THEME.ERROR} icon="close" onClick={() => handleLinkAddCancel()} />
+              <ModalButton
+                color={THEME.MAIN_COLOR_GREEN}
+                icon="done"
+                onClick={() => {
+                  if (!isDownloading) {
+                    handleLinkAddConfirm();
+                  }
+                }}
+              />
+              <ModalButton
+                color={THEME.ERROR}
+                icon="close"
+                onClick={() => {
+                  if (!isDownloading) {
+                    handleLinkAddCancel();
+                  }
+                }}
+              />
             </S.ButtonsContainer>
           </S.AddChannelWithLinkModal>
         </S.ModalMask>

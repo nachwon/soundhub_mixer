@@ -2,9 +2,9 @@ import { MIXER_SETTINGS } from "../constants";
 import axios from "axios";
 
 export class BufferExtractor {
-  async extract(src: File | string): Promise<ArrayBuffer | undefined> {
+  async extract(src: File | string, onProgressUpdate?: (e: ProgressEvent) => void): Promise<ArrayBuffer | undefined> {
     if (typeof src === "string") {
-      return await this.fromUrl(src);
+      return await this.fromUrl(src, onProgressUpdate);
     } else if (src instanceof File) {
       return await this.fromFile(src);
     } else {
@@ -16,9 +16,9 @@ export class BufferExtractor {
     return await file.arrayBuffer();
   }
 
-  async fromUrl(url: string) {
+  async fromUrl(url: string, onProgressUpdate?: (e: ProgressEvent) => void) {
     try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
+      const response = await axios.get(url, { responseType: "arraybuffer", onDownloadProgress: onProgressUpdate });
       return response.data;
     } catch (error) {
       console.log(error);

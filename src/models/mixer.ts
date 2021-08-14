@@ -102,13 +102,11 @@ class Mixer {
     return maxDuration;
   }
 
-  async addChannel(index: number, dto: ChannelDto): Promise<boolean> {
-    if (this.state === "running") {
-      return false;
-    }
+  async addChannel(index: number, dto: ChannelDto, onProgressUpdate?: (e: ProgressEvent) => void): Promise<boolean> {
+    this.stop();
 
     const channelConstructor = new BufferExtractor();
-    const buffer = await channelConstructor.extract(dto.src);
+    const buffer = await channelConstructor.extract(dto.src, onProgressUpdate);
     if (!buffer) {
       return false;
     }
