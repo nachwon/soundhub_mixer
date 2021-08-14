@@ -15,7 +15,7 @@ const ChannelName: React.FC<ChannelNameProps> = (props) => {
   const trackNamePosition = useRef(InitialTrackNamePosition);
   const [centered, setCentered] = useState(false);
   const [position, setPosition] = useState(InitialTrackNamePosition);
-  const [animation, setAnimation] = useState<number | null>(null);
+  const [animation, setAnimation] = useState<null | ReturnType<typeof setTimeout>>(null);
   const textAnimationReversed = useRef(false);
 
   useEffect(() => {
