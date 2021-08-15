@@ -15,7 +15,7 @@ export const MixerContainer = styled.div`
   border-radius: 10px;
   border: 2px solid silver;
   box-shadow: inset -1px -1px 3px 0px black;
-  box-shadow: 1px 1px 20px 8px #737373;
+  box-shadow: 1px 1px 20px 8px black;
   padding: 10px;
   position: absolute;
   top: 50%;
