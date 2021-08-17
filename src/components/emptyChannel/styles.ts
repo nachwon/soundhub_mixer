@@ -85,7 +85,7 @@ export const AddChannelButtonsContainer = styled.div`
   background: #00000070;
   border-radius: 5px;
   animation: ${fadeIn} linear 0.3s;
-  border: 1px solid ${THEME.MAIN_COLOR_GREEN};
+  /* border: 1px solid ${THEME.MAIN_COLOR_GREEN}; */
   box-shadow: 0px 0px 11px 0px #4cf7cf78;
   cursor: auto;
 `;
@@ -104,6 +104,7 @@ export const EmptyChannel = styled.div`
   position: relative;
   cursor: pointer;
   transition-duration: 0.2s;
+  border: 1px solid #282828;
   :hover {
     border: 1px solid #4cf7cf;
   }
