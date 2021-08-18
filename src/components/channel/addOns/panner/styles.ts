@@ -129,10 +129,13 @@ export const PannerRangeIndicator = styled.div`
 
 export const PannerRangeTick = styled.div`
   width: 1px;
-  height: 100%;
+  height: 50%;
   position: absolute;
   transform: rotate(${(props: { deg: number }) => props.deg}deg);
   border-left: 1px solid #b7b7b7;
+  transform-origin: 50% 100%;
+  top: 0%;
+  left: 50%;
 `;
 
 export const PannerRangeCenterTick = styled.div`

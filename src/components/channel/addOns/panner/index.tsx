@@ -18,7 +18,7 @@ const unitDegCalculator = (deg: number) => {
 };
 
 const doubleUnitDegCalculator = (deg: number) => {
-  const unitAngle = (MaxPanAngle / 100) * UnitPannerValue * 2;
+  const unitAngle = (MaxPanAngle / 100) * UnitPannerValue * 4;
   return Math.round(deg / unitAngle) * unitAngle;
 };
 
@@ -95,8 +95,16 @@ const Panner: React.FC<PannerProps> = observer(({ channel, pressedKey = "default
 
   const renderTicks = () => {
     const ticks = [];
-    for (let i of [...Array(4).keys()]) {
-      ticks.push(i === 0 ? <S.PannerRangeCenterTick key={i} deg={i} /> : <S.PannerRangeTick key={i} deg={i * 45} />);
+    const range = [...Array(6).keys()];
+    for (let i of range) {
+      i === range.length
+        ? ticks.push(<S.PannerRangeTick key={"R6"} deg={MaxPanAngle} />)
+        : ticks.push(
+            <>
+              <S.PannerRangeTick key={`R${i}`} deg={(i * MaxPanAngle) / 5} />
+              <S.PannerRangeTick key={`L${i}`} deg={MaxPanAngle + 90 + (i * MaxPanAngle) / 5} />
+            </>
+          );
     }
     return ticks;
   };
