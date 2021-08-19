@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";
@@ -36,6 +36,8 @@ const FaderPositionCalculator: { [k: string]: (percent: number) => number } = {
 export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
   const faderRail = useRef<HTMLDivElement>(null);
+  const faderHandle = useRef<HTMLDivElement>(null);
+  const faderOffset = useRef(0);
 
   useEffect(() => {
     const calcFunc = FaderPositionCalculator[pressedKey];
@@ -47,17 +49,24 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   }, [pressedKey]);
 
   const handleFaderMouseDown = (e: React.MouseEvent) => {
+    faderOffset.current = e.nativeEvent.offsetY;
     window.addEventListener("mousemove", handleFaderMouseMove);
     window.addEventListener("mouseup", removeGlobalFaderEvents);
   };
 
   const handleFaderMouseMove = (e: MouseEvent) => {
-    if (!faderRail.current) {
+    if (!faderRail.current || !faderHandle.current) {
       return;
     }
-    const rect = faderRail.current.getBoundingClientRect();
-    const faderRailTop = rect.top;
-    const faderPositionPx = Math.max(Math.min(e.pageY - faderRailTop, faderRail.current.offsetHeight), 0);
+    const railRect = faderRail.current.getBoundingClientRect();
+    const faderRailTop = railRect.top;
+    const faderRailHeight = railRect.height;
+    const handleHeight = faderHandle.current.getBoundingClientRect().height;
+
+    const faderPositionPx = Math.max(
+      Math.min(e.pageY - faderRailTop - faderOffset.current + handleHeight / 2, faderRailHeight),
+      0
+    );
     const faderPositionPercent = FaderMaxPercent - (faderPositionPx * FaderMaxPercent) / faderRail.current.offsetHeight;
     const calculatedFaderPosition = calculateFaderPositionFromPercent(faderPositionPercent);
     const calculatedFaderGainValue = FaderMaxPercent - FaderMaxPercent * (calculatedFaderPosition / 100);
@@ -78,6 +87,7 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   return {
     handleFaderMouseDown,
     faderRail,
+    faderHandle,
     NumberOfTicks,
   };
 };
