@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";

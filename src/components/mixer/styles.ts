@@ -7,7 +7,6 @@ export const MixerContainer = styled.div`
   height: fit-content;
   width: fit-content;
   background: ${MIXER_SETTINGS.mixerBackgroundColor};
-  margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,10 +16,6 @@ export const MixerContainer = styled.div`
   box-shadow: inset -1px -1px 3px 0px black;
   box-shadow: 1px 1px 20px 8px black;
   padding: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 export const MixerInnerWrapper = styled.div`

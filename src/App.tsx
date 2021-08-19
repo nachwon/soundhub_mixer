@@ -1,4 +1,3 @@
-import "./App.css";
 import SoundHubMixer from "./components/mixer";
 
 import Mixer from "./models/mixer";

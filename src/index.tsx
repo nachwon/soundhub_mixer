@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
       outline: none;
     }
   }
+
   html {
     font-size : 10px;
     scrollbar-width: none;
@@ -25,12 +26,6 @@ const GlobalStyle = createGlobalStyle`
 
   html::-webkit-scrollbar {
     display: none;
-  }
-  
-  body {
-    margin: 0;
-    height: 100vh;
-    /* background-color: #18191a; */
   }
 
   button {
