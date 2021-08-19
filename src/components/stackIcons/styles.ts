@@ -8,7 +8,7 @@ export const StackIconsContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
-  margin-top: 3px;
+  margin-top: 7px;
 `;
 
 export const StackIconsText = styled.div`

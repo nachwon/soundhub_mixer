@@ -118,8 +118,9 @@ export const MasterTrackName = styled.div`
   font-size: 13px;
   font-weight: 700;
   font-size: 14px;
-  color: white;
+  color: #d8d8d8;
   text-shadow: 0px 0px 2px black;
+  font-family: "Montserrat";
 `;
 
 export const MasterChannelMeter = styled.div`
@@ -132,10 +133,11 @@ export const MasterChannelMeter = styled.div`
 `;
 
 export const MeterLabel = styled.div`
-  color: white;
+  color: #d8d8d8;
   position: absolute;
   bottom: -20px;
   font-size: 13px;
+  font-family: "Montserrat";
 `;
 
 export const MasterChannelMeterTicksContainer = styled.div`
