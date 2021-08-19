@@ -95,16 +95,9 @@ const Panner: React.FC<PannerProps> = observer(({ channel, pressedKey = "default
 
   const renderTicks = () => {
     const ticks = [];
-    const range = [...Array(6).keys()];
+    const range = [...Array(11).keys()];
     for (let i of range) {
-      i === range.length
-        ? ticks.push(<S.PannerRangeTick key={"R6"} deg={MaxPanAngle} />)
-        : ticks.push(
-            <>
-              <S.PannerRangeTick key={`R${i}`} deg={(i * MaxPanAngle) / 5} />
-              <S.PannerRangeTick key={`L${i}`} deg={MaxPanAngle + 90 + (i * MaxPanAngle) / 5} />
-            </>
-          );
+      ticks.push(<S.PannerRangeTick key={i} deg={MaxPanAngle - (i * MaxPanAngle) / 5} />);
     }
     return ticks;
   };
