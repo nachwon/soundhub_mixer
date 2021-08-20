@@ -205,6 +205,14 @@ class Mixer {
       channels: this.channels.map((channel) => channel?.exportSettings()),
     };
   }
+
+  getWaveformData(width: number, height: number): Array<number> {
+    const channel = this.channels[0];
+    if (!channel) {
+      return [];
+    }
+    return channel.getWaveformData(width, height);
+  }
 }
 
 export default Mixer;

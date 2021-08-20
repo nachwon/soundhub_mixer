@@ -52,13 +52,14 @@ export const MixerProgressBarContainer = styled.div`
 
 export const MixerProgressBarGuide = styled.div`
   width: 100%;
-  height: 19px;
+  height: 40px;
   border-radius: 3px;
-  background: #393939;
+  background: #1b1b1b;
   box-shadow: inset 1px 1px 4px 0 black;
   flex-shrink: 0;
   overflow: hidden;
   pointer-events: none;
+  position: relative;
 `;
 
 interface MixerProgressIndicatorProps {
@@ -71,41 +72,37 @@ export const MixerProgressIndicator = styled.div.attrs<MixerProgressIndicatorPro
   },
 }))<MixerProgressIndicatorProps>`
   height: 100%;
-  background: ${THEME.MAIN_COLOR_GREEN};
+  z-index: 2;
+  background: #4cf7cf2e;
   box-shadow: inset 1px 1px 4px 0 black;
   position: relative;
   pointer-events: none;
+  border-right: 1px solid ${THEME.MAIN_COLOR_GREEN};
 `;
 
 interface MixerProgressPointerProps {
-  position: number;
+  position: string;
 }
 
 export const MixerProgressPointer = styled.div.attrs<MixerProgressPointerProps>((props) => ({
   style: {
-    left: `${props.position}px`,
+    width: `${props.position}`,
   },
 }))<MixerProgressPointerProps>`
-  width: 1px;
   height: 100%;
-  background: #ff2929;
+  background: #4cf7cf2e;
   display: inline-block;
   position: absolute;
-  opacity: 0;
   pointer-events: none;
+  box-shadow: inset 1px 1px 4px 0 black;
 `;
 
 export const MixerProgressBar = styled.div`
   width: 100%;
-  height: 25px;
+  height: 50px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  :hover {
-    ${MixerProgressPointer} {
-      opacity: 1;
-    }
-  }
 `;
 
 export const CurrentTimeDisplay = styled.div`

@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import { InitialFaderPosition } from "../../constants";
 import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
+import ChannelWaveformCalculator from "../waveformCalculator";
 
 class Channel implements FaderInterface {
   index: number;
@@ -195,6 +196,14 @@ class Channel implements FaderInterface {
       gain: this.currentGain,
       pan: this.currentPan,
     };
+  }
+
+  getWaveformData(waveformWidth: number, waveformHeight: number) {
+    if (!this.buffer) {
+      return [];
+    }
+    const calculator = new ChannelWaveformCalculator(this.buffer, waveformWidth, waveformHeight, this.currentGain);
+    return calculator.calculate();
   }
 }
 
