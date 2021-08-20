@@ -161,6 +161,7 @@ export const DownloadProgress = styled.div`
     width: ${(props: { progress: number }) => props.progress}%;
     height: 100%;
     position: absolute;
+    transition-duration: 0.2s;
   }
   overflow: hidden;
   position: relative;

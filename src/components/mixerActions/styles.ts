@@ -145,6 +145,7 @@ export const EditButton = styled.button<EditButtonProps>`
     background-size: 21px;
     animation: ${(props) => (props.isEditing ? spin : "")} linear 1s infinite;
   }
+  position: relative;
   margin-right: 5px;
   background-color: transparent;
   background-position: center;
