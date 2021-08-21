@@ -1,8 +1,11 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
+import { MaxChannelCount } from "../constants";
 
 class WaveformStore {
   waveform: Array<number> = [];
+  channelWaveforms: Array<Array<number>> = new Array(MaxChannelCount);
   maxDuration: number = 0;
+  maxRms: number = 0;
   width: number = 650;
   height: number = 40;
 
@@ -14,21 +17,37 @@ class WaveformStore {
     this.waveform = waveform;
   }
 
+  setChannelWaveform(waveform: Array<number>, index: number) {
+    this.channelWaveforms[index] = waveform;
+  }
+
   setMaxDuration(duration: number) {
     this.maxDuration = Math.max(this.maxDuration, duration);
   }
 
-  updateWaveform(waveform: Array<number>) {
-    if (this.waveform.length === 0) {
-      this.setWaveform(waveform);
-    } else {
-      this.waveform = this.waveform.map((value, index) => {
-        let currentData = value ? value : 0;
-        let newData = waveform[index] ? waveform[index] : 0;
+  setMaxRms(rms: number) {
+    this.maxRms = Math.max(this.maxRms, rms);
+  }
 
-        return Math.max(currentData, newData);
-      });
+  updateChannelWaveform(waveform: Array<number>, index: number) {
+    this.setChannelWaveform(waveform, index);
+    this.updateWaveform();
+  }
+
+  updateWaveform() {
+    const waveform = [];
+    for (let i = 0; i < this.width; i++) {
+      let maxRms = 0;
+      for (let channelWaveform of this.channelWaveforms) {
+        channelWaveform = toJS(channelWaveform);
+        if (channelWaveform) {
+          const curremtRms = channelWaveform[i] ? channelWaveform[i] : 0;
+          maxRms = Math.max(curremtRms, maxRms);
+        }
+      }
+      waveform.push(maxRms);
     }
+    this.setWaveform(waveform);
   }
 }
 

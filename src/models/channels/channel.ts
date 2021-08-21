@@ -211,7 +211,7 @@ class Channel implements FaderInterface {
     const height = WaveformStore.height;
     const calculator = new ChannelWaveformCalculator(this.buffer, width, height, this.currentGain);
     const waveform = calculator.calculate();
-    WaveformStore.updateWaveform(waveform);
+    WaveformStore.updateChannelWaveform(waveform, this.index);
   }
 }
 

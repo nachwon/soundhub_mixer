@@ -1,3 +1,5 @@
+import { WaveformStore } from "../stores";
+
 export default class ChannelWaveformCalculator {
   buffer: AudioBuffer;
   chunkSize: number;
@@ -19,19 +21,21 @@ export default class ChannelWaveformCalculator {
     const pcmR = this.buffer.getChannelData(1);
     const chunkifiedArrayL = this.chunkifyArray(pcmL);
     const chunkifiedArrayR = this.chunkifyArray(pcmR);
-    let maxRms = -Infinity;
+    let maxRms = 0;
 
     for (let i = 0; i < this.barCount; i++) {
       const chunkL = chunkifiedArrayL[i];
       const chunkR = chunkifiedArrayR[i];
-      const rmsL = this.getRMS(chunkL) * this.gain;
-      const rmsR = this.getRMS(chunkR) * this.gain;
+      const rmsL = this.getRMS(chunkL);
+      const rmsR = this.getRMS(chunkR);
       const rmsSum = rmsL + rmsR;
-      waveformData.push(rmsSum);
+      waveformData.push(rmsSum * this.gain);
       maxRms = Math.max(rmsSum, maxRms);
     }
 
-    return this.convertToWaveform(waveformData, maxRms);
+    WaveformStore.setMaxRms(maxRms);
+
+    return this.convertToWaveform(waveformData, WaveformStore.maxRms);
   }
 
   chunkifyArray(array: Float32Array): Array<Float32Array> {
