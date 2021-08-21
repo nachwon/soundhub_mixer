@@ -3,7 +3,6 @@ import { InitialFaderPosition } from "../../constants";
 import { WaveformStore } from "../../stores";
 import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
-import ChannelWaveformCalculator from "../waveformCalculator";
 
 class Channel implements FaderInterface {
   index: number;
@@ -73,7 +72,8 @@ class Channel implements FaderInterface {
       this.createBufferSourceNode(buffer);
       this.connectNodes();
       this.setLoaded(true);
-      this.updateWaveformData();
+      WaveformStore.addChannel(this);
+      WaveformStore.updateWaveformData();
     });
   }
 
@@ -198,23 +198,6 @@ class Channel implements FaderInterface {
       gain: this.currentGain,
       pan: this.currentPan,
     };
-  }
-
-  updateWaveformData(sync: boolean = true) {
-    if (!this.buffer) {
-      return;
-    }
-
-    WaveformStore.setMaxDuration(this.duration);
-    const widthRatio = this.duration / WaveformStore.maxDuration;
-    const width = WaveformStore.width * widthRatio;
-    const height = WaveformStore.height;
-    const calculator = new ChannelWaveformCalculator(this.buffer, width, height, this.currentGain);
-    const waveform = calculator.calculate();
-    WaveformStore.updateChannelWaveform(waveform, this.index);
-    if (sync) {
-      WaveformStore.updateFinalWaveform();
-    }
   }
 }
 

@@ -1,9 +1,12 @@
 import { makeAutoObservable, toJS } from "mobx";
 import { MaxChannelCount } from "../constants";
+import { Channel } from "../models/channels";
+import ChannelWaveformCalculator from "../models/waveformCalculator";
 import { calcFinalWaveform } from "../utils";
 
 class WaveformStore {
   waveform: Array<number> = [];
+  channels: Array<Channel | undefined> = [];
   channelWaveforms: Array<Array<number>> = new Array(MaxChannelCount);
   maxDuration: number = 0;
   maxRms: number = 0;
@@ -12,6 +15,11 @@ class WaveformStore {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  addChannel(channel: Channel) {
+    this.channels.push(channel);
+    this.setMaxDuration(channel.duration);
   }
 
   setWaveform(waveform: Array<number>) {
@@ -28,6 +36,23 @@ class WaveformStore {
 
   setMaxRms(rms: number) {
     this.maxRms = Math.max(this.maxRms, rms);
+  }
+
+  updateWaveformData(sync: boolean = true) {
+    for (let channel of this.channels) {
+      if (!channel || !channel.buffer) {
+        continue;
+      }
+      const widthRatio = channel.duration / this.maxDuration;
+      const width = this.width * widthRatio;
+      const height = this.height;
+      const calculator = new ChannelWaveformCalculator(channel.buffer, width, height, channel.currentGain);
+      const waveform = calculator.calculate();
+      this.updateChannelWaveform(waveform, channel.index);
+      if (sync) {
+        this.updateFinalWaveform();
+      }
+    }
   }
 
   updateChannelWaveform(waveform: Array<number>, index: number) {

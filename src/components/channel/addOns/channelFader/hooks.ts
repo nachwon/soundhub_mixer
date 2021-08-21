@@ -80,14 +80,12 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   };
 
   const handleFaderMouseUp = async (e: MouseEvent) => {
-    if (channel.updateWaveformData) {
-      channel.updateWaveformData(false);
-      const waveform = await updateWaveformWorker(
-        WaveformStore.channelWaveforms.map((value) => toJS(value)),
-        WaveformStore.width
-      );
-      WaveformStore.setWaveform(waveform);
-    }
+    WaveformStore.updateWaveformData(false);
+    const waveform = await updateWaveformWorker(
+      WaveformStore.channelWaveforms.map((value) => toJS(value)),
+      WaveformStore.width
+    );
+    WaveformStore.setWaveform(waveform);
 
     window.removeEventListener("mousemove", handleFaderMouseMove);
     window.removeEventListener("mouseup", handleFaderMouseUp);
