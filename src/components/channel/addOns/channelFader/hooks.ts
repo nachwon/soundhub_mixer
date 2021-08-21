@@ -9,6 +9,7 @@ import { toJS } from "mobx";
 interface useChannelFaderProps {
   channel: FaderInterface;
   pressedKey?: string;
+  isMaster: boolean;
 }
 
 const FaderMaxPercent = MIXER_SETTINGS.faderMaxPercent;
@@ -36,7 +37,7 @@ const FaderPositionCalculator: { [k: string]: (percent: number) => number } = {
   MetaLeft: snappingClaculator,
 };
 
-export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
+export const useChannelFader = ({ channel, pressedKey = "default", isMaster = false }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
   const faderRail = useRef<HTMLDivElement>(null);
   const faderHandle = useRef<HTMLDivElement>(null);
@@ -80,12 +81,13 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   };
 
   const handleFaderMouseUp = async (e: MouseEvent) => {
-    WaveformStore.updateWaveformData(false);
-    const waveform = await updateWaveformWorker(
-      WaveformStore.channelWaveforms.map((value) => toJS(value)),
-      WaveformStore.width
-    );
-    WaveformStore.setWaveform(waveform);
+    if (!isMaster) {
+      WaveformStore.updateWaveformData(false);
+      updateWaveformWorker(
+        WaveformStore.channelWaveforms.map((value) => toJS(value)),
+        WaveformStore.width
+      ).then((waveform) => WaveformStore.setWaveform(waveform));
+    }
 
     window.removeEventListener("mousemove", handleFaderMouseMove);
     window.removeEventListener("mouseup", handleFaderMouseUp);

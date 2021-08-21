@@ -64,7 +64,11 @@ interface ChannelFaderProps {
 }
 
 const ChannelFader: React.FC<ChannelFaderProps> = observer(({ channel, pressedKey = "default" }) => {
-  const { handleFaderMouseDown, faderRail, faderHandle, NumberOfTicks } = useChannelFader({ channel, pressedKey });
+  const { handleFaderMouseDown, faderRail, faderHandle, NumberOfTicks } = useChannelFader({
+    channel,
+    pressedKey,
+    isMaster: false,
+  });
   const [faderPosition, setFaderPosition] = useState(0);
   const renderTicks = () => {
     const ticksArray = [];
