@@ -35,10 +35,7 @@ class WaveformStore {
   }
 
   updateFinalWaveform() {
-    const finalWaveform = calcFinalWaveform(
-      this.channelWaveforms.map((value) => toJS(value)),
-      this.width
-    );
+    const finalWaveform = calcFinalWaveform(toJS(this.channelWaveforms), this.width);
     this.setWaveform(finalWaveform);
   }
 }

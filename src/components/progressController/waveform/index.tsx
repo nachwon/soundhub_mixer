@@ -1,3 +1,4 @@
+import { toJS } from "mobx";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { THEME } from "../../../constants";
 import * as S from "./styles";
@@ -11,6 +12,7 @@ interface WaveformProps {
 const Waveform: React.FC<WaveformProps> = (props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D>();
+  const waveform = useRef<Array<number>>([]);
   const frame = useRef(0);
 
   const initCanvas = (canvas: HTMLCanvasElement | null): CanvasRenderingContext2D | undefined => {
@@ -41,21 +43,30 @@ const Waveform: React.FC<WaveformProps> = (props) => {
 
     const drawWaveform = (frame: number) => {
       if (frame === 40) {
+        waveform.current = toJS(props.data);
         return;
       }
 
       canvasCtx.clearRect(0, 0, props.width, props.height);
       props.data.forEach((value, index) => {
+        const currentValue = waveform.current.length === 0 ? 0 : waveform.current[index];
+        const isDecrease = currentValue > value;
+        const nextFrame = isDecrease ? frame : -frame;
+        const upperYMathFunc = isDecrease ? Math.min : Math.max;
+        const hMathFunc = isDecrease ? Math.max : Math.min;
+
+        const X = index * 2;
+        const W = 1;
+        const upperY = upperYMathFunc((props.height - value) / 2, (props.height - currentValue) / 2 + nextFrame);
+        const H = hMathFunc(currentValue / 2 - nextFrame, value / 2);
+
         canvasCtx.fillStyle = "#888888";
-        canvasCtx.fillRect(
-          index * 2,
-          Math.max((props.height - value) / 2, (props.height - frame * 2) / 2),
-          1,
-          Math.min(frame, value / 2)
-        );
+        canvasCtx.fillRect(X, upperY, W, H);
+
+        const lowerY = props.height / 2;
 
         canvasCtx.fillStyle = "#666666";
-        canvasCtx.fillRect(index * 2, props.height / 2, 1, Math.min(frame, value / 2));
+        canvasCtx.fillRect(X, lowerY, W, H);
       });
       requestAnimationFrame(() => drawWaveform(frame + 1));
     };

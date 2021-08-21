@@ -75,7 +75,7 @@ export const getScaledGainValue = (gainValue: number, maxGain: number) => {
 export const calcFinalWaveform = (waveforms: Array<Array<number>>, width: number) => {
   const finalWaveform = [];
 
-  for (let i = 0; i < width; i++) {
+  for (let i = 0; i < width / 2; i++) {
     let maxRms = 0;
     for (let channelWaveform of waveforms) {
       if (channelWaveform) {
