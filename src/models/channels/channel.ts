@@ -200,7 +200,7 @@ class Channel implements FaderInterface {
     };
   }
 
-  updateWaveformData() {
+  updateWaveformData(sync: boolean = true) {
     if (!this.buffer) {
       return;
     }
@@ -212,6 +212,9 @@ class Channel implements FaderInterface {
     const calculator = new ChannelWaveformCalculator(this.buffer, width, height, this.currentGain);
     const waveform = calculator.calculate();
     WaveformStore.updateChannelWaveform(waveform, this.index);
+    if (sync) {
+      WaveformStore.updateFinalWaveform();
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { makeAutoObservable, toJS } from "mobx";
 import { MaxChannelCount } from "../constants";
+import { calcFinalWaveform } from "../utils";
 
 class WaveformStore {
   waveform: Array<number> = [];
@@ -31,23 +32,14 @@ class WaveformStore {
 
   updateChannelWaveform(waveform: Array<number>, index: number) {
     this.setChannelWaveform(waveform, index);
-    this.updateWaveform();
   }
 
-  updateWaveform() {
-    const waveform = [];
-    for (let i = 0; i < this.width; i++) {
-      let maxRms = 0;
-      for (let channelWaveform of this.channelWaveforms) {
-        channelWaveform = toJS(channelWaveform);
-        if (channelWaveform) {
-          const curremtRms = channelWaveform[i] ? channelWaveform[i] : 0;
-          maxRms = Math.max(curremtRms, maxRms);
-        }
-      }
-      waveform.push(maxRms);
-    }
-    this.setWaveform(waveform);
+  updateFinalWaveform() {
+    const finalWaveform = calcFinalWaveform(
+      this.channelWaveforms.map((value) => toJS(value)),
+      this.width
+    );
+    this.setWaveform(finalWaveform);
   }
 }
 

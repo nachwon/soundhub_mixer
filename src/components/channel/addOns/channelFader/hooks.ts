@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
-import { getScaledGainValue } from "../../../../utils";
+import { calcFinalWaveform, getScaledGainValue } from "../../../../utils";
+import { useWorker } from "@koale/useworker";
+import { WaveformStore } from "../../../../stores";
+import { toJS } from "mobx";
 
 interface useChannelFaderProps {
   channel: FaderInterface;
@@ -38,6 +41,7 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   const faderRail = useRef<HTMLDivElement>(null);
   const faderHandle = useRef<HTMLDivElement>(null);
   const faderOffset = useRef(0);
+  const [updateWaveformWorker] = useWorker(calcFinalWaveform);
 
   useEffect(() => {
     const calcFunc = FaderPositionCalculator[pressedKey];
@@ -75,10 +79,16 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     channel.setFaderPosition(calculatedFaderPosition);
   };
 
-  const handleFaderMouseUp = (e: MouseEvent) => {
+  const handleFaderMouseUp = async (e: MouseEvent) => {
     if (channel.updateWaveformData) {
-      channel.updateWaveformData();
+      channel.updateWaveformData(false);
+      const waveform = await updateWaveformWorker(
+        WaveformStore.channelWaveforms.map((value) => toJS(value)),
+        WaveformStore.width
+      );
+      WaveformStore.setWaveform(waveform);
     }
+
     window.removeEventListener("mousemove", handleFaderMouseMove);
     window.removeEventListener("mouseup", handleFaderMouseUp);
   };

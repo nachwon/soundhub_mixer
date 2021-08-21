@@ -29,7 +29,7 @@ export interface FaderInterface {
   getCurrentLevels: () => Array<number>;
   getPeaks: () => Array<number>;
   getCounters: () => Array<number>;
-  updateWaveformData?: () => void;
+  updateWaveformData?: (sync: boolean) => void;
 }
 
 export type ChannelSettings = {
