@@ -3,6 +3,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";
+import { WaveformStore } from "../../stores";
 import { toMMSS } from "../../utils";
 import * as S from "./styles";
 import Waveform from "./waveform";
@@ -21,7 +22,6 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
   const [pointerPosition, setPointerPosition] = useState<number>(0);
   const [isPointing, setIsPointing] = useState(false);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const [waveformData, setWaveformData] = useState<Array<number>>([]);
 
   const resetProgress = () => {
     setProgress(0);
@@ -77,7 +77,6 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
   };
 
   const handleProgressBarMouseDown = (e: any) => {
-    setWaveformData(mixer.getWaveformData(650, 40));
     isSeeking.current = true;
     window.addEventListener("mousemove", handleProgressBarMouseMove);
     window.addEventListener("mouseup", handleProgressBarMouseUp);
@@ -141,7 +140,7 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
           onMouseLeave={handleProgressBarMouseLeave}
         >
           <S.MixerProgressBarGuide>
-            <Waveform width={650} height={40} data={waveformData} />
+            <Waveform width={650} height={40} data={WaveformStore.waveform} />
             <S.MixerProgressIndicator progress={progress}>
               <S.MixerProgressPointer position={isPointing ? `${pointerPosition}px` : "100%"} />
             </S.MixerProgressIndicator>

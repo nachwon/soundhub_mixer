@@ -116,7 +116,6 @@ class Mixer {
       src: dto.src,
       title: dto.title,
     });
-
     this.insertChannel(index, channel);
     this.soloGainBroadcaster.add(channel.gainController);
     return true;
@@ -204,14 +203,6 @@ class Mixer {
       master: { gain: this.masterChannel.currentGain },
       channels: this.channels.map((channel) => channel?.exportSettings()),
     };
-  }
-
-  getWaveformData(width: number, height: number): Array<number> {
-    const channel = this.channels[0];
-    if (!channel) {
-      return [];
-    }
-    return channel.getWaveformData(width, height);
   }
 }
 

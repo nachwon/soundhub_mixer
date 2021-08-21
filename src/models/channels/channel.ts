@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { InitialFaderPosition } from "../../constants";
+import { WaveformStore } from "../../stores";
 import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 import ChannelWaveformCalculator from "../waveformCalculator";
@@ -72,6 +73,7 @@ class Channel implements FaderInterface {
       this.createBufferSourceNode(buffer);
       this.connectNodes();
       this.setLoaded(true);
+      this.updateWaveformData();
     });
   }
 
@@ -198,12 +200,18 @@ class Channel implements FaderInterface {
     };
   }
 
-  getWaveformData(waveformWidth: number, waveformHeight: number) {
+  updateWaveformData() {
     if (!this.buffer) {
-      return [];
+      return;
     }
-    const calculator = new ChannelWaveformCalculator(this.buffer, waveformWidth, waveformHeight, this.currentGain);
-    return calculator.calculate();
+
+    WaveformStore.setMaxDuration(this.duration);
+    const widthRatio = this.duration / WaveformStore.maxDuration;
+    const width = WaveformStore.width * widthRatio;
+    const height = WaveformStore.height;
+    const calculator = new ChannelWaveformCalculator(this.buffer, width, height, this.currentGain);
+    const waveform = calculator.calculate();
+    WaveformStore.updateWaveform(waveform);
   }
 }
 

@@ -51,7 +51,7 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   const handleFaderMouseDown = (e: React.MouseEvent) => {
     faderOffset.current = e.nativeEvent.offsetY;
     window.addEventListener("mousemove", handleFaderMouseMove);
-    window.addEventListener("mouseup", removeGlobalFaderEvents);
+    window.addEventListener("mouseup", handleFaderMouseUp);
   };
 
   const handleFaderMouseMove = (e: MouseEvent) => {
@@ -75,9 +75,12 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     channel.setFaderPosition(calculatedFaderPosition);
   };
 
-  const removeGlobalFaderEvents = (e: MouseEvent) => {
+  const handleFaderMouseUp = (e: MouseEvent) => {
+    if (channel.updateWaveformData) {
+      channel.updateWaveformData();
+    }
     window.removeEventListener("mousemove", handleFaderMouseMove);
-    window.removeEventListener("mouseup", removeGlobalFaderEvents);
+    window.removeEventListener("mouseup", handleFaderMouseUp);
   };
 
   const calculateFaderPositionFromPercent = (gain: number) => {
