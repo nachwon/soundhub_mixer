@@ -21,6 +21,7 @@ export interface FaderHandleProps {
 }
 
 export interface FaderInterface {
+  index: number;
   audioCtx: AudioContext;
   currentGain: number;
   maxGain: number;

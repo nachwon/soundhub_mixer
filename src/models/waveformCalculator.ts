@@ -7,7 +7,7 @@ export default class ChannelWaveformCalculator {
   waveformHeight: number;
   gain: number;
 
-  constructor(buffer: AudioBuffer, waveformWidth: number, waveformHeight: number, gain: number) {
+  constructor(buffer: AudioBuffer, waveformWidth: number, waveformHeight: number, gain: number = 1) {
     this.buffer = buffer;
     this.barCount = Math.round(waveformWidth / 2);
     this.chunkSize = Math.ceil(this.buffer.length / this.barCount);

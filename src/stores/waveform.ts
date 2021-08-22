@@ -7,6 +7,7 @@ import { calcFinalWaveform } from "../utils";
 class WaveformStore {
   waveform: Array<number> = [];
   channels: Array<Channel | undefined> = [];
+  pcms: Array<Array<number>> = new Array(MaxChannelCount);
   channelWaveforms: Array<Array<number>> = new Array(MaxChannelCount);
   maxDuration: number = 0;
   maxRms: number = 0;
@@ -27,6 +28,7 @@ class WaveformStore {
   }
 
   setChannelWaveform(waveform: Array<number>, index: number) {
+    this.pcms[index] = waveform;
     this.channelWaveforms[index] = waveform;
   }
 
@@ -53,6 +55,10 @@ class WaveformStore {
         this.updateFinalWaveform();
       }
     }
+  }
+
+  applyChannelGain(index: number, gain: number) {
+    this.channelWaveforms[index] = this.pcms[index].map((value) => value * gain);
   }
 
   updateChannelWaveform(waveform: Array<number>, index: number) {

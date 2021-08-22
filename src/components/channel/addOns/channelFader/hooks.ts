@@ -82,7 +82,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
 
   const handleFaderMouseUp = async (e: MouseEvent) => {
     if (!isMaster) {
-      WaveformStore.updateWaveformData(false);
+      WaveformStore.applyChannelGain(channel.index, channel.currentGain);
       updateWaveformWorker(
         WaveformStore.channelWaveforms.map((value) => toJS(value)),
         WaveformStore.width
