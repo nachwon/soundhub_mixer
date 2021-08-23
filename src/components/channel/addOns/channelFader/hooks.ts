@@ -84,7 +84,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
     if (!isMaster) {
       WaveformStore.applyChannelGain(channel.index, channel.currentGain);
       updateWaveformWorker(
-        WaveformStore.channelWaveforms.map((value) => toJS(value)),
+        WaveformStore.channelWaveforms.map((value: Array<number>) => toJS(value)),
         WaveformStore.width
       ).then((waveform) => WaveformStore.setWaveform(waveform));
     }

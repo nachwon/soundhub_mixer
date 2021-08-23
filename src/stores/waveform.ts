@@ -48,9 +48,10 @@ class WaveformStore {
       const widthRatio = channel.duration / this.maxDuration;
       const width = this.width * widthRatio;
       const height = this.height;
-      const calculator = new ChannelWaveformCalculator(channel.buffer, width, height, channel.currentGain);
+      const calculator = new ChannelWaveformCalculator(channel.buffer, width, height);
       const waveform = calculator.calculate();
       this.setChannelWaveform(waveform, channel.index);
+      this.applyChannelGain(channel.index, channel.currentGain);
       if (sync) {
         this.updateFinalWaveform();
       }

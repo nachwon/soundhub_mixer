@@ -5,14 +5,12 @@ export default class ChannelWaveformCalculator {
   chunkSize: number;
   barCount: number;
   waveformHeight: number;
-  gain: number;
 
-  constructor(buffer: AudioBuffer, waveformWidth: number, waveformHeight: number, gain: number = 1) {
+  constructor(buffer: AudioBuffer, waveformWidth: number, waveformHeight: number) {
     this.buffer = buffer;
     this.barCount = Math.round(waveformWidth / 2);
     this.chunkSize = Math.ceil(this.buffer.length / this.barCount);
     this.waveformHeight = Math.round(waveformHeight);
-    this.gain = gain;
   }
 
   calculate() {
@@ -29,7 +27,7 @@ export default class ChannelWaveformCalculator {
       const rmsL = this.getRMS(chunkL);
       const rmsR = this.getRMS(chunkR);
       const rmsSum = rmsL + rmsR;
-      waveformData.push(rmsSum * this.gain);
+      waveformData.push(rmsSum);
       maxRms = Math.max(rmsSum, maxRms);
     }
 
