@@ -6,10 +6,9 @@ import { calcFinalWaveform } from "../utils";
 
 class WaveformStore {
   waveform: Array<number> = [];
-  channels: Array<Channel | undefined> = [];
+  channels: Array<Channel | undefined> = new Array(MaxChannelCount);
   pcms: Array<Array<number>> = new Array(MaxChannelCount);
   channelWaveforms: Array<Array<number>> = new Array(MaxChannelCount);
-  maxDuration: number = 0;
   maxRms: number = 0;
   width: number = 650;
   height: number = 40;
@@ -19,8 +18,12 @@ class WaveformStore {
   }
 
   addChannel(channel: Channel) {
-    this.channels.push(channel);
-    this.setMaxDuration(channel.duration);
+    this.channels[channel.index] = channel;
+  }
+
+  removeChannel(index: number) {
+    this.channels[index] = undefined;
+    this.removeChannelWaveform(index);
   }
 
   setWaveform(waveform: Array<number>) {
@@ -32,8 +35,21 @@ class WaveformStore {
     this.channelWaveforms[index] = waveform;
   }
 
-  setMaxDuration(duration: number) {
-    this.maxDuration = Math.max(this.maxDuration, duration);
+  removeChannelWaveform(index: number) {
+    this.pcms[index] = [];
+    this.channelWaveforms[index] = [];
+  }
+
+  get maxDuration() {
+    let maxVal = 0;
+    for (let channel of this.channels) {
+      if (!channel) {
+        continue;
+      }
+
+      maxVal = Math.max(channel.duration, maxVal);
+    }
+    return maxVal;
   }
 
   setMaxRms(rms: number) {
@@ -45,6 +61,7 @@ class WaveformStore {
       if (!channel || !channel.buffer) {
         continue;
       }
+
       const widthRatio = channel.duration / this.maxDuration;
       const width = this.width * widthRatio;
       const height = this.height;
@@ -52,9 +69,10 @@ class WaveformStore {
       const waveform = calculator.calculate();
       this.setChannelWaveform(waveform, channel.index);
       this.applyChannelGain(channel.index, channel.currentGain);
-      if (sync) {
-        this.updateFinalWaveform();
-      }
+    }
+
+    if (sync) {
+      this.updateFinalWaveform();
     }
   }
 
