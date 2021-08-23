@@ -50,7 +50,7 @@ class WaveformStore {
       const height = this.height;
       const calculator = new ChannelWaveformCalculator(channel.buffer, width, height, channel.currentGain);
       const waveform = calculator.calculate();
-      this.updateChannelWaveform(waveform, channel.index);
+      this.setChannelWaveform(waveform, channel.index);
       if (sync) {
         this.updateFinalWaveform();
       }
@@ -58,11 +58,7 @@ class WaveformStore {
   }
 
   applyChannelGain(index: number, gain: number) {
-    this.channelWaveforms[index] = this.pcms[index].map((value) => value * gain);
-  }
-
-  updateChannelWaveform(waveform: Array<number>, index: number) {
-    this.setChannelWaveform(waveform, index);
+    this.channelWaveforms[index] = this.pcms[index].map((value) => Math.min(value * gain, this.height));
   }
 
   updateFinalWaveform() {
