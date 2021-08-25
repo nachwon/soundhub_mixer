@@ -10,17 +10,15 @@ export const useWaveformWorker = () => {
     WaveformStore.removeChannel(index);
     WaveformStore.updateWaveformData(false);
 
-    updateWaveformWorker(
-      WaveformStore.channelWaveforms.map((value: Array<number>) => toJS(value)),
-      WaveformStore.width
-    ).then((waveform) => {
-      WaveformStore.setWaveform(waveform);
-      onRemove();
-    });
+    reloadWaveform().then(() => onRemove());
   };
 
   const applayGain = async (index: number, gain: number) => {
     WaveformStore.applyChannelGain(index, gain);
+    await reloadWaveform();
+  };
+
+  const reloadWaveform = async () => {
     const waveform = await updateWaveformWorker(
       WaveformStore.channelWaveforms.map((value: Array<number>) => toJS(value)),
       WaveformStore.width
@@ -32,5 +30,6 @@ export const useWaveformWorker = () => {
   return {
     removeWaveform,
     applayGain,
+    reloadWaveform,
   };
 };

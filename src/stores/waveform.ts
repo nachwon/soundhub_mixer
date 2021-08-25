@@ -84,6 +84,11 @@ class WaveformStore {
     const finalWaveform = calcFinalWaveform(toJS(this.channelWaveforms), this.width);
     this.setWaveform(finalWaveform);
   }
+
+  resetWaveform() {
+    this.channelWaveforms = this.pcms;
+    this.updateFinalWaveform();
+  }
 }
 
 export default new WaveformStore();
