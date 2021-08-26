@@ -1,9 +1,12 @@
 import { observer } from "mobx-react";
+import React from "react";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import Mixer from "../../models/mixer";
+import { WaveformStore } from "../../stores";
 import { toMMSS } from "../../utils";
 import * as S from "./styles";
+import Waveform from "./waveform";
 
 interface ProgressControllerProps {
   mixer: Mixer;
@@ -17,6 +20,7 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
   const [currentTime, setCurrentTime] = useState(0);
   const [progress, setProgress] = useState(0);
   const [pointerPosition, setPointerPosition] = useState<number>(0);
+  const [isPointing, setIsPointing] = useState(false);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   const resetProgress = () => {
@@ -107,6 +111,14 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
     isSeeking.current = false;
   };
 
+  const handleProgressBarMouseEnter = (e: React.MouseEvent) => {
+    setIsPointing(true);
+  };
+
+  const handleProgressBarMouseLeave = (e: React.MouseEvent) => {
+    setIsPointing(false);
+  };
+
   return (
     <S.MixerControllerContainer>
       <S.MixerPlayButton
@@ -124,10 +136,13 @@ const ProgressController: React.FC<ProgressControllerProps> = observer((props) =
           onMouseMove={handleProgressBarMouseMove}
           onMouseDown={handleProgressBarMouseDown}
           onMouseUp={handleProgressBarMouseUp}
+          onMouseEnter={handleProgressBarMouseEnter}
+          onMouseLeave={handleProgressBarMouseLeave}
         >
           <S.MixerProgressBarGuide>
+            <Waveform width={650} height={40} data={WaveformStore.waveform} />
             <S.MixerProgressIndicator progress={progress}>
-              <S.MixerProgressPointer position={pointerPosition} />
+              <S.MixerProgressPointer position={isPointing ? `${pointerPosition}px` : "100%"} />
             </S.MixerProgressIndicator>
           </S.MixerProgressBarGuide>
         </S.MixerProgressBar>

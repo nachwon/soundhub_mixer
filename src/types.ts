@@ -21,6 +21,7 @@ export interface FaderHandleProps {
 }
 
 export interface FaderInterface {
+  index: number;
   audioCtx: AudioContext;
   currentGain: number;
   maxGain: number;
@@ -29,6 +30,7 @@ export interface FaderInterface {
   getCurrentLevels: () => Array<number>;
   getPeaks: () => Array<number>;
   getCounters: () => Array<number>;
+  updateWaveformData?: (sync: boolean) => void;
 }
 
 export type ChannelSettings = {

@@ -15,9 +15,16 @@ export class ChannelGainController {
   currentGain: number = 0;
   isMuted: boolean = false;
   isSoloed: boolean = false;
+  isMutedBySolo: boolean = false;
 
   get maxGain() {
     return 3;
+  }
+
+  get actualGain() {
+    const solo = this.isMutedBySolo ? 0 : 1;
+    const mute = this.isMuted ? 0 : 1;
+    return this.currentGain * solo * mute;
   }
 
   constructor(index: number, audioCtx: AudioContext) {
@@ -81,10 +88,12 @@ export class ChannelGainController {
   }
 
   turnOnSoloGain(when: number = 0) {
+    this.isMutedBySolo = false;
     this.soloGainNode.gain.setValueAtTime(1, when);
   }
 
   turnOffSoloGain(when: number = 0) {
+    this.isMutedBySolo = true;
     this.soloGainNode.gain.setValueAtTime(0, when);
   }
 }
@@ -102,6 +111,7 @@ export class SoloGainBroadcaster {
   add(controller: ChannelGainController) {
     this.channelGainControllers.push(controller);
     controller.setBroadcaster(this);
+    this.broadcast();
   }
 
   broadcast() {

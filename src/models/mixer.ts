@@ -37,10 +37,7 @@ class Mixer {
 
   constructor() {
     makeAutoObservable(this);
-    this.channels = [];
-    for (let i = 0; i < this.maxChannelCount; i++) {
-      this.channels.push(undefined);
-    }
+
     this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 
@@ -116,7 +113,6 @@ class Mixer {
       src: dto.src,
       title: dto.title,
     });
-
     this.insertChannel(index, channel);
     this.soloGainBroadcaster.add(channel.gainController);
     return true;

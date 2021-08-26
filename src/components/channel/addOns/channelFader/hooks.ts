@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";
+import { useWaveformWorker } from "../../../progressController/waveform/hooks";
 
 interface useChannelFaderProps {
   channel: FaderInterface;
   pressedKey?: string;
+  isMaster: boolean;
 }
 
 const FaderMaxPercent = MIXER_SETTINGS.faderMaxPercent;
@@ -33,11 +35,12 @@ const FaderPositionCalculator: { [k: string]: (percent: number) => number } = {
   MetaLeft: snappingClaculator,
 };
 
-export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelFaderProps) => {
+export const useChannelFader = ({ channel, pressedKey = "default", isMaster = false }: useChannelFaderProps) => {
   const faderPositionCalculator = useRef<(gain: number) => number>(defaultCalculator);
   const faderRail = useRef<HTMLDivElement>(null);
   const faderHandle = useRef<HTMLDivElement>(null);
   const faderOffset = useRef(0);
+  const { applyGain } = useWaveformWorker();
 
   useEffect(() => {
     const calcFunc = FaderPositionCalculator[pressedKey];
@@ -51,7 +54,7 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
   const handleFaderMouseDown = (e: React.MouseEvent) => {
     faderOffset.current = e.nativeEvent.offsetY;
     window.addEventListener("mousemove", handleFaderMouseMove);
-    window.addEventListener("mouseup", removeGlobalFaderEvents);
+    window.addEventListener("mouseup", handleFaderMouseUp);
   };
 
   const handleFaderMouseMove = (e: MouseEvent) => {
@@ -75,9 +78,13 @@ export const useChannelFader = ({ channel, pressedKey = "default" }: useChannelF
     channel.setFaderPosition(calculatedFaderPosition);
   };
 
-  const removeGlobalFaderEvents = (e: MouseEvent) => {
+  const handleFaderMouseUp = async (e: MouseEvent) => {
+    if (!isMaster) {
+      await applyGain(channel.index, channel.currentGain);
+    }
+
     window.removeEventListener("mousemove", handleFaderMouseMove);
-    window.removeEventListener("mouseup", removeGlobalFaderEvents);
+    window.removeEventListener("mouseup", handleFaderMouseUp);
   };
 
   const calculateFaderPositionFromPercent = (gain: number) => {
