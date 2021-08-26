@@ -34,6 +34,10 @@ class Channel implements FaderInterface {
     return this.gainController.currentGain;
   }
 
+  get actualGain() {
+    return this.gainController.actualGain;
+  }
+
   get maxGain() {
     return this.gainController.maxGain;
   }

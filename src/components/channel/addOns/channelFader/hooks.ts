@@ -40,7 +40,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
   const faderRail = useRef<HTMLDivElement>(null);
   const faderHandle = useRef<HTMLDivElement>(null);
   const faderOffset = useRef(0);
-  const { applayGain } = useWaveformWorker();
+  const { applyGain } = useWaveformWorker();
 
   useEffect(() => {
     const calcFunc = FaderPositionCalculator[pressedKey];
@@ -80,7 +80,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
 
   const handleFaderMouseUp = async (e: MouseEvent) => {
     if (!isMaster) {
-      await applayGain(channel.index, channel.currentGain);
+      await applyGain(channel.index, channel.currentGain);
     }
 
     window.removeEventListener("mousemove", handleFaderMouseMove);

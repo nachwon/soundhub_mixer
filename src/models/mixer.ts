@@ -37,10 +37,7 @@ class Mixer {
 
   constructor() {
     makeAutoObservable(this);
-    this.channels = [];
-    for (let i = 0; i < this.maxChannelCount; i++) {
-      this.channels.push(undefined);
-    }
+
     this.setMixerState("stopped");
     this.audioCtx = new AudioContext();
 

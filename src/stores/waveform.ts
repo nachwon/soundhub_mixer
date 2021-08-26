@@ -30,6 +30,10 @@ class WaveformStore {
     this.waveform = waveform;
   }
 
+  getChannelWaveforms() {
+    return this.channelWaveforms.map((value: Array<number>) => toJS(value));
+  }
+
   setChannelWaveform(waveform: Array<number>, index: number) {
     this.pcms[index] = waveform;
     this.channelWaveforms[index] = waveform;
@@ -78,6 +82,15 @@ class WaveformStore {
 
   applyChannelGain(index: number, gain: number) {
     this.channelWaveforms[index] = this.pcms[index].map((value) => Math.min(value * gain, this.height));
+  }
+
+  updateChannelGains() {
+    for (let channel of this.channels) {
+      if (!channel) {
+        continue;
+      }
+      this.applyChannelGain(channel?.index, channel.actualGain);
+    }
   }
 
   updateFinalWaveform() {
