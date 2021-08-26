@@ -102,6 +102,7 @@ export class SoloGainBroadcaster {
   add(controller: ChannelGainController) {
     this.channelGainControllers.push(controller);
     controller.setBroadcaster(this);
+    this.broadcast();
   }
 
   broadcast() {
