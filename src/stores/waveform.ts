@@ -99,7 +99,7 @@ class WaveformStore {
   }
 
   resetWaveform() {
-    this.channelWaveforms = this.pcms;
+    this.channelWaveforms = [...this.pcms];
     this.updateFinalWaveform();
   }
 }
