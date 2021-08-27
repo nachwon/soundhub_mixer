@@ -29,7 +29,7 @@ export class AudioAnalyser {
     this.channel = channel;
     this.leftAnalyserNode = audioCtx.createAnalyser();
     this.rightAnalyserNode = audioCtx.createAnalyser();
-    this.spliterNode = audioCtx.createChannelSplitter();
+    this.spliterNode = audioCtx.createChannelSplitter(2);
   }
 
   connect(source: AudioNode) {
