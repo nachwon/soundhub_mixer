@@ -88,6 +88,7 @@ const MasterChannelComponent: React.FC<MasterChannelProps> = observer((props) =>
   const { handleFaderMouseDown, faderRail, faderHandle, NumberOfTicks } = useChannelFader({
     channel: masterChannel,
     pressedKey: props.pressedKey,
+    isMaster: true,
   });
   const [faderPosition, setFaderPosition] = useState(0);
 

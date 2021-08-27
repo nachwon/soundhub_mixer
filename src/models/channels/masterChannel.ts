@@ -5,6 +5,7 @@ import { AudioAnalyser, MasterGainController } from "../addons";
 import Mixer from "../mixer";
 
 class MasterChannel implements FaderInterface {
+  index: number = 0;
   mixer: Mixer;
   audioCtx: AudioContext;
   masterGainController: MasterGainController;

@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { InitialFaderPosition } from "../../constants";
+import { WaveformStore } from "../../stores";
 import { ChannelMeta, ChannelSettings, FaderInterface } from "../../types";
 import { AudioAnalyser, ChannelGainController, PanController } from "../addons";
 
@@ -31,6 +32,10 @@ class Channel implements FaderInterface {
 
   get currentGain() {
     return this.gainController.currentGain;
+  }
+
+  get actualGain() {
+    return this.gainController.actualGain;
   }
 
   get maxGain() {
@@ -71,6 +76,8 @@ class Channel implements FaderInterface {
       this.createBufferSourceNode(buffer);
       this.connectNodes();
       this.setLoaded(true);
+      WaveformStore.addChannel(this);
+      WaveformStore.updateWaveformData();
     });
   }
 

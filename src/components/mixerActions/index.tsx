@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useState } from "react";
 import Mixer from "../../models/mixer";
 import { MixerExporter } from "../../models/mixerExporter";
-import { EditModeStore } from "../../stores/";
+import { EditModeStore, WaveformStore } from "../../stores/";
 import * as S from "./styles";
 
 interface MixerActionsContainerProps {
@@ -26,6 +26,11 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
     exporter.export(() => setIsPreparing(false));
   };
 
+  const handleReset = async () => {
+    mixer.resetSettings();
+    WaveformStore.resetWaveform();
+  };
+
   return (
     <S.MixerActionButtonsContainer>
       <S.MixerTitleContainer>
@@ -39,9 +44,9 @@ const MixerActionsContainer: React.FC<MixerActionsContainerProps> = observer((pr
           isEditing={store.isEditing}
           onClick={() => (mixer.channelsLoaded ? store.toggleEditMode() : null)}
         />
-        <S.ResetButton onClick={() => mixer.resetSettings()} isLoaded={mixer.channelsLoaded} />
+        <S.ResetButton onClick={handleReset} isLoaded={mixer.channelsLoaded} />
         <S.ButtonDivider />
-        <S.DownloadButton onClick={() => handleExport()} isLoaded={mixer.channelsLoaded} isPreparing={isPreparing} />
+        <S.DownloadButton onClick={handleExport} isLoaded={mixer.channelsLoaded} isPreparing={isPreparing} />
       </S.ButtonsWrapper>
     </S.MixerActionButtonsContainer>
   );
