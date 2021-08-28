@@ -8,8 +8,10 @@ export const calcFinalWaveform = (waveforms: Array<Array<number>>, width: number
     let maxRms = 0;
     for (let channelWaveform of waveforms) {
       if (channelWaveform) {
-        const curremtRms = channelWaveform[i] ? channelWaveform[i] : 0;
-        maxRms = Math.max(curremtRms, maxRms);
+        const currentRms = channelWaveform[i] ? channelWaveform[i] : 0;
+        if (currentRms > maxRms) {
+          maxRms = currentRms;
+        }
       }
     }
     finalWaveform.push(maxRms);
