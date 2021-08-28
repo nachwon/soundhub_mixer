@@ -8,3 +8,5 @@ It was originally made to be used in SoundHub project but I thought it would be 
 ![main image](/assets/screenshot1.png)
 
 [Live Demo](http://soundhub-mixer.s3-website.ap-northeast-2.amazonaws.com/)
+
+[Information](https://che1.notion.site/SoundHub-Mixer-9a5f87d062d44e888b07b642125a72cc)
