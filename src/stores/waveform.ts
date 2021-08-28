@@ -1,8 +1,8 @@
 import { makeAutoObservable, toJS } from "mobx";
+import { calcFinalWaveform } from "../components/progressController/waveform/hooks";
 import { MaxChannelCount } from "../constants";
 import { Channel } from "../models/channels";
 import ChannelWaveformCalculator from "../models/waveformCalculator";
-import { calcFinalWaveform } from "../utils";
 
 class WaveformStore {
   waveform: Array<number> = [];
