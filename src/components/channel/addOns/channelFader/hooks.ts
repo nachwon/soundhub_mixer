@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { MIXER_SETTINGS } from "../../../../constants";
 import { FaderInterface } from "../../../../types";
 import { getScaledGainValue } from "../../../../utils";
-import { useWaveformWorker } from "../../../progressController/waveform/hooks";
+import { useWaveform } from "../../../progressController/waveform/hooks";
 
 interface useChannelFaderProps {
   channel: FaderInterface;
@@ -40,7 +40,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
   const faderRail = useRef<HTMLDivElement>(null);
   const faderHandle = useRef<HTMLDivElement>(null);
   const faderOffset = useRef(0);
-  const { applyGain } = useWaveformWorker();
+  const { applyGain } = useWaveform();
 
   useEffect(() => {
     const calcFunc = FaderPositionCalculator[pressedKey];
@@ -80,7 +80,7 @@ export const useChannelFader = ({ channel, pressedKey = "default", isMaster = fa
 
   const handleFaderMouseUp = async (e: MouseEvent) => {
     if (!isMaster) {
-      await applyGain(channel.index, channel.currentGain);
+      await applyGain(channel.index, channel.actualGain);
     }
 
     window.removeEventListener("mousemove", handleFaderMouseMove);

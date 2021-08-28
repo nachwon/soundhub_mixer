@@ -19,7 +19,7 @@ export const calcFinalWaveform = (waveforms: Array<Array<number>>, width: number
   return finalWaveform;
 };
 
-export const useWaveformWorker = () => {
+export const useWaveform = () => {
   const removeWaveform = async (index: number, onRemove: Function) => {
     WaveformStore.removeChannel(index);
     WaveformStore.updateWaveformData(false);

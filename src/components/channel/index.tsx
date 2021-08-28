@@ -8,7 +8,7 @@ import { Channel } from "../../models/channels";
 import Mixer from "../../models/mixer";
 import { AddFileLinkModalStore, EditModeStore } from "../../stores";
 import EmptyChannel from "../emptyChannel";
-import { useWaveformWorker } from "../progressController/waveform/hooks";
+import { useWaveform } from "../progressController/waveform/hooks";
 import ChannelFader from "./addOns/channelFader";
 import ChannelName from "./addOns/channelName";
 import MuteSoloComponent from "./addOns/muteSolo";
@@ -32,7 +32,7 @@ interface ChannelComponentProps {
 const ChannelComponent: React.FC<ChannelComponentProps> = observer(
   ({ channel, pressedKey = "default", onDeleteChannel }) => {
     const store = EditModeStore;
-    const { removeWaveform } = useWaveformWorker();
+    const { removeWaveform } = useWaveform();
 
     const hnadleChannelDelete = async () => {
       await removeWaveform(channel.index, () => onDeleteChannel(channel));

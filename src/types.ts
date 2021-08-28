@@ -24,6 +24,7 @@ export interface FaderInterface {
   index: number;
   audioCtx: AudioContext;
   currentGain: number;
+  actualGain: number;
   maxGain: number;
   setGain: (value: number, when?: number) => void;
   setFaderPosition: (value: number) => void;

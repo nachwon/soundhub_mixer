@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { Channel } from "../../../../models/channels";
-import { useWaveformWorker } from "../../../progressController/waveform/hooks";
+import { useWaveform } from "../../../progressController/waveform/hooks";
 import * as S from "./styles";
 
 interface MuteSoloComponentProps {
@@ -9,7 +9,7 @@ interface MuteSoloComponentProps {
 
 const MuteSoloComponent: React.FC<MuteSoloComponentProps> = observer((props) => {
   const channel = props.channel;
-  const { applyGain, updateChannelGains } = useWaveformWorker();
+  const { applyGain, updateChannelGains } = useWaveform();
 
   const handleMute = async () => {
     channel.toggleMute();

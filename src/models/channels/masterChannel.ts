@@ -29,6 +29,10 @@ class MasterChannel implements FaderInterface {
     return this.masterGainController.currentGain;
   }
 
+  get actualGain() {
+    return this.currentGain;
+  }
+
   get isPlaying() {
     return this.mixer.isPlaying;
   }
