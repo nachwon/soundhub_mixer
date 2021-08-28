@@ -8,7 +8,7 @@ export class AudioAnalyser {
   // Nodes
   leftAnalyserNode: AnalyserNode;
   rightAnalyserNode: AnalyserNode;
-  spliterNode: ChannelSplitterNode;
+  splitterNode: ChannelSplitterNode;
 
   // Levels
   levelLeft: number = -Infinity;
@@ -29,20 +29,20 @@ export class AudioAnalyser {
     this.channel = channel;
     this.leftAnalyserNode = audioCtx.createAnalyser();
     this.rightAnalyserNode = audioCtx.createAnalyser();
-    this.spliterNode = audioCtx.createChannelSplitter(2);
+    this.splitterNode = audioCtx.createChannelSplitter(2);
   }
 
   connect(source: AudioNode) {
-    this.spliterNode.connect(this.leftAnalyserNode, 0, 0);
-    this.spliterNode.connect(this.rightAnalyserNode, 1, 0);
-    source.connect(this.spliterNode);
+    this.splitterNode.connect(this.leftAnalyserNode, 0, 0);
+    this.splitterNode.connect(this.rightAnalyserNode, 1, 0);
+    source.connect(this.splitterNode);
     return source;
   }
 
   disconnect() {
     this.leftAnalyserNode.disconnect();
     this.rightAnalyserNode.disconnect();
-    this.spliterNode.disconnect();
+    this.splitterNode.disconnect();
   }
 
   getCurrentLevels(): Array<number> {
