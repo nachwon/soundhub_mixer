@@ -26,4 +26,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://soundhub-mixer
+            build s3://mixer.soundhub.kr
