@@ -9,4 +9,4 @@ It was originally made to be used in SoundHub project but I thought it would be 
 
 [Live Demo](http://mixer.soundhub.kr)
 
-[Information](https://che1.notion.site/SoundHub-Mixer-9a5f87d062d44e888b07b642125a72cc)
+[Information (WIP)](https://che1.notion.site/SoundHub-Mixer-9a5f87d062d44e888b07b642125a72cc)
