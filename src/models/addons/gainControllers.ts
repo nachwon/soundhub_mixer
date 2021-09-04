@@ -99,35 +99,37 @@ export class ChannelGainController {
 }
 
 export class SoloGainBroadcaster {
-  channelGainControllers: Array<ChannelGainController>;
-  soloedControllers: Array<ChannelGainController>;
+  channelGainControllers: Array<ChannelGainController> = new Array(8);
+  soloedControllers: Array<ChannelGainController> = new Array(8);
 
   constructor() {
     makeAutoObservable(this);
-    this.channelGainControllers = [];
-    this.soloedControllers = [];
   }
 
-  add(controller: ChannelGainController) {
-    this.channelGainControllers.push(controller);
+  add(index: number, controller: ChannelGainController) {
+    this.channelGainControllers[index] = controller;
     controller.setBroadcaster(this);
     this.broadcast();
   }
 
+  remove(index: number) {
+    delete this.channelGainControllers[index];
+  }
+
   broadcast() {
-    this.soloedControllers = this.channelGainControllers.filter((controller) => controller.isSoloed);
+    this.soloedControllers = this.channelGainControllers.filter((controller) => controller?.isSoloed);
     if (this.soloedControllers.length === 0) {
       for (let controller of this.channelGainControllers) {
-        controller.turnOnSoloGain();
+        controller?.turnOnSoloGain();
       }
       return;
     }
 
     for (let controller of this.channelGainControllers) {
-      controller.turnOffSoloGain();
+      controller?.turnOffSoloGain();
     }
     for (let controller of this.soloedControllers) {
-      controller.turnOnSoloGain();
+      controller?.turnOnSoloGain();
     }
   }
 }

@@ -114,13 +114,14 @@ class Mixer {
       title: dto.title,
     });
     this.insertChannel(index, channel);
-    this.soloGainBroadcaster.add(channel.gainController);
+    this.soloGainBroadcaster.add(index, channel.gainController);
     return true;
   }
 
   removeChannel(index: number) {
     this.channels[index]?.disconnect();
     this.channels[index] = undefined;
+    this.soloGainBroadcaster.remove(index);
 
     if (!this.channelsLoaded) {
       this.stop();
